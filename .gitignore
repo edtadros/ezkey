@@ -1,0 +1,16 @@
+# Gnosys memory store
+.gnosys/
+
+# SwiftPM / Xcode
+.build/
+.swiftpm/
+DerivedData/
+*.xcodeproj
+xcuserdata/
+
+# Packaged app output (rebuild with scripts/build-and-run.sh)
+build/
+
+.DS_Store
+*.swp
+

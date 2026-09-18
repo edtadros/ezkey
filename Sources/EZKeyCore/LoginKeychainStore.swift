@@ -1,0 +1,178 @@
+import Foundation
+import Security
+
+public protocol SecretStore: Sendable {
+    func contains(_ identity: SecretIdentity) async throws -> Bool
+    func add(_ identity: SecretIdentity, secret: String) async throws
+    func update(_ identity: SecretIdentity, secret: String) async throws
+    func retrieve(_ identity: SecretIdentity) async throws -> String
+    func delete(_ identity: SecretIdentity) async throws
+}
+
+/// Generic-password access to the user's file-based login Keychain.
+///
+/// SecItem's default data-protection store is a different database than
+/// `~/Library/Keychains/login.keychain-db`. This type opens that file
+/// explicitly so items round-trip with `/usr/bin/security`.
+///
+/// File-based Keychain APIs are deprecated by Apple in favor of the data-
+/// protection keychain. They remain the correct API for this compatibility
+/// requirement.
+public actor LoginKeychainStore: SecretStore {
+    public let keychainPath: String
+    /// When false, Keychain calls fail instead of showing a password dialog.
+    /// Tests use this so an unexpected ACL prompt cannot hang the suite.
+    public let allowsPrompt: Bool
+
+    public init(
+        keychainPath: String = LoginKeychainStore.defaultLoginPath,
+        allowsPrompt: Bool = true
+    ) {
+        self.keychainPath = keychainPath
+        self.allowsPrompt = allowsPrompt
+    }
+
+    public static var defaultLoginPath: String {
+        FileManager.default.homeDirectoryForCurrentUser
+            .appendingPathComponent("Library/Keychains/login.keychain-db")
+            .path
+    }
+
+    public func contains(_ identity: SecretIdentity) async throws -> Bool {
+        try requireValid(identity)
+        var result: CFTypeRef?
+        let status = SecItemCopyMatching(try searchQuery(identity, returnData: false) as CFDictionary, &result)
+        switch status {
+        case errSecSuccess:
+            return true
+        case errSecItemNotFound:
+            return false
+        case errSecInteractionNotAllowed, errSecAuthFailed:
+            // Attributes were gated; the item exists.
+            return true
+        default:
+            throw KeychainError.from(status: status)
+        }
+    }
+
+    public func add(_ identity: SecretIdentity, secret: String) async throws {
+        try requireValid(identity)
+        try requireSecret(secret)
+        let keychain = try openLoginKeychain()
+        var query: [CFString: Any] = [
+            kSecClass: kSecClassGenericPassword,
+            kSecAttrService: identity.service,
+            kSecAttrAccount: identity.account,
+            kSecValueData: Data(secret.utf8),
+            kSecUseKeychain: keychain,
+            kSecUseDataProtectionKeychain: false
+        ]
+        if let access = makeAccess() {
+            query[kSecAttrAccess] = access
+        }
+        let status = SecItemAdd(query as CFDictionary, nil)
+        try check(status)
+    }
+
+    public func update(_ identity: SecretIdentity, secret: String) async throws {
+        try requireValid(identity)
+        try requireSecret(secret)
+        var query = try searchQuery(identity, returnData: false)
+        query[kSecUseAuthenticationUI] = allowsPrompt
+            ? kSecUseAuthenticationUIAllow
+            : kSecUseAuthenticationUIFail
+        let attributes: [CFString: Any] = [
+            kSecValueData: Data(secret.utf8)
+        ]
+        let status = SecItemUpdate(query as CFDictionary, attributes as CFDictionary)
+        try check(status)
+    }
+
+    public func retrieve(_ identity: SecretIdentity) async throws -> String {
+        try requireValid(identity)
+        var result: CFTypeRef?
+        let status = SecItemCopyMatching(try searchQuery(identity, returnData: true) as CFDictionary, &result)
+        try check(status)
+        guard let data = result as? Data, let secret = String(data: data, encoding: .utf8) else {
+            throw KeychainError.failure(errSecDecode)
+        }
+        return secret
+    }
+
+    public func delete(_ identity: SecretIdentity) async throws {
+        try requireValid(identity)
+        let status = SecItemDelete(try searchQuery(identity, returnData: false) as CFDictionary)
+        if status == errSecItemNotFound {
+            return
+        }
+        try check(status)
+    }
+
+    private func requireValid(_ identity: SecretIdentity) throws {
+        guard identity.isValid else { throw KeychainError.invalidIdentity }
+    }
+
+    private func requireSecret(_ secret: String) throws {
+        guard !secret.isEmpty else { throw KeychainError.emptySecret }
+    }
+
+    private func check(_ status: OSStatus) throws {
+        guard status == errSecSuccess else {
+            throw KeychainError.from(status: status)
+        }
+    }
+
+    private func searchQuery(_ identity: SecretIdentity, returnData: Bool) throws -> [CFString: Any] {
+        let keychain = try openLoginKeychain()
+        var query: [CFString: Any] = [
+            kSecClass: kSecClassGenericPassword,
+            kSecAttrService: identity.service,
+            kSecAttrAccount: identity.account,
+            kSecMatchLimit: kSecMatchLimitOne,
+            kSecMatchSearchList: [keychain],
+            kSecUseDataProtectionKeychain: false
+        ]
+        if returnData {
+            query[kSecReturnData] = true
+            query[kSecUseAuthenticationUI] = allowsPrompt
+                ? kSecUseAuthenticationUIAllow
+                : kSecUseAuthenticationUIFail
+        } else {
+            query[kSecReturnData] = false
+            query[kSecReturnAttributes] = true
+            query[kSecUseAuthenticationUI] = kSecUseAuthenticationUISkip
+        }
+        return query
+    }
+
+    private func openLoginKeychain() throws -> SecKeychain {
+        var keychain: SecKeychain?
+        let status = SecKeychainOpen(keychainPath, &keychain)
+        guard status == errSecSuccess, let keychain else {
+            throw KeychainError.from(status: status)
+        }
+        return keychain
+    }
+
+    /// Trust this process and `/usr/bin/security` on newly created items so the
+    /// documented CLI commands can read them. Updates do not touch ACLs.
+    private func makeAccess() -> SecAccess? {
+        var trustedSelf: SecTrustedApplication?
+        var trustedCLI: SecTrustedApplication?
+        guard SecTrustedApplicationCreateFromPath(nil, &trustedSelf) == errSecSuccess,
+              let trustedSelf,
+              SecTrustedApplicationCreateFromPath("/usr/bin/security", &trustedCLI) == errSecSuccess,
+              let trustedCLI
+        else {
+            return nil
+        }
+        var access: SecAccess?
+        let status = SecAccessCreate(
+            "ezkey" as CFString,
+            [trustedSelf, trustedCLI] as CFArray,
+            &access
+        )
+        guard status == errSecSuccess else { return nil }
+        return access
+    }
+}
