@@ -220,8 +220,10 @@ final class PanelModelTests: XCTestCase {
         XCTAssertEqual(defaults.string(forKey: PanelModel.accountDefaultsKey), "testuser")
     }
 
-    func testInFlightRetrieveIsDiscardedIfPanelCloses() async {
+    func testInFlightRetrieveSurvivesKeychainDialogDismissingPanel() async {
         let gate = Gate()
+        var reopenCount = 0
+        model.onOperationFinishedWhileClosed = { reopenCount += 1 }
         await store.setRetrieveHandler { _ in
             await gate.wait()
             return "late-secret"
@@ -235,8 +237,11 @@ final class PanelModelTests: XCTestCase {
         model.panelDidClose()
         await gate.open()
         await task.value
-        XCTAssertNil(model.retrievedSecret)
-        XCTAssertEqual(model.status, .idle)
+        XCTAssertEqual(model.retrievedSecret, "late-secret")
+        XCTAssertFalse(model.isRevealed)
+        XCTAssertEqual(model.status, .retrieved)
+        XCTAssertFalse(model.isPanelOpen)
+        XCTAssertEqual(reopenCount, 1)
     }
 
     func testModeSwitchClearsRetrievedSecret() async {

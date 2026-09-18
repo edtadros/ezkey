@@ -45,7 +45,7 @@ Keep `build/ezkey.app` wherever you like, or drag it to `/Applications`.
 2. Choose **Save** or **Retrieve**.
 3. Enter a **Service** (for example `phishhook/jev`) and **Account** (defaults to your Unix username).
 4. **Save** writes a new item. If that service/account pair already exists, ezkey asks you to click **Update** before replacing it.
-5. **Retrieve** looks up the exact pair. The secret stays masked until **Reveal**. **Hide** and **Copy** are available after a successful retrieve.
+5. **Retrieve** looks up the exact pair. macOS may ask for your login Keychain password the first time ezkey reads an item created by another app (for example `security`). After you Allow, ezkey brings the panel back with the secret still masked until **Reveal**. Choose **Always Allow** to skip that prompt next time. **Hide** and **Copy** are available after a successful retrieve.
 6. **Quit ezkey** exits the app.
 
 Service and account labels are remembered. Secret values are not.

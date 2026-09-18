@@ -41,6 +41,10 @@ public final class PanelModel {
     private var retrieveGeneration = 0
     @ObservationIgnored
     private var identityAtNeedsUpdate: SecretIdentity?
+    /// Invoked when a Keychain operation finishes after the menu-bar panel
+    /// was dismissed (typical when the system password dialog steals focus).
+    @ObservationIgnored
+    public var onOperationFinishedWhileClosed: (@MainActor () -> Void)?
 
     public static let serviceDefaultsKey = "ezkey.service"
     public static let accountDefaultsKey = "ezkey.account"
@@ -76,13 +80,16 @@ public final class PanelModel {
     public func panelDidClose() {
         guard isPanelOpen else { return }
         isPanelOpen = false
+        persistLabels()
+        if isWorking {
+            return
+        }
         retrieveGeneration += 1
         secretToSave = ""
         retrievedSecret = nil
         isRevealed = false
         status = .idle
         identityAtNeedsUpdate = nil
-        persistLabels()
     }
 
     public func save() async {
@@ -101,16 +108,20 @@ public final class PanelModel {
             if try await store.contains(identity) {
                 identityAtNeedsUpdate = identity
                 status = .needsUpdate
+                noteFinishedWhileClosed()
                 return
             }
             try await store.add(identity, secret: secretToSave)
             secretToSave = ""
             identityAtNeedsUpdate = nil
             status = .saved
+            noteFinishedWhileClosed()
         } catch let error as KeychainError {
             status = .from(error: error)
+            noteFinishedWhileClosed()
         } catch {
             status = .failure
+            noteFinishedWhileClosed()
         }
     }
 
@@ -131,10 +142,13 @@ public final class PanelModel {
             secretToSave = ""
             identityAtNeedsUpdate = nil
             status = .updated
+            noteFinishedWhileClosed()
         } catch let error as KeychainError {
             status = .from(error: error)
+            noteFinishedWhileClosed()
         } catch {
             status = .failure
+            noteFinishedWhileClosed()
         }
     }
 
@@ -156,10 +170,11 @@ public final class PanelModel {
         } catch let error as KeychainError {
             applyRetrieveResult(.failure(error), generation: generation)
         } catch {
-            guard generation == retrieveGeneration, isPanelOpen else { return }
+            guard generation == retrieveGeneration else { return }
             retrievedSecret = nil
             isRevealed = false
             status = .failure
+            noteFinishedWhileClosed()
         }
     }
 
@@ -176,7 +191,6 @@ public final class PanelModel {
 
     private func applyRetrieveResult(_ result: Result<String, KeychainError>, generation: Int) {
         guard generation == retrieveGeneration else { return }
-        guard isPanelOpen else { return }
         switch result {
         case .success(let secret):
             retrievedSecret = secret
@@ -187,6 +201,12 @@ public final class PanelModel {
             isRevealed = false
             status = .from(error: error)
         }
+        noteFinishedWhileClosed()
+    }
+
+    private func noteFinishedWhileClosed() {
+        guard !isPanelOpen else { return }
+        onOperationFinishedWhileClosed?()
     }
 
     private func persistLabels() {
