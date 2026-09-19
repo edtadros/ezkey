@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security vulnerability
+    url: https://github.com/edtadros/ezkey/security/advisories/new
+    about: Private disclosure only. Do not file a public issue.
+  - name: Build and usage questions
+    url: https://github.com/edtadros/ezkey/discussions
+    about: Questions about building or using ezkey.

@@ -3,11 +3,14 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 APP_NAME="ezkey"
+BUNDLE_ID="app.ezkey"
 BUILD_ROOT="$ROOT_DIR/build"
 APP_DIR="$BUILD_ROOT/${APP_NAME}.app"
 EXECUTABLE_PATH="$ROOT_DIR/.build/release/${APP_NAME}"
 INFO_PLIST="$ROOT_DIR/Resources/Info.plist"
-SIGN_IDENTITY="${EZKEY_SIGN_IDENTITY:-Apple Development: Edward Tadros (VDT383H7NN)}"
+LICENSE_FILE="$ROOT_DIR/LICENSE"
+# Local/dev only. Public binaries must go through scripts/release.sh (Developer ID + notary).
+SIGN_IDENTITY="${EZKEY_SIGN_IDENTITY:-}"
 
 cd "$ROOT_DIR"
 
@@ -24,14 +27,16 @@ rm -rf "$APP_DIR"
 mkdir -p "$APP_DIR/Contents/MacOS" "$APP_DIR/Contents/Resources"
 cp "$EXECUTABLE_PATH" "$APP_DIR/Contents/MacOS/${APP_NAME}"
 cp "$INFO_PLIST" "$APP_DIR/Contents/Info.plist"
+cp "$LICENSE_FILE" "$APP_DIR/Contents/Resources/LICENSE"
 printf 'APPL????' > "$APP_DIR/Contents/PkgInfo"
 xattr -cr "$APP_DIR" >/dev/null 2>&1 || true
 
-if codesign --force --sign "$SIGN_IDENTITY" --identifier com.proticom.ezkey "$APP_DIR" >/dev/null 2>&1; then
+if [[ -n "$SIGN_IDENTITY" ]]; then
+  codesign --force --sign "$SIGN_IDENTITY" --identifier "$BUNDLE_ID" "$APP_DIR"
   echo "Signed with $SIGN_IDENTITY"
 else
-  echo "Development identity unavailable; signing ad-hoc"
-  codesign --force --sign - --identifier com.proticom.ezkey "$APP_DIR" >/dev/null
+  codesign --force --sign - --identifier "$BUNDLE_ID" "$APP_DIR"
+  echo "Ad-hoc signed for local use. Do not distribute this binary."
 fi
 
 echo "Packaged app: $APP_DIR"

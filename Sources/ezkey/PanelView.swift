@@ -36,11 +36,21 @@ struct PanelView: View {
 
             Divider()
 
-            Button("Quit ezkey") {
-                NSApp.terminate(nil)
+            HStack {
+                Button("License") {
+                    openLicense()
+                }
+                .help("Open the license and disclaimer")
+                Spacer()
+                Button("Quit ezkey") {
+                    NSApp.terminate(nil)
+                }
+                .keyboardShortcut("q", modifiers: .command)
+                .help("Quit ezkey")
             }
-            .keyboardShortcut("q", modifiers: .command)
-            .help("Quit ezkey")
+            Text("Provided as-is. No warranty.")
+                .font(.caption2)
+                .foregroundStyle(.secondary)
         }
         .padding(14)
         .frame(width: 340)
@@ -173,6 +183,12 @@ struct PanelView: View {
                 .onSubmit {
                     Task { await primarySaveAction() }
                 }
+        }
+    }
+
+    private func openLicense() {
+        if let url = Bundle.main.url(forResource: "LICENSE", withExtension: nil) {
+            NSWorkspace.shared.open(url)
         }
     }
 

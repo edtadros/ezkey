@@ -1,75 +1,62 @@
 # ezkey
 
-A small native macOS menu bar app for saving, updating, and retrieving secrets in the login Keychain. It is a standalone tool, not part of PhishHook.
+A small native macOS menu bar app for saving, updating, and retrieving secrets in the **login Keychain**. It is local software. It is not a hosted password manager.
 
-ezkey talks to the same file-based login Keychain as:
+**Provided as-is, without warranty or liability.** See [LICENSE](LICENSE) and [DISCLAIMER.md](DISCLAIMER.md).
+
+ezkey talks to the same file-based Keychain as:
 
 ```sh
-security add-generic-password -U -a "$USER" -s "phishhook/jev" -w "$SECRET" "$HOME/Library/Keychains/login.keychain-db"
+security add-generic-password -U -a "$USER" -s "your-service-name" -w "$SECRET" "$HOME/Library/Keychains/login.keychain-db"
 
-security find-generic-password -a "$USER" -s "phishhook/jev" -w "$HOME/Library/Keychains/login.keychain-db"
+security find-generic-password -a "$USER" -s "your-service-name" -w "$HOME/Library/Keychains/login.keychain-db"
 ```
 
-## Requirements
+## How to get it
 
-- macOS 14 Sonoma or later
-- Xcode 16+ / Swift 6.2+ command-line tools
-
-## Install and run
+**Build from source.** That is the supported path.
 
 ```sh
-chmod +x scripts/build-and-run.sh
+git clone https://github.com/edtadros/ezkey.git
+cd ezkey
 ./scripts/build-and-run.sh
 ```
 
-That runs tests, builds a release binary, packages `build/ezkey.app`, signs it, and launches it. Look for the key icon in the menu bar. There is no Dock icon.
+Requires macOS 14 or later and Xcode 16+ / Swift 6.2 command-line tools.
 
-To package without launching:
+The script packages `build/ezkey.app` and ad-hoc signs it for this machine. **Do not give that binary to other people.** A distributable zip exists only if `scripts/release.sh` succeeds at Developer ID signing **and** Apple notarization. CI never attaches an `.app`.
 
-```sh
-SKIP_LAUNCH=1 ./scripts/build-and-run.sh
-open build/ezkey.app
-```
-
-The key icon may sit on the left of the menu-bar extras (near the notch), not next to Control Center.
-
-`SKIP_TESTS=1` skips `swift test`. `SKIP_VERIFY=1` skips the signed-app `--self-test` against disposable `ezkey.test.*` Keychain items.
-
-Optional: set `EZKEY_SIGN_IDENTITY` to a codesigning name. The script falls back to ad-hoc signing if the default Apple Development identity is missing.
-
-Keep `build/ezkey.app` wherever you like, or drag it to `/Applications`.
+Look for the key icon in the menu bar (often near the notch, not next to Control Center). There is no Dock icon.
 
 ## Use
 
 1. Click the key icon.
 2. Choose **Save** or **Retrieve**.
-3. Enter a **Service** (for example `phishhook/jev`) and **Account** (defaults to your Unix username).
-4. **Save** writes a new item. If that service/account pair already exists, ezkey asks you to click **Update** before replacing it.
-5. **Retrieve** looks up the exact pair. macOS may ask for your login Keychain password the first time ezkey reads an item created by another app (for example `security`). After you Allow, ezkey brings the panel back with the secret still masked until **Reveal**. Choose **Always Allow** to skip that prompt next time. **Hide** and **Copy** are available after a successful retrieve.
-6. **Quit ezkey** exits the app.
+3. Enter a **Service** and **Account** (account defaults to your Unix username).
+4. **Save** writes a new item. If that pair already exists, you must click **Update**.
+5. **Retrieve** looks up the exact pair. macOS may ask for your login Keychain password the first time ezkey reads an item created by another app. After you Allow, the panel returns with the secret masked. **Reveal**, **Hide**, and **Copy** follow. **Always Allow** is a standing grant to this app’s code signature; use it only for a build you compiled or a notarized GitHub Release.
+6. **Quit ezkey** exits. **License** opens the MIT text bundled in the app.
 
-Service and account labels are remembered. Secret values are not.
+Service and account labels may be remembered. Secret values are not.
+
+## What this software does not do
+
+- It does not send secrets, or anything else, off the Mac.
+- It does not bypass Keychain prompts.
+- It is not sandboxed. A sandbox would store items where `security` cannot see them.
+- It does not offer support, backups, or recovery.
 
 ## Signing
 
-A stable signing identity keeps Keychain access-control lists from prompting on every rebuild. Ad-hoc signing works for local use, but macOS may ask again after each new binary.
+Local builds are ad-hoc unless you set `EZKEY_SIGN_IDENTITY`. Public binaries must use `scripts/release.sh` with:
 
-This app is not sandboxed. Sandboxing would store items in an application keychain that `/usr/bin/security` cannot see.
+- `EZKEY_SIGN_IDENTITY` — `Developer ID Application: Name (TEAMID)`
+- `EZKEY_NOTARY_PROFILE` — a `notarytool` keychain profile
 
-## Keychain permission prompts
+Until both exist, there is no official download.
 
-macOS may ask you to allow ezkey to use an item, or to allow `security` to use an item ezkey created. That is normal.
+## Security
 
-- **Allow** grants that lookup or save.
-- **Deny** surfaces “Keychain access denied.”
-- **Cancel** surfaces “Keychain access cancelled.”
+Report vulnerabilities privately: <https://github.com/edtadros/ezkey/security/advisories/new>
 
-ezkey does not bypass these prompts. Existing item access controls are left in place on update.
-
-## Security notes
-
-- Secrets live only in the login Keychain.
-- ezkey does not log, write, or put secret values in preferences, files, or process arguments.
-- Retrieve runs only after you click **Retrieve**.
-- Closing the panel clears the save field and any retrieved secret, and drops in-flight lookups.
-- **Copy** clears the clipboard after 30 seconds only if it still contains the value ezkey copied.
+Details: [SECURITY.md](SECURITY.md).

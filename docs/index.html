@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ezkey — a menu bar for the Keychain you already have</title>
+  <meta name="description" content="ezkey is a local macOS menu bar UI for the login Keychain. No server, no account, no warranty.">
+  <meta name="robots" content="index,follow">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <a class="wordmark" href="index.html">ezkey</a>
+      <nav>
+        <a href="https://github.com/edtadros/ezkey">Source</a>
+        <a href="privacy.html">Privacy</a>
+        <a href="security.html">Security</a>
+        <a href="https://github.com/edtadros/ezkey/blob/master/LICENSE">License</a>
+      </nav>
+    </header>
+
+    <section class="hero">
+      <svg class="key" viewBox="0 0 280 72" role="img" aria-label="A brass key">
+        <circle cx="36" cy="36" r="22" fill="none" stroke="#b8923a" stroke-width="8"/>
+        <circle cx="36" cy="36" r="8" fill="#1b2430"/>
+        <rect x="56" y="32" width="200" height="8" fill="#b8923a"/>
+        <rect x="200" y="40" width="8" height="16" fill="#b8923a"/>
+        <rect x="216" y="40" width="8" height="22" fill="#b8923a"/>
+        <rect x="232" y="40" width="8" height="12" fill="#b8923a"/>
+      </svg>
+      <h1>A menu bar for the Keychain you already have.</h1>
+      <p class="lede">ezkey does not keep your secrets. macOS does. There is no account, no server, and no warranty.</p>
+      <div class="actions">
+        <a class="primary" href="https://github.com/edtadros/ezkey">Build from source</a>
+        <a class="ghost" href="https://github.com/edtadros/ezkey/blob/master/DISCLAIMER.md">Read the disclaimer</a>
+      </div>
+    </section>
+
+    <aside class="warn">
+      <p>There is no official downloadable app until a GitHub Release is signed with Developer ID and notarized by Apple. If you did not compile it, do not grant it Keychain access.</p>
+      <p><strong>Always Allow</strong> is a standing grant to this program’s code signature, including later copies you install. Use it only for a build you trust.</p>
+    </aside>
+
+    <article class="sheet">
+      <h2>What it does</h2>
+      <p>ezkey is a small macOS menu bar app. You save, update, and retrieve generic passwords in your login Keychain under a service name and account, the same items <code>security add-generic-password</code> and <code>security find-generic-password</code> use.</p>
+      <p>Secrets stay on your Mac. Retrieve is masked until you click Reveal. Copy clears the clipboard after 30 seconds if it still holds what ezkey put there.</p>
+    </article>
+
+    <article class="sheet">
+      <h2>What it does not do</h2>
+      <ul>
+        <li>It does not send data anywhere.</li>
+        <li>It does not create an account or back up your Keychain.</li>
+        <li>It does not bypass macOS permission dialogs.</li>
+        <li>It is not sandboxed, because a sandbox would hide items from the <code>security</code> CLI.</li>
+        <li>It is not supported software. If it breaks, you keep the pieces.</li>
+      </ul>
+    </article>
+
+    <article class="sheet">
+      <h2>Build it yourself</h2>
+      <p>Requires macOS 14 or later and Xcode command-line tools.</p>
+<pre><code>git clone https://github.com/edtadros/ezkey.git
+cd ezkey
+./scripts/build-and-run.sh</code></pre>
+      <p>That produces a local <code>build/ezkey.app</code>. Ad-hoc signing is for that machine only. A public zip is produced only by <code>scripts/release.sh</code>, which refuses to run without Developer ID credentials and Apple notarization.</p>
+    </article>
+
+    <footer>
+      <p>Copyright 2026 Edward Tadros. MIT License. Provided as-is, without warranty or liability. Independent of any employer or client.</p>
+    </footer>
+  </div>
+</body>
+</html>

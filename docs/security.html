@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Security — ezkey</title>
+  <meta name="description" content="How ezkey uses the login Keychain, and how to report a problem privately.">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <a class="wordmark" href="index.html">ezkey</a>
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="https://github.com/edtadros/ezkey">Source</a>
+        <a href="privacy.html">Privacy</a>
+        <a href="https://github.com/edtadros/ezkey/blob/master/LICENSE">License</a>
+      </nav>
+    </header>
+
+    <section class="hero">
+      <h1>Security</h1>
+      <p class="lede">macOS still owns the Keychain. ezkey is a front door, not a vault.</p>
+    </section>
+
+    <aside class="warn">
+      <p>Report vulnerabilities privately: <a href="https://github.com/edtadros/ezkey/security/advisories/new">GitHub security advisories</a>. Do not open a public issue and do not attach secrets.</p>
+    </aside>
+
+    <article class="sheet">
+      <h2>How access works</h2>
+      <p>When ezkey reads an item another program created, macOS may ask for your login Keychain password. That prompt is the operating system. ezkey cannot suppress it.</p>
+      <p><strong>Always Allow</strong> means: trust this app’s code signature for that item. A later ezkey signed with the same Developer ID can then read it without asking again. A random unsigned download cannot honestly claim that trust, and you should not give it.</p>
+    </article>
+
+    <article class="sheet">
+      <h2>What you should install</h2>
+      <ul>
+        <li>Source from <a href="https://github.com/edtadros/ezkey">github.com/edtadros/ezkey</a>, built on your Mac, or</li>
+        <li>A GitHub Release whose zip is Developer ID signed, Apple-notarized, and whose SHA-256 matches the published checksum.</li>
+      </ul>
+      <p>CI on GitHub runs tests. It does not attach an <code>.app</code>. Unsigned CI artifacts are not a release channel.</p>
+    </article>
+
+    <article class="sheet">
+      <h2>Limits</h2>
+      <p>ezkey is not sandboxed. Sandboxing would store items where the <code>security</code> CLI cannot see them. The source is public so you can read the Keychain calls yourself. There is still no warranty that it is free of defects.</p>
+    </article>
+
+    <footer>
+      <p>See also <a href="https://github.com/edtadros/ezkey/blob/master/SECURITY.md">SECURITY.md</a> in the repository.</p>
+    </footer>
+  </div>
+</body>
+</html>

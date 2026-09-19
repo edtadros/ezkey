@@ -1,0 +1,3 @@
+- [ ] No secrets, Keychain dumps, or real service/account pairs
+- [ ] No personal filesystem paths or signing identities
+- [ ] Tests still use only `ezkey.test.*` Keychain items

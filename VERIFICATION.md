@@ -1,6 +1,6 @@
 # ezkey verification
 
-Date: 2026-09-17. Host: macOS 26.6.1, Apple Development signing (`W3N4GBR8TB`).
+Date: 2026-09-17. Host: macOS 26.6.1. Local Apple Development signing was used for this machine only. Public binaries require Developer ID + notarization.
 
 ## Keychain backend (before UI)
 
