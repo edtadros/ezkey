@@ -22,7 +22,7 @@ cd ezkey
 ./scripts/build-and-run.sh
 ```
 
-Requires macOS 14 or later and Xcode 16+ / Swift 6.2 command-line tools.
+Requires macOS 14 or later and Xcode 16+ / Swift 6.1 command-line tools.
 
 The script packages `build/ezkey.app` and ad-hoc signs it for this machine. **Do not give that binary to other people.** A distributable zip exists only if `scripts/release.sh` succeeds at Developer ID signing **and** Apple notarization. CI never attaches an `.app`.
 
