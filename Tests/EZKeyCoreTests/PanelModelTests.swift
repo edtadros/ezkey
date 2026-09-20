@@ -197,23 +197,23 @@ final class PanelModelTests: XCTestCase {
     }
 
     func testPartialRetrieveListsMatchesWithoutSecrets() async {
-        let staging = SecretIdentity(service: "callbrief/staging/xai", account: "testuser")
-        let prod = SecretIdentity(service: "callbrief/prod/xai", account: "testuser")
+        let staging = SecretIdentity(service: "myapp/staging/llm", account: "testuser")
+        let prod = SecretIdentity(service: "myapp/prod/llm", account: "testuser")
         await store.seed(staging, secret: "staging-secret")
         await store.seed(prod, secret: "prod-secret")
-        model.service = "callbrief"
+        model.service = "myapp"
         await model.retrieve()
         XCTAssertEqual(model.status, .chooseMatch)
         XCTAssertNil(model.retrievedSecret)
-        XCTAssertEqual(model.matches.map(\.service), ["callbrief/prod/xai", "callbrief/staging/xai"])
+        XCTAssertEqual(model.matches.map(\.service), ["myapp/prod/llm", "myapp/staging/llm"])
     }
 
     func testSelectingAMatchRetrievesThatSecret() async {
-        let staging = SecretIdentity(service: "callbrief/staging/xai", account: "testuser")
-        let prod = SecretIdentity(service: "callbrief/prod/xai", account: "testuser")
+        let staging = SecretIdentity(service: "myapp/staging/llm", account: "testuser")
+        let prod = SecretIdentity(service: "myapp/prod/llm", account: "testuser")
         await store.seed(staging, secret: "staging-secret")
         await store.seed(prod, secret: "prod-secret")
-        model.service = "callbrief"
+        model.service = "myapp"
         await model.retrieve()
         await model.selectMatch(staging)
         XCTAssertEqual(model.status, .retrieved)

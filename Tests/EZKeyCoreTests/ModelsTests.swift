@@ -4,14 +4,14 @@ import XCTest
 
 final class ModelsTests: XCTestCase {
     func testIdentityTrimsServiceAndAccount() {
-        let identity = SecretIdentity(service: "  phishhook/jev  ", account: "  edward  ")
-        XCTAssertEqual(identity.service, "phishhook/jev")
-        XCTAssertEqual(identity.account, "edward")
+        let identity = SecretIdentity(service: "  my-app/api-token  ", account: "  alice  ")
+        XCTAssertEqual(identity.service, "my-app/api-token")
+        XCTAssertEqual(identity.account, "alice")
         XCTAssertTrue(identity.isValid)
     }
 
     func testIdentityRejectsBlankFields() {
-        XCTAssertFalse(SecretIdentity(service: "  ", account: "edward").isValid)
+        XCTAssertFalse(SecretIdentity(service: "  ", account: "alice").isValid)
         XCTAssertFalse(SecretIdentity(service: "svc", account: " \n ").isValid)
     }
 
@@ -37,6 +37,6 @@ final class ModelsTests: XCTestCase {
 
     func testDisposablePrefixNeverMatchesProductionService() {
         XCTAssertTrue(DisposableEntry.isDisposable(SecretIdentity(service: "ezkey.test.abc", account: "a")))
-        XCTAssertFalse(DisposableEntry.isDisposable(SecretIdentity(service: "phishhook/jev", account: "a")))
+        XCTAssertFalse(DisposableEntry.isDisposable(SecretIdentity(service: "mail/prod", account: "a")))
     }
 }

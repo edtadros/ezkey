@@ -27,7 +27,7 @@
   <key>NSHighResolutionCapable</key>
   <true/>
   <key>NSHumanReadableCopyright</key>
-  <string>Copyright 2026 Edward Tadros. Provided as-is, without warranty.</string>
+  <string>Copyright 2026 ezkey authors. Provided as-is, without warranty.</string>
   <key>NSPrincipalClass</key>
   <string>NSApplication</string>
 </dict>

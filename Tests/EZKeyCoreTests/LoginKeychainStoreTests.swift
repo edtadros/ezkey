@@ -102,7 +102,7 @@ final class LoginKeychainStoreTests: XCTestCase {
     }
 
     func testRefusesToTreatProductionServiceAsDisposable() {
-        let production = SecretIdentity(service: "phishhook/jev", account: NSUserName())
+        let production = SecretIdentity(service: "mail/prod", account: NSUserName())
         XCTAssertFalse(DisposableEntry.isDisposable(production))
     }
 

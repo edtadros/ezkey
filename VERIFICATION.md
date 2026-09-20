@@ -12,13 +12,13 @@ security find-generic-password -a "$USER" -s "<service>" -w "$HOME/Library/Keych
 
 and that `security add-generic-password` items are visible to `SecItemCopyMatching`. Naive `SecItemAdd` also landed in the login Keychain on this Mac. ezkey still opens that file with `SecKeychainOpen`, `kSecUseKeychain`, and `kSecMatchSearchList`, and sets `kSecUseDataProtectionKeychain` to false, so it does not use the data-protection / app-only store.
 
-The probe used disposable `ezkey.test.probe.*` entries and cleaned them up. It did not touch `phishhook/jev`.
+The probe used disposable `ezkey.test.probe.*` entries and cleaned them up. It did not modify unrelated login Keychain items.
 
 ## Automated tests
 
 `swift test`: 29 tests, 0 failures.
 
-- Models: identity trimming, error mapping, disposable prefix vs `phishhook/jev`
+- Models: identity trimming, error mapping, disposable prefix vs unrelated services
 - PanelModel: save, explicit update, missing/cancelled/denied, mask/reveal, copy, panel-close clearing, in-flight retrieve discard, label persistence
 - ClipboardGuard: 30-second clear only if the pasteboard still holds ezkey's value
 - LoginKeychainStore (same-process, `allowsPrompt: false`): add/retrieve, update without clobbering another pair, missing entry, Unicode/spaces/quotes round trip, duplicate add
@@ -56,7 +56,7 @@ Cleanup only deleted `ezkey.test.*` items created by the test.
 | Mask, reveal/hide, copy, conditional clipboard clear | PASS in PanelModel and ClipboardGuard tests |
 | Spaces, quotes, Unicode | PASS |
 | Close panel clears secrets | PASS (`panelDidClose`) |
-| Existing credentials including `phishhook/jev` | Untouched; tests refuse non-`ezkey.test.` services |
+| Existing credentials | Untouched; tests refuse to mutate non-`ezkey.test.` services |
 
 ## Remaining limitations
 

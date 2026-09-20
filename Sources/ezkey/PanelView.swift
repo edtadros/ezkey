@@ -22,7 +22,7 @@ struct PanelView: View {
             .accessibilityLabel("Mode")
             .disabled(model.isWorking)
 
-            labeledField("Name", text: $model.service, prompt: "edwardtadros-ai-gateway-token", field: .service)
+            labeledField("Name", text: $model.service, prompt: "my-app-api-token", field: .service)
 
             if model.mode == .save {
                 saveSection
