@@ -19,9 +19,6 @@
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="/styles.css">
   <script src="/webmcp.js" defer></script>
-  <script type="application/ld+json">
-  {"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://ezkey.app/#org","name":"ezkey.app","alternateName":"ezkey","url":"https://ezkey.app/","email":"hello@ezkey.app","sameAs":["https://github.com/edtadros/ezkey"],"address":{"@type":"PostalAddress","streetAddress":"16835 Algonquin St #205","addressLocality":"Huntington Beach","addressRegion":"CA","postalCode":"92649","addressCountry":"US"},"contactPoint":{"@type":"ContactPoint","contactType":"customer support","email":"hello@ezkey.app","url":"https://ezkey.app/contact/"}},{"@type":"SoftwareApplication","@id":"https://ezkey.app/#app","name":"ezkey.app","alternateName":"ezkey","url":"https://ezkey.app/","applicationCategory":"UtilitiesApplication","screenshot":["https://ezkey.app/images/panel-save.png","https://ezkey.app/images/panel-matches.png"],"operatingSystem":"macOS 14+","description":"A macOS menu bar extra for the login Keychain. Local only.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"license":"https://github.com/edtadros/ezkey/blob/master/LICENSE","publisher":{"@id":"https://ezkey.app/#org"},"sameAs":"https://github.com/edtadros/ezkey"},{"@type":"SoftwareSourceCode","name":"ezkey.app","codeRepository":"https://github.com/edtadros/ezkey","programmingLanguage":"Swift","runtimePlatform":"macOS","license":"https://github.com/edtadros/ezkey/blob/master/LICENSE"},{"@type":"WebSite","@id":"https://ezkey.app/#website","name":"ezkey.app","url":"https://ezkey.app/","publisher":{"@id":"https://ezkey.app/#org"}}]}
-  </script>
 </head>
 <body>
   <a class="skip" href="#main">Skip to content</a>
@@ -43,6 +40,24 @@
       <a class="cta ghost" href="https://github.com/edtadros/ezkey/blob/master/DISCLAIMER.md">Disclaimer</a>
     </div>
   </section>
+  <div class="stage">
+    <div class="shots">
+      <figure>
+        <picture>
+          <source srcset="/images/panel-save-dark.png" media="(prefers-color-scheme: dark)">
+          <img src="/images/panel-save.png" width="340" height="294" alt="The ezkey Save panel. Name is my-app-api-token. Secret is masked.">
+        </picture>
+        <figcaption>Save</figcaption>
+      </figure>
+      <figure>
+        <picture>
+          <source srcset="/images/panel-matches-dark.png" media="(prefers-color-scheme: dark)">
+          <img src="/images/panel-matches.png" width="340" height="350" alt="The ezkey Retrieve panel listing matching Keychain names.">
+        </picture>
+        <figcaption>Retrieve</figcaption>
+      </figure>
+    </div>
+  </div>
   <main id="main" class="wrap">
     <section class="group">
       <h2>How it works</h2>
