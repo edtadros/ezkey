@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>macOS Keychain vs 1Password for API keys — ezkey.app</title>
+  <meta name="description" content="Use the login Keychain for keys that must stay on one Mac. Use 1Password when you need sharing, recovery, or a phone. ezkey is a local extra for the Keychain side.">
+  <meta name="is-agentic-site-type" content="content">
+  <meta property="og:title" content="macOS Keychain vs 1Password for API keys — ezkey.app">
+  <meta property="og:description" content="Use the login Keychain for keys that must stay on one Mac. Use 1Password when you need sharing, recovery, or a phone. ezkey is a local extra for the Keychain side.">
+  <meta property="og:type" content="article">
+  <meta property="og:image" content="https://ezkey.app/og.png">
+  <meta property="og:url" content="https://ezkey.app/compare/macos-keychain-vs-1password-for-api-keys/">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+  <link rel="canonical" href="https://ezkey.app/compare/macos-keychain-vs-1password-for-api-keys/">
+  <link rel="describedby" href="https://ezkey.app/llms.txt" type="text/plain">
+  <link rel="alternate" type="text/markdown" href="https://ezkey.app/compare/macos-keychain-vs-1password-for-api-keys.md">
+  <link rel="ard" href="https://ezkey.app/.well-known/ard.json">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/webmcp.js" defer></script>
+  <script type="application/ld+json">
+  {"@context": "https://schema.org", "@graph": [{"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "ezkey.app", "item": "https://ezkey.app/"}, {"@type": "ListItem", "position": 2, "name": "Guides", "item": "https://ezkey.app/guides/"}, {"@type": "ListItem", "position": 3, "name": "Keychain vs 1Password", "item": "https://ezkey.app/compare/macos-keychain-vs-1password-for-api-keys/"}]}, {"@type": "Article", "headline": "macOS Keychain vs 1Password for API keys", "description": "Use the login Keychain for keys that must stay on one Mac. Use 1Password when you need sharing, recovery, or a phone. ezkey is a local extra for the Keychain side.", "datePublished": "2026-09-20", "dateModified": "2026-09-20", "mainEntityOfPage": "https://ezkey.app/compare/macos-keychain-vs-1password-for-api-keys/", "author": {"@type": "Organization", "name": "ezkey.app", "url": "https://ezkey.app/"}, "publisher": {"@id": "https://ezkey.app/#org"}}, {"@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Can I use both?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Bank and shared logins in 1Password. Machine-local tokens in the login Keychain."}}, {"@type": "Question", "name": "Does 1Password store items in the Keychain too?", "acceptedAnswer": {"@type": "Answer", "text": "It uses platform APIs for its own unlock. That is not the same as your generic-password item named my-app-api-token."}}, {"@type": "Question", "name": "Is Bitwarden the same comparison?", "acceptedAnswer": {"@type": "Answer", "text": "Same shape: hosted vault vs local file. Details differ. The local-only rule does not."}}, {"@type": "Question", "name": "Does ezkey compete with 1Password?", "acceptedAnswer": {"@type": "Answer", "text": "No. If you need 1Password, you need 1Password."}}]}]}
+  </script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="top">
+    <a class="mark" href="/">ezkey</a>
+    <nav>
+      <a href="/guides/">Guides</a>
+      <a href="/about/">About</a>
+      <a href="https://github.com/edtadros/ezkey">Source</a>
+    </nav>
+  </header>
+  <main id="main" class="legal">
+    <p><a href="/guides/">Guides</a></p>
+    <h1>macOS Keychain vs 1Password for API keys</h1>
+    <div class="answer"><p>Use the macOS login Keychain when the API key should stay on this computer and you already live in Terminal. Use 1Password when another person, another device, or a recovery story matters more than staying local. ezkey.app only helps the Keychain side. 1Password is a better password manager. The Keychain is a better local drawer.</p></div>
+    <p>On this page</p>
+    <ul class="toc"><li><a href="#split">The honest split</a></li><li><a href="#table">Side by side</a></li><li><a href="#keychain-wins">Where Keychain wins</a></li><li><a href="#1p-wins">Where 1Password still wins</a></li><li><a href="#ezkey">ezkey’s place</a></li><li><a href="#related">Related answers</a></li></ul>
+    <h2 id="split">The honest split</h2>
+    <p>People type “best way to save keys” into a search box after a scare. Vendors answer with their brand. The useful answer is a split. Sharing and recovery are 1Password’s product. A file on this Mac that <code>security</code> can print is Apple’s login Keychain. Pretending either one is universal is how keys end up in the wrong drawer.</p>
+    <h2 id="table">Side by side</h2>
+    <table><thead><tr><th></th><th>login Keychain</th><th>1Password</th></tr></thead><tbody><tr><td>Where the bits live</td><td>login.keychain-db on this Mac</td><td>1Password’s vault, usually synced</td></tr><tr><td>Account required</td><td>Your Mac login</td><td>A 1Password account</td></tr><tr><td>CLI</td><td>security(1), built in</td><td>op CLI, extra install</td></tr><tr><td>Menu bar for generic passwords</td><td>Keychain Access, or ezkey</td><td>1Password app</td></tr><tr><td>Share with a teammate</td><td>No</td><td>Yes</td></tr><tr><td>Phone</td><td>Not this file</td><td>Yes</td></tr><tr><td>Price</td><td>Included with macOS</td><td>Subscription</td></tr></tbody></table>
+    <h2 id="keychain-wins">Where Keychain wins</h2>
+    <p>No extra account. No vendor outage. The same item your script already knows how to <code>find-generic-password</code>. Works offline because it is a file. ezkey and Keychain Access are just windows onto it. See <a href="/guides/how-to-save-api-keys-securely-on-mac/">how to save API keys securely</a>.</p>
+    <h2 id="1p-wins">Where 1Password still wins</h2>
+    <ul><li>You forgot the Mac password and still need a travel login — recovery is their job, not login.keychain-db.</li><li>A family member needs the Wi-Fi and the streaming password.</li><li>Watchtower, sharing, document storage, browser fill.</li><li>You want a company admin to revoke access without touching the laptop.</li></ul>
+    <p>Those are real wins. A Keychain tutorial that pretends otherwise is selling you a smaller product. This page is not a 1Password hatchet job.</p>
+    <p>Watchtower-style alerts, document storage, and browser fill are also 1Password’s job. The login Keychain will not tell you that a site password appeared in a dump. It will not fill a credit card on the web. If that is what you meant by “save keys,” you asked the wrong question. This comparison is only about API tokens a developer copies into a terminal.</p>
+    <h2 id="ezkey">ezkey’s place</h2>
+    <p>ezkey does not implement a vault. It does not sync. It is a menu extra for generic passwords that already belong in the login Keychain. Build it from source or skip it and use <code>security</code>. Either way the comparison above still holds.</p>
+    <h2 id="related">Related answers</h2>
+    <div class="related"><a href="/guides/best-way-to-store-api-keys-on-macos/">Best way to store API keys on macOS<small>More options than these two.</small></a><a href="/compare/ezkey-vs-keychain-access/">ezkey vs Keychain Access<small>Same Keychain, different UI.</small></a><a href="/for/local-api-keys/">Local API keys<small>When sync is a bug.</small></a><a href="/for/developers/">For developers<small>CLI round-trip.</small></a></div>
+    <h2 id="faq-1">Can I use both?</h2>
+    <p>Yes. Bank and shared logins in 1Password. Machine-local tokens in the login Keychain.</p><h2 id="faq-2">Does 1Password store items in the Keychain too?</h2>
+    <p>It uses platform APIs for its own unlock. That is not the same as your generic-password item named my-app-api-token.</p><h2 id="faq-3">Is Bitwarden the same comparison?</h2>
+    <p>Same shape: hosted vault vs local file. Details differ. The local-only rule does not.</p><h2 id="faq-4">Does ezkey compete with 1Password?</h2>
+    <p>No. If you need 1Password, you need 1Password.</p>
+  </main>
+  <footer>
+    <nav>
+      <a href="/guides/">Guides</a>
+      <a href="/about/">About</a>
+      <a href="/contact/">Contact</a>
+      <a href="/privacy/">Privacy</a>
+      <a href="/security/">Security</a>
+    </nav>
+    <p>MIT. Provided as-is, without warranty.</p>
+  </footer>
+</body>
+</html>

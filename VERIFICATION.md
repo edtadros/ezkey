@@ -30,9 +30,12 @@ Unsigned `xctest` cannot read another app's login-Keychain secret without the lo
 `build/ezkey.app/Contents/MacOS/ezkey --self-test` (Apple Development signed):
 
 - PASS same-process-roundtrip (spaces, quotes, café, 🔑)
+- PASS comment-roundtrip
 - PASS contains-without-returning-secret
 - PASS app-add-visible-to-security-cli (attribute lookup in `login.keychain-db`)
+- PASS comment-visible-to-security-cli
 - PASS cli-add-visible-to-app
+- PASS cli-comment-visible-to-app
 - PASS update-does-not-clobber-other-pair
 - PASS missing-entry
 

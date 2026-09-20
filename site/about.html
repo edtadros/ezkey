@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>About — ezkey</title>
+  <meta name="description" content="ezkey is a local macOS menu bar extra for the login Keychain. It is not a hosted password manager.">
+  <meta name="is-agentic-site-type" content="content">
+  <meta property="og:title" content="About — ezkey">
+  <meta property="og:description" content="ezkey is a local macOS menu bar extra for the login Keychain.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://ezkey.app/og.png">
+  <meta property="og:url" content="https://ezkey.app/about/">
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+  <link rel="canonical" href="https://ezkey.app/about/">
+  <link rel="describedby" href="https://ezkey.app/llms.txt" type="text/plain">
+  <link rel="alternate" type="text/markdown" href="https://ezkey.app/about.md">
+  <link rel="ard" href="https://ezkey.app/.well-known/ard.json">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/webmcp.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="top">
+    <a class="mark" href="/">ezkey</a>
+    <nav>
+      <a href="/guides/">Guides</a>
+      <a href="/contact/">Contact</a>
+      <a href="https://github.com/edtadros/ezkey">Source</a>
+    </nav>
+  </header>
+  <main id="main" class="legal">
+    <h1>About</h1>
+    <p>ezkey is a small open-source macOS application. It lives in the menu bar and talks to the login Keychain that macOS already keeps on the computer. It does not create an account, it does not run a backend, and it does not send secrets off the machine.</p>
+    <p>The product exists because the <code>security</code> command-line tool and Keychain Access already store generic passwords, and a compact extra is easier for day-to-day save and retrieve. Name in ezkey is the same string Keychain Access shows as Name and Where. Account is the logged-in Mac user and is not shown in the extra.</p>
+    <p>The software is provided as-is, without warranty or a support contract. The source is public so anyone can read the Keychain calls, build the app locally, and decide whether to grant it access. There is no official unsigned download. Until a GitHub Release is Developer ID signed and notarized, the supported path is clone and build on your Mac.</p>
+    <p>ezkey is not a hosted password manager, not a browser extension, and not a sync service. It does not replace 1Password, iCloud Keychain, or the security CLI. It is a local extra for generic-password items you already keep in login.keychain-db. See the <a href="/glossary/">glossary</a> for field names, the <a href="/security/">security</a> page for Always Allow, and the <a href="/guides/">guides</a> for how to save API keys securely on a Mac.</p>
+  </main>
+  <footer>
+    <nav>
+      <a href="/contact/">Contact</a>
+      <a href="/developers/">Developers</a>
+      <a href="/privacy/">Privacy</a>
+      <a href="/security/">Security</a>
+    </nav>
+  </footer>
+</body>
+</html>

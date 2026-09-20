@@ -28,6 +28,11 @@ mkdir -p "$APP_DIR/Contents/MacOS" "$APP_DIR/Contents/Resources"
 cp "$EXECUTABLE_PATH" "$APP_DIR/Contents/MacOS/${APP_NAME}"
 cp "$INFO_PLIST" "$APP_DIR/Contents/Info.plist"
 cp "$LICENSE_FILE" "$APP_DIR/Contents/Resources/LICENSE"
+for icon in MenuBarIcon.png "MenuBarIcon@2x.png" AppIcon.icns; do
+  if [[ -f "$ROOT_DIR/Resources/$icon" ]]; then
+    cp "$ROOT_DIR/Resources/$icon" "$APP_DIR/Contents/Resources/$icon"
+  fi
+done
 printf 'APPL????' > "$APP_DIR/Contents/PkgInfo"
 xattr -cr "$APP_DIR" >/dev/null 2>&1 || true
 

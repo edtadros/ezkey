@@ -1,0 +1,58 @@
+{
+  "protocolVersion": "0.3.0",
+  "name": "ezkey",
+  "description": "Read-only site agent for ezkey, a macOS menu bar extra for the login Keychain. Answers from public documentation. Does not access Keychain secrets.",
+  "version": "1.0.0",
+  "url": "https://ezkey.app/a2a",
+  "preferredTransport": "JSONRPC",
+  "supportedInterfaces": [
+    {
+      "url": "https://ezkey.app/a2a",
+      "protocolBinding": "JSONRPC",
+      "transport": "JSONRPC",
+      "protocolVersion": "0.3"
+    }
+  ],
+  "additionalInterfaces": [
+    {
+      "url": "https://ezkey.app/a2a",
+      "transport": "JSONRPC"
+    }
+  ],
+  "provider": {
+    "organization": "ezkey",
+    "url": "https://ezkey.app/"
+  },
+  "documentationUrl": "https://ezkey.app/developers/",
+  "iconUrl": "https://ezkey.app/favicon.svg",
+  "capabilities": {
+    "streaming": false,
+    "pushNotifications": false,
+    "stateTransitionHistory": false
+  },
+  "defaultInputModes": ["text/plain"],
+  "defaultOutputModes": ["text/plain", "application/json"],
+  "securitySchemes": {},
+  "security": [],
+  "supportsAuthenticatedExtendedCard": false,
+  "skills": [
+    {
+      "id": "overview",
+      "name": "Overview",
+      "description": "Explain what ezkey is and that it is local software for the macOS login Keychain.",
+      "tags": ["keychain", "macos"],
+      "examples": ["What is ezkey?", "Does ezkey sync passwords?"],
+      "inputModes": ["text/plain"],
+      "outputModes": ["text/plain", "application/json"]
+    },
+    {
+      "id": "build",
+      "name": "Build from source",
+      "description": "Give clone and build commands for macOS 14+.",
+      "tags": ["build"],
+      "examples": ["How do I install ezkey?", "How do I build ezkey from source?"],
+      "inputModes": ["text/plain"],
+      "outputModes": ["text/plain", "application/json"]
+    }
+  ]
+}

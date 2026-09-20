@@ -48,4 +48,5 @@ Allow: /
 User-agent: Amazonbot
 Allow: /
 
+Agentmap: https://ezkey.app/.well-known/ard.json
 Sitemap: https://ezkey.app/sitemap.xml

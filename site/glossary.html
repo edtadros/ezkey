@@ -5,14 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Glossary — ezkey</title>
   <meta name="description" content="Names for Keychain fields and related ezkey terms.">
+  <meta name="is-agentic-site-type" content="content">
   <meta property="og:title" content="Glossary — ezkey">
   <meta property="og:description" content="Names for Keychain fields and related ezkey terms.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://ezkey.app/og.png">
+  <meta property="og:url" content="https://ezkey.app/glossary/">
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
   <link rel="canonical" href="https://ezkey.app/glossary/">
   <link rel="describedby" href="https://ezkey.app/llms.txt" type="text/plain">
   <link rel="alternate" type="text/markdown" href="https://ezkey.app/glossary.md">
+  <link rel="ard" href="https://ezkey.app/.well-known/ard.json">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="/styles.css">
+  <script src="/webmcp.js" defer></script>
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"DefinedTermSet","name":"ezkey glossary","url":"https://ezkey.app/glossary/"}
   </script>
@@ -22,9 +28,10 @@
   <header class="top">
     <a class="mark" href="/">ezkey</a>
     <nav>
+      <a href="/guides/">Guides</a>
+      <a href="/about/">About</a>
+      <a href="/developers/">Developers</a>
       <a href="https://github.com/edtadros/ezkey">Source</a>
-      <a href="/privacy/">Privacy</a>
-      <a href="/security/">Security</a>
     </nav>
   </header>
   <main id="main" class="legal">
@@ -36,6 +43,8 @@
     <p>Keychain account attribute. ezkey always uses the logged-in Mac username and does not show the field.</p>
     <h2>Where</h2>
     <p>Keychain Access field for the service (<code>security add-generic-password -s</code>).</p>
+    <h2>Comments / Notes</h2>
+    <p>Keychain Access Comments (<code>security add-generic-password -j</code>). ezkey Notes. These are item attributes, not the password.</p>
     <h2>login Keychain</h2>
     <p><code>~/Library/Keychains/login.keychain-db</code> on macOS.</p>
     <h2>Always Allow</h2>

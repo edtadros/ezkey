@@ -20,6 +20,27 @@ public struct SecretIdentity: Hashable, Sendable, Equatable, Identifiable {
     }
 }
 
+/// Password bytes plus Keychain Access Comments (`kSecAttrComment`,
+/// `security add-generic-password -j`). Comments are item attributes, not a
+/// second secret.
+public struct StoredSecret: Equatable, Sendable {
+    public let secret: String
+    public let note: String
+
+    public init(secret: String, note: String = "") {
+        self.secret = secret
+        self.note = note
+    }
+
+    public var hasNote: Bool {
+        !note.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+
+    public static func normalizedNote(_ note: String) -> String {
+        note.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+}
+
 public enum PanelMode: String, Sendable, Equatable, CaseIterable, Identifiable {
     case save
     case retrieve

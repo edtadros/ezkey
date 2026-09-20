@@ -1,9 +1,12 @@
 {
+  "$schema": "https://schemas.agentskills.io/discovery/0.2.0/schema.json",
   "skills": [
     {
       "name": "build-ezkey",
-      "description": "Clone and build the ezkey macOS menu bar app from source.",
-      "url": "https://ezkey.app/.well-known/agent-skills/build-ezkey.md"
+      "type": "skill-md",
+      "description": "Clone and build the ezkey macOS menu bar app from source. Use when the user wants to install or run ezkey.",
+      "url": "https://ezkey.app/.well-known/agent-skills/build-ezkey/SKILL.md",
+      "digest": "sha256:08c6313975fe67e2ee940df5cfa7bc77094ed11f49d3326387e983fea59cc50e"
     }
   ]
 }

@@ -6,6 +6,21 @@
     <changefreq>weekly</changefreq>
   </url>
   <url>
+    <loc>https://ezkey.app/about/</loc>
+    <lastmod>2026-09-19</lastmod>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://ezkey.app/contact/</loc>
+    <lastmod>2026-09-19</lastmod>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://ezkey.app/developers/</loc>
+    <lastmod>2026-09-19</lastmod>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
     <loc>https://ezkey.app/privacy/</loc>
     <lastmod>2026-09-19</lastmod>
     <changefreq>monthly</changefreq>
@@ -19,5 +34,70 @@
     <loc>https://ezkey.app/glossary/</loc>
     <lastmod>2026-09-19</lastmod>
     <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://ezkey.app/guides/</loc>
+    <lastmod>2026-09-20</lastmod>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://ezkey.app/guides/how-to-save-api-keys-securely-on-mac/</loc>
+    <lastmod>2026-09-20</lastmod>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://ezkey.app/guides/best-way-to-store-api-keys-on-macos/</loc>
+    <lastmod>2026-09-20</lastmod>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://ezkey.app/guides/is-it-safe-to-put-api-keys-in-dotenv/</loc>
+    <lastmod>2026-09-20</lastmod>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://ezkey.app/guides/how-to-store-openai-api-key-on-mac/</loc>
+    <lastmod>2026-09-20</lastmod>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://ezkey.app/guides/security-add-generic-password/</loc>
+    <lastmod>2026-09-20</lastmod>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://ezkey.app/for/developers/</loc>
+    <lastmod>2026-09-20</lastmod>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://ezkey.app/for/local-api-keys/</loc>
+    <lastmod>2026-09-20</lastmod>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://ezkey.app/compare/macos-keychain-vs-1password-for-api-keys/</loc>
+    <lastmod>2026-09-20</lastmod>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://ezkey.app/compare/ezkey-vs-keychain-access/</loc>
+    <lastmod>2026-09-20</lastmod>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://ezkey.app/pricing.md</loc>
+    <lastmod>2026-09-19</lastmod>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://ezkey.app/auth.md</loc>
+    <lastmod>2026-09-19</lastmod>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://ezkey.app/llms.txt</loc>
+    <lastmod>2026-09-19</lastmod>
+    <changefreq>weekly</changefreq>
   </url>
 </urlset>

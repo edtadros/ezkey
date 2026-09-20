@@ -2,29 +2,34 @@ import XCTest
 @testable import EZKeyCore
 
 actor MockStore: SecretStore {
-    var items: [SecretIdentity: String] = [:]
-    var retrieveHandler: (@Sendable (SecretIdentity) async throws -> String)?
+    var items: [SecretIdentity: StoredSecret] = [:]
+    var retrieveHandler: (@Sendable (SecretIdentity) async throws -> StoredSecret)?
 
     func contains(_ identity: SecretIdentity) async throws -> Bool {
         items[identity] != nil
     }
 
-    func add(_ identity: SecretIdentity, secret: String) async throws {
+    func add(_ identity: SecretIdentity, secret: String, note: String) async throws {
         if items[identity] != nil { throw KeychainError.duplicateEntry }
-        items[identity] = secret
+        items[identity] = StoredSecret(secret: secret, note: note)
     }
 
-    func update(_ identity: SecretIdentity, secret: String) async throws {
+    func update(_ identity: SecretIdentity, secret: String, note: String) async throws {
         guard items[identity] != nil else { throw KeychainError.missingEntry }
-        items[identity] = secret
+        items[identity] = StoredSecret(secret: secret, note: note)
     }
 
-    func retrieve(_ identity: SecretIdentity) async throws -> String {
+    func retrieve(_ identity: SecretIdentity) async throws -> StoredSecret {
         if let retrieveHandler {
             return try await retrieveHandler(identity)
         }
-        guard let secret = items[identity] else { throw KeychainError.missingEntry }
-        return secret
+        guard let stored = items[identity] else { throw KeychainError.missingEntry }
+        return stored
+    }
+
+    func comment(for identity: SecretIdentity) async throws -> String {
+        guard let stored = items[identity] else { throw KeychainError.missingEntry }
+        return stored.note
     }
 
     func list(matching query: String) async throws -> [SecretIdentity] {
@@ -34,6 +39,7 @@ actor MockStore: SecretStore {
             .filter {
                 $0.service.localizedCaseInsensitiveContains(needle)
                     || $0.account.localizedCaseInsensitiveContains(needle)
+                    || (items[$0]?.note.localizedCaseInsensitiveContains(needle) ?? false)
             }
             .sorted { ($0.service, $0.account) < ($1.service, $1.account) }
     }
@@ -43,15 +49,15 @@ actor MockStore: SecretStore {
     }
 
     func secret(for identity: SecretIdentity) -> String? {
-        items[identity]
+        items[identity]?.secret
     }
 
-    func setRetrieveHandler(_ handler: (@Sendable (SecretIdentity) async throws -> String)?) {
+    func setRetrieveHandler(_ handler: (@Sendable (SecretIdentity) async throws -> StoredSecret)?) {
         retrieveHandler = handler
     }
 
-    func seed(_ identity: SecretIdentity, secret: String) {
-        items[identity] = secret
+    func seed(_ identity: SecretIdentity, secret: String, note: String = "") {
+        items[identity] = StoredSecret(secret: secret, note: note)
     }
 }
 
@@ -222,6 +228,58 @@ final class PanelModelTests: XCTestCase {
         XCTAssertTrue(model.matches.isEmpty)
     }
 
+    func testSelectingAMatchThenCopyPutsSecretOnClipboard() async {
+        let staging = SecretIdentity(service: "myapp/staging/llm", account: "testuser")
+        let prod = SecretIdentity(service: "myapp/prod/llm", account: "testuser")
+        await store.seed(staging, secret: "staging-secret")
+        await store.seed(prod, secret: "prod-secret")
+        model.service = "myapp"
+        await model.retrieve()
+        await model.selectMatch(staging)
+        model.copyRetrieved()
+        XCTAssertEqual(model.status, .copied)
+        XCTAssertEqual(pasteboard.value, "staging-secret")
+    }
+
+    func testPanelDidOpenDoesNotClearRetrieveMatches() async {
+        let staging = SecretIdentity(service: "myapp/staging/llm", account: "testuser")
+        let prod = SecretIdentity(service: "myapp/prod/llm", account: "testuser")
+        await store.seed(staging, secret: "staging-secret")
+        await store.seed(prod, secret: "prod-secret")
+        model.service = "myapp"
+        await model.retrieve()
+        XCTAssertEqual(model.status, .chooseMatch)
+        XCTAssertEqual(model.matches.count, 2)
+        model.panelDidOpen()
+        XCTAssertEqual(model.status, .chooseMatch)
+        XCTAssertEqual(model.matches.map(\.service), ["myapp/prod/llm", "myapp/staging/llm"])
+    }
+
+    func testReassigningSameServiceDoesNotClearMatches() async {
+        let staging = SecretIdentity(service: "myapp/staging/llm", account: "testuser")
+        let prod = SecretIdentity(service: "myapp/prod/llm", account: "testuser")
+        await store.seed(staging, secret: "staging-secret")
+        await store.seed(prod, secret: "prod-secret")
+        model.service = "myapp"
+        await model.retrieve()
+        model.service = "myapp"
+        model.account = "testuser"
+        XCTAssertEqual(model.status, .chooseMatch)
+        XCTAssertEqual(model.matches.count, 2)
+    }
+
+    func testEditingServiceClearsRetrieveMatches() async {
+        let staging = SecretIdentity(service: "myapp/staging/llm", account: "testuser")
+        let prod = SecretIdentity(service: "myapp/prod/llm", account: "testuser")
+        await store.seed(staging, secret: "staging-secret")
+        await store.seed(prod, secret: "prod-secret")
+        model.service = "myapp"
+        await model.retrieve()
+        model.service = "myapp/prod"
+        XCTAssertEqual(model.status, .idle)
+        XCTAssertTrue(model.matches.isEmpty)
+    }
+
     func testRetrieveIsMaskedUntilRevealed() async {
         let identity = SecretIdentity(service: "ezkey.test.mask", account: "testuser")
         await store.seed(identity, secret: "hidden-value")
@@ -268,7 +326,7 @@ final class PanelModelTests: XCTestCase {
         await store.seed(identity, secret: "placeholder")
         await store.setRetrieveHandler { _ in
             await gate.wait()
-            return "late-secret"
+            return StoredSecret(secret: "late-secret", note: "late-note")
         }
         model.service = identity.service
         let task = Task { await model.retrieve() }
@@ -280,6 +338,7 @@ final class PanelModelTests: XCTestCase {
         await gate.open()
         await task.value
         XCTAssertEqual(model.retrievedSecret, "late-secret")
+        XCTAssertEqual(model.retrievedNote, "late-note")
         XCTAssertFalse(model.isRevealed)
         XCTAssertEqual(model.status, .retrieved)
         XCTAssertFalse(model.isPanelOpen)
@@ -295,5 +354,97 @@ final class PanelModelTests: XCTestCase {
         XCTAssertEqual(model.retrievedSecret, "value")
         model.mode = .save
         XCTAssertNil(model.retrievedSecret)
+        XCTAssertNil(model.retrievedNote)
+    }
+
+    func testSavePersistsNote() async throws {
+        model.service = "ezkey.test.note-save"
+        model.secretToSave = "secret"
+        model.noteToSave = "  staging token for local tools  "
+        await model.save()
+        XCTAssertEqual(model.status, .saved)
+        XCTAssertEqual(model.noteToSave, "")
+        let stored = try await store.retrieve(SecretIdentity(service: "ezkey.test.note-save", account: "testuser"))
+        XCTAssertEqual(stored.note, "staging token for local tools")
+    }
+
+    func testRetrieveReturnsNoteUnmasked() async {
+        let identity = SecretIdentity(service: "ezkey.test.note-get", account: "testuser")
+        await store.seed(identity, secret: "hidden-value", note: "prod west")
+        model.service = identity.service
+        model.mode = .retrieve
+        await model.retrieve()
+        XCTAssertEqual(model.status, .retrieved)
+        XCTAssertEqual(model.retrievedSecret, "hidden-value")
+        XCTAssertEqual(model.retrievedNote, "prod west")
+        XCTAssertFalse(model.isRevealed)
+    }
+
+    func testSelectingAMatchRetrievesNote() async {
+        let staging = SecretIdentity(service: "myapp/staging/llm", account: "testuser")
+        let prod = SecretIdentity(service: "myapp/prod/llm", account: "testuser")
+        await store.seed(staging, secret: "staging-secret", note: "staging cluster")
+        await store.seed(prod, secret: "prod-secret", note: "prod cluster")
+        model.service = "myapp"
+        model.mode = .retrieve
+        await model.retrieve()
+        await model.selectMatch(staging)
+        XCTAssertEqual(model.retrievedSecret, "staging-secret")
+        XCTAssertEqual(model.retrievedNote, "staging cluster")
+    }
+
+    func testSaveExistingPrefillsNoteForUpdate() async {
+        let identity = SecretIdentity(service: "ezkey.test.note-prefill", account: "testuser")
+        await store.seed(identity, secret: "old", note: "keep this")
+        model.service = identity.service
+        model.secretToSave = "new"
+        await model.save()
+        XCTAssertEqual(model.status, .needsUpdate)
+        XCTAssertEqual(model.noteToSave, "keep this")
+    }
+
+    func testSaveExistingDoesNotOverwriteTypedNote() async {
+        let identity = SecretIdentity(service: "ezkey.test.note-typed", account: "testuser")
+        await store.seed(identity, secret: "old", note: "old-note")
+        model.service = identity.service
+        model.secretToSave = "new"
+        model.noteToSave = "new-note"
+        await model.save()
+        XCTAssertEqual(model.status, .needsUpdate)
+        XCTAssertEqual(model.noteToSave, "new-note")
+    }
+
+    func testUpdateWritesNote() async throws {
+        let identity = SecretIdentity(service: "ezkey.test.note-update", account: "testuser")
+        await store.seed(identity, secret: "old", note: "old-note")
+        model.service = identity.service
+        model.secretToSave = "new"
+        model.noteToSave = "rotated 2026-09"
+        await model.update()
+        XCTAssertEqual(model.status, .updated)
+        XCTAssertEqual(model.noteToSave, "")
+        let stored = try await store.retrieve(identity)
+        XCTAssertEqual(stored.secret, "new")
+        XCTAssertEqual(stored.note, "rotated 2026-09")
+    }
+
+    func testPanelCloseClearsNotes() async {
+        model.service = "ezkey.test.close-note"
+        model.noteToSave = "draft-note"
+        model.retrievedNote = "retrieved-note"
+        model.panelDidClose()
+        XCTAssertEqual(model.noteToSave, "")
+        XCTAssertNil(model.retrievedNote)
+    }
+
+    func testModeSwitchCopiesNoteIntoSaveField() async {
+        let identity = SecretIdentity(service: "ezkey.test.note-copy", account: "testuser")
+        await store.seed(identity, secret: "value", note: "from retrieve")
+        model.service = identity.service
+        model.mode = .retrieve
+        await model.retrieve()
+        model.mode = .save
+        XCTAssertNil(model.retrievedNote)
+        XCTAssertEqual(model.noteToSave, "from retrieve")
     }
 }

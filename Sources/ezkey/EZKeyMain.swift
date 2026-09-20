@@ -23,14 +23,20 @@ enum SelfTest {
                 account: account
             )
             let secret = "  self-test \"quoted\" café 🔑 "
-            try await store.add(identity, secret: secret)
+            let note = "self-test note \(UUID().uuidString)"
+            try await store.add(identity, secret: secret, note: note)
             created.append(identity)
 
             let retrieved = try await store.retrieve(identity)
-            if retrieved == secret {
+            if retrieved.secret == secret {
                 pass("same-process-roundtrip")
             } else {
                 fail("same-process-roundtrip", "mismatch")
+            }
+            if retrieved.note == note {
+                pass("comment-roundtrip")
+            } else {
+                fail("comment-roundtrip", "mismatch")
             }
 
             if try await store.contains(identity) {
@@ -50,18 +56,36 @@ enum SelfTest {
                 fail("app-add-visible-to-security-cli", "security(1) did not find the item in login.keychain-db")
             }
 
+            let findOut = securityFindOutput(
+                service: identity.service,
+                account: account,
+                keychain: loginPath
+            )
+            if findOut.contains(note) {
+                pass("comment-visible-to-security-cli")
+            } else {
+                fail("comment-visible-to-security-cli", "security(1) did not print the comment")
+            }
+
             let fromCLI = SecretIdentity(
                 service: DisposableEntry.servicePrefix + "self.cli.\(UUID().uuidString)",
                 account: account
             )
             let cliSecret = "cli-created-\(UUID().uuidString)"
-            let addCode = securityAdd(identity: fromCLI, secret: cliSecret, keychain: loginPath)
+            let cliNote = "cli-note-\(UUID().uuidString)"
+            let addCode = securityAdd(identity: fromCLI, secret: cliSecret, note: cliNote, keychain: loginPath)
             if addCode == 0 {
                 created.append(fromCLI)
                 if try await store.contains(fromCLI) {
                     pass("cli-add-visible-to-app")
                 } else {
                     fail("cli-add-visible-to-app", "contains returned false")
+                }
+                let cliComment = try await store.comment(for: fromCLI)
+                if cliComment == cliNote {
+                    pass("cli-comment-visible-to-app")
+                } else {
+                    fail("cli-comment-visible-to-app", "comment mismatch")
                 }
             } else {
                 fail("cli-add-visible-to-app", "security add exit=\(addCode)")
@@ -73,10 +97,10 @@ enum SelfTest {
             )
             try await store.add(other, secret: "other-secret")
             created.append(other)
-            try await store.update(identity, secret: "updated-secret")
+            try await store.update(identity, secret: "updated-secret", note: note)
             let first = try await store.retrieve(identity)
             let second = try await store.retrieve(other)
-            if first == "updated-secret", second == "other-secret" {
+            if first.secret == "updated-secret", second.secret == "other-secret" {
                 pass("update-does-not-clobber-other-pair")
             } else {
                 fail("update-does-not-clobber-other-pair", "values diverged")
@@ -126,33 +150,52 @@ enum SelfTest {
         ]) == 0
     }
 
-    private static func securityAdd(identity: SecretIdentity, secret: String, keychain: String) -> Int32 {
+    private static func securityFindOutput(service: String, account: String, keychain: String) -> String {
+        runSecurityCapture([
+            "find-generic-password",
+            "-a", account,
+            "-s", service,
+            keychain
+        ]).1
+    }
+
+    private static func securityAdd(identity: SecretIdentity, secret: String, note: String = "", keychain: String) -> Int32 {
         guard DisposableEntry.isDisposable(identity) else { return -1 }
-        return runSecurity([
+        var arguments = [
             "add-generic-password",
             "-U",
             "-A",
             "-a", identity.account,
             "-s", identity.service,
             "-w", secret,
-            keychain
-        ])
+        ]
+        if !note.isEmpty {
+            arguments.append(contentsOf: ["-j", note])
+        }
+        arguments.append(keychain)
+        return runSecurity(arguments)
     }
 
     private static func runSecurity(_ arguments: [String], timeout: TimeInterval = 8) -> Int32 {
+        runSecurityCapture(arguments, timeout: timeout).0
+    }
+
+    private static func runSecurityCapture(_ arguments: [String], timeout: TimeInterval = 8) -> (Int32, String) {
         let proc = Process()
         proc.executableURL = URL(fileURLWithPath: "/usr/bin/security")
         proc.arguments = arguments
-        proc.standardOutput = FileHandle.nullDevice
+        let out = Pipe()
+        proc.standardOutput = out
         proc.standardError = FileHandle.nullDevice
         let group = DispatchGroup()
         group.enter()
         proc.terminationHandler = { _ in group.leave() }
-        do { try proc.run() } catch { return -1 }
+        do { try proc.run() } catch { return (-1, "") }
         if group.wait(timeout: .now() + timeout) == .timedOut {
             proc.terminate()
-            return -2
+            return (-2, "")
         }
-        return proc.terminationStatus
+        let text = String(data: out.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? ""
+        return (proc.terminationStatus, text)
     }
 }

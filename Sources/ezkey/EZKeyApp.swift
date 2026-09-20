@@ -46,10 +46,37 @@ struct EZKeyApp: App {
         MenuBarExtra {
             PanelView(model: session.model)
         } label: {
-            Image(systemName: "key.fill")
+            Image(nsImage: MenuBarIcon.image)
+                .renderingMode(.template)
                 .accessibilityLabel("ezkey")
         }
         .menuBarExtraStyle(.window)
+    }
+}
+
+enum MenuBarIcon {
+    static let image: NSImage = {
+        let source = load() ?? NSImage(systemSymbolName: "key.fill", accessibilityDescription: "ezkey") ?? NSImage()
+        let image = source.copy() as? NSImage ?? source
+        image.isTemplate = true
+        image.size = NSSize(width: 18, height: 22)
+        return image
+    }()
+
+    private static func load() -> NSImage? {
+        if let named = NSImage(named: "MenuBarIcon") {
+            return named
+        }
+        let urls = [
+            Bundle.main.url(forResource: "MenuBarIcon", withExtension: "png"),
+            Bundle.main.resourceURL?.appendingPathComponent("MenuBarIcon.png"),
+        ]
+        for url in urls.compactMap({ $0 }) {
+            if let image = NSImage(contentsOf: url) {
+                return image
+            }
+        }
+        return nil
     }
 }
 
@@ -61,6 +88,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         if CommandLine.arguments.contains("--self-test") {
             Task { @MainActor in
                 exit(await SelfTest.run())
+            }
+            return
+        }
+        if let index = CommandLine.arguments.firstIndex(of: "--render-marketing") {
+            let next = CommandLine.arguments.index(after: index)
+            let directory = next < CommandLine.arguments.endIndex
+                ? CommandLine.arguments[next]
+                : "site/images"
+            Task { @MainActor in
+                exit(await MarketingRender.run(outputDirectory: directory))
             }
         }
     }

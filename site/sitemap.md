@@ -1,8 +1,23 @@
 # Sitemap
 
 - [Home](https://ezkey.app/): Product overview and build instructions
+- [Guides](https://ezkey.app/guides/): Question-led answers for storing keys on a Mac
+- [How to save API keys securely](https://ezkey.app/guides/how-to-save-api-keys-securely-on-mac/)
+- [Best way to store API keys on macOS](https://ezkey.app/guides/best-way-to-store-api-keys-on-macos/)
+- [Are .env files safe?](https://ezkey.app/guides/is-it-safe-to-put-api-keys-in-dotenv/)
+- [Store an OpenAI API key](https://ezkey.app/guides/how-to-store-openai-api-key-on-mac/)
+- [security add-generic-password](https://ezkey.app/guides/security-add-generic-password/)
+- [For developers](https://ezkey.app/for/developers/)
+- [Local API keys](https://ezkey.app/for/local-api-keys/)
+- [Keychain vs 1Password](https://ezkey.app/compare/macos-keychain-vs-1password-for-api-keys/)
+- [ezkey vs Keychain Access](https://ezkey.app/compare/ezkey-vs-keychain-access/)
+- [About](https://ezkey.app/about/): What ezkey is and is not
+- [Contact](https://ezkey.app/contact/): Issues and security reports
+- [Developers](https://ezkey.app/developers/): REST, MCP, A2A, rate limits
 - [Privacy](https://ezkey.app/privacy/): What the app and site collect (nothing)
 - [Security](https://ezkey.app/security/): Keychain prompts, Always Allow, how to report issues
 - [Glossary](https://ezkey.app/glossary/): Names for Keychain fields and related terms
+- [auth.md](https://ezkey.app/auth.md): Authentication policy for agents
 - [llms.txt](https://ezkey.app/llms.txt): Agent index
 - [AGENTS.md](https://ezkey.app/AGENTS.md): Notes for coding agents
+- [OpenAPI](https://ezkey.app/openapi.json): Site REST description

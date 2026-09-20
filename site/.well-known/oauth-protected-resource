@@ -1,0 +1,8 @@
+{
+  "resource": "https://ezkey.app",
+  "resource_name": "ezkey",
+  "authorization_servers": ["https://ezkey.app"],
+  "scopes_supported": [],
+  "bearer_methods_supported": ["header"],
+  "resource_documentation": "https://ezkey.app/auth.md"
+}

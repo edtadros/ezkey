@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Is it safe to put API keys in .env files? — ezkey.app</title>
+  <meta name="description" content="A .env file is plaintext. It is fine for non-secrets. It is a common way API keys leak through git, zips, and backups. Use the login Keychain as the canonical store on a Mac.">
+  <meta name="is-agentic-site-type" content="content">
+  <meta property="og:title" content="Is it safe to put API keys in .env files? — ezkey.app">
+  <meta property="og:description" content="A .env file is plaintext. It is fine for non-secrets. It is a common way API keys leak through git, zips, and backups. Use the login Keychain as the canonical store on a Mac.">
+  <meta property="og:type" content="article">
+  <meta property="og:image" content="https://ezkey.app/og.png">
+  <meta property="og:url" content="https://ezkey.app/guides/is-it-safe-to-put-api-keys-in-dotenv/">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+  <link rel="canonical" href="https://ezkey.app/guides/is-it-safe-to-put-api-keys-in-dotenv/">
+  <link rel="describedby" href="https://ezkey.app/llms.txt" type="text/plain">
+  <link rel="alternate" type="text/markdown" href="https://ezkey.app/guides/is-it-safe-to-put-api-keys-in-dotenv.md">
+  <link rel="ard" href="https://ezkey.app/.well-known/ard.json">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/webmcp.js" defer></script>
+  <script type="application/ld+json">
+  {"@context": "https://schema.org", "@graph": [{"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "ezkey.app", "item": "https://ezkey.app/"}, {"@type": "ListItem", "position": 2, "name": "Guides", "item": "https://ezkey.app/guides/"}, {"@type": "ListItem", "position": 3, "name": ".env files", "item": "https://ezkey.app/guides/is-it-safe-to-put-api-keys-in-dotenv/"}]}, {"@type": "Article", "headline": "Is it safe to put API keys in .env files?", "description": "A .env file is plaintext. It is fine for non-secrets. It is a common way API keys leak through git, zips, and backups. Use the login Keychain as the canonical store on a Mac.", "datePublished": "2026-09-20", "dateModified": "2026-09-20", "mainEntityOfPage": "https://ezkey.app/guides/is-it-safe-to-put-api-keys-in-dotenv/", "author": {"@type": "Organization", "name": "ezkey.app", "url": "https://ezkey.app/"}, "publisher": {"@id": "https://ezkey.app/#org"}}, {"@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "What if the framework requires a .env?", "acceptedAnswer": {"@type": "Answer", "text": "Give it a file that points at non-secrets, or generate a throwaway env in memory. Do not let the committed example contain a real key."}}, {"@type": "Question", "name": "Are encrypted .env tools enough?", "acceptedAnswer": {"@type": "Answer", "text": "They are better than plaintext. You then have a new format, a passphrase, and another binary. The login Keychain is already on the Mac."}}, {"@type": "Question", "name": "Does Docker make this worse?", "acceptedAnswer": {"@type": "Answer", "text": "Yes if you COPY a .env into an image or pass secrets as build args that land in layers. Use runtime secrets, not files in the context."}}, {"@type": "Question", "name": "Can ezkey write a .env for me?", "acceptedAnswer": {"@type": "Answer", "text": "No. ezkey does not write project files. It talks to the Keychain only."}}]}]}
+  </script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="top">
+    <a class="mark" href="/">ezkey</a>
+    <nav>
+      <a href="/guides/">Guides</a>
+      <a href="/about/">About</a>
+      <a href="https://github.com/edtadros/ezkey">Source</a>
+    </nav>
+  </header>
+  <main id="main" class="legal">
+    <p><a href="/guides/">Guides</a></p>
+    <h1>Is it safe to put API keys in .env files?</h1>
+    <div class="answer"><p>No, not as the canonical store. A <code>.env</code> file is plaintext on disk. <code>.gitignore</code> only helps if everyone remembers it, including the zip you upload and the colleague’s backup. On a Mac, keep the live key in the login Keychain and, if a tool insists on an environment variable, export it for one process.</p></div>
+    <p>On this page</p>
+    <ul class="toc"><li><a href="#why">Why dotenv became the default</a></li><li><a href="#leaks">How .env files actually leak</a></li><li><a href="#gitignore">Why gitignore is not a control</a></li><li><a href="#instead">What to do instead on macOS</a></li><li><a href="#related">Related answers</a></li></ul>
+    <h2 id="why">Why dotenv became the default</h2>
+    <p>Twelve-factor config said “store config in the environment.” Frameworks translated that into a file named <code>.env</code> that the process reads at boot. That is convenient. It is also a file. Files get copied. The pattern spread because it is easy to document: put <code>DATABASE_URL=</code> here. Safety was someone else’s <code>.gitignore</code>.</p>
+    <h2 id="leaks">How .env files actually leak</h2>
+    <ul><li>git add -f, or a first commit before gitignore existed.</li><li>A zip of the project mailed to a contractor.</li><li>iCloud Drive or Dropbox sync of the repo folder.</li><li>A screenshot or a screen share that includes the editor tab.</li><li>CI caches and Docker layers that ingested the file as a build context.</li></ul>
+    <p>None of those require a sophisticated attacker. They require a tired Thursday. Once a live key is in git history, rotating the key is the fix, not another gitignore line.</p>
+    <p>Dotenv files also train muscle memory in the wrong direction. You open a new repo, copy <code>.env.example</code> to <code>.env</code>, paste live values, and get to work. Six months later the example file has a real key because someone “just needed it to run.” Code review does not catch a file gitignore hides. The Keychain does not sit next to <code>src/</code>.</p>
+    <h2 id="gitignore">Why gitignore is not a control</h2>
+    <p><code>.gitignore</code> is a filter for one tool. It does not encrypt. It does not stop <code>cp</code>. It does not stop Time Machine. It does not stop an editor plugin that uploads the workspace. Treat gitignore as politeness toward your future self, not as access control.</p>
+    <h2 id="instead">What to do instead on macOS</h2>
+    <p>Keep the canonical secret in the login Keychain. See <a href="/guides/how-to-save-api-keys-securely-on-mac/">how to save API keys securely on a Mac</a>. If a local server must see <code>OPENAI_API_KEY</code>, export it in that terminal from <code>security find-generic-password</code> or retrieve it in ezkey and paste once into a process you will kill. Do not recreate a long-lived <code>.env</code> that is just the Keychain dumped to disk.</p>
+    <p>For a walkthrough with the OpenAI variable name, see <a href="/guides/how-to-store-openai-api-key-on-mac/">how to store an OpenAI API key on a Mac</a>.</p>
+    <h2 id="related">Related answers</h2>
+    <div class="related"><a href="/guides/how-to-save-api-keys-securely-on-mac/">How to save API keys securely on a Mac<small>Keychain first, leftovers deleted.</small></a><a href="/guides/best-way-to-store-api-keys-on-macos/">Best way to store API keys on macOS<small>The comparison table.</small></a><a href="/for/developers/">For developers<small>Local Keychain items, source you can read.</small></a><a href="/glossary/">Glossary<small>Name, Where, Account.</small></a></div>
+    <h2 id="faq-1">What if the framework requires a .env?</h2>
+    <p>Give it a file that points at non-secrets, or generate a throwaway env in memory. Do not let the committed example contain a real key.</p><h2 id="faq-2">Are encrypted .env tools enough?</h2>
+    <p>They are better than plaintext. You then have a new format, a passphrase, and another binary. The login Keychain is already on the Mac.</p><h2 id="faq-3">Does Docker make this worse?</h2>
+    <p>Yes if you COPY a .env into an image or pass secrets as build args that land in layers. Use runtime secrets, not files in the context.</p><h2 id="faq-4">Can ezkey write a .env for me?</h2>
+    <p>No. ezkey does not write project files. It talks to the Keychain only.</p>
+  </main>
+  <footer>
+    <nav>
+      <a href="/guides/">Guides</a>
+      <a href="/about/">About</a>
+      <a href="/contact/">Contact</a>
+      <a href="/privacy/">Privacy</a>
+      <a href="/security/">Security</a>
+    </nav>
+    <p>MIT. Provided as-is, without warranty.</p>
+  </footer>
+</body>
+</html>

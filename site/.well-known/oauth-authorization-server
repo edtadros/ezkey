@@ -1,0 +1,25 @@
+{
+  "issuer": "https://ezkey.app",
+  "authorization_endpoint": "https://ezkey.app/oauth/authorize",
+  "token_endpoint": "https://ezkey.app/oauth/token",
+  "revocation_endpoint": "https://ezkey.app/oauth/revoke",
+  "jwks_uri": "https://ezkey.app/.well-known/jwks.json",
+  "registration_endpoint": "https://ezkey.app/agent/identity",
+  "grant_types_supported": [],
+  "response_types_supported": [],
+  "scopes_supported": [],
+  "token_endpoint_auth_methods_supported": ["none"],
+  "code_challenge_methods_supported": ["S256"],
+  "service_documentation": "https://ezkey.app/auth.md",
+  "agent_auth": {
+    "skill": "https://ezkey.app/auth.md",
+    "identity_endpoint": "https://ezkey.app/agent/identity",
+    "claim_endpoint": "https://ezkey.app/agent/identity/claim",
+    "events_endpoint": "https://ezkey.app/agent/event/notify",
+    "identity_types_supported": ["anonymous"],
+    "identity_assertion": {
+      "assertion_types_supported": []
+    },
+    "events_supported": []
+  }
+}

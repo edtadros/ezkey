@@ -7,7 +7,14 @@ public final class PanelModel {
     public var mode: PanelMode = .save {
         didSet {
             guard oldValue != mode else { return }
+            if mode == .save,
+               StoredSecret.normalizedNote(noteToSave).isEmpty,
+               let retrievedNote,
+               StoredSecret.normalizedNote(retrievedNote).isEmpty == false {
+                noteToSave = retrievedNote
+            }
             retrievedSecret = nil
+            retrievedNote = nil
             isRevealed = false
             matches = []
             if status == .retrieved || status == .copied || status == .needsUpdate || status == .chooseMatch {
@@ -18,6 +25,7 @@ public final class PanelModel {
 
     public var service: String {
         didSet {
+            guard oldValue != service else { return }
             resetNeedsUpdateIfIdentityChanged()
             resetMatchesIfSearchChanged()
         }
@@ -25,13 +33,16 @@ public final class PanelModel {
 
     public var account: String {
         didSet {
+            guard oldValue != account else { return }
             resetNeedsUpdateIfIdentityChanged()
             resetMatchesIfSearchChanged()
         }
     }
 
     public var secretToSave: String = ""
+    public var noteToSave: String = ""
     public var retrievedSecret: String?
+    public var retrievedNote: String?
     public var matches: [SecretIdentity] = []
     public var isRevealed: Bool = false
     public var status: OperationStatus = .idle
@@ -90,7 +101,9 @@ public final class PanelModel {
         }
         retrieveGeneration += 1
         secretToSave = ""
+        noteToSave = ""
         retrievedSecret = nil
+        retrievedNote = nil
         matches = []
         isRevealed = false
         status = .idle
@@ -113,12 +126,16 @@ public final class PanelModel {
         do {
             if try await store.contains(identity) {
                 identityAtNeedsUpdate = identity
+                if StoredSecret.normalizedNote(noteToSave).isEmpty {
+                    noteToSave = (try? await store.comment(for: identity)) ?? ""
+                }
                 status = .needsUpdate
                 noteFinishedWhileClosed()
                 return
             }
-            try await store.add(identity, secret: secretToSave)
+            try await store.add(identity, secret: secretToSave, note: StoredSecret.normalizedNote(noteToSave))
             secretToSave = ""
+            noteToSave = ""
             identityAtNeedsUpdate = nil
             status = .saved
             noteFinishedWhileClosed()
@@ -145,8 +162,9 @@ public final class PanelModel {
         }
         status = .working
         do {
-            try await store.update(identity, secret: secretToSave)
+            try await store.update(identity, secret: secretToSave, note: StoredSecret.normalizedNote(noteToSave))
             secretToSave = ""
+            noteToSave = ""
             identityAtNeedsUpdate = nil
             status = .updated
             noteFinishedWhileClosed()
@@ -162,6 +180,7 @@ public final class PanelModel {
     public func retrieve() async {
         persistLabels()
         retrievedSecret = nil
+        retrievedNote = nil
         isRevealed = false
         matches = []
         let query = service.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -193,6 +212,7 @@ public final class PanelModel {
         } catch {
             guard generation == retrieveGeneration else { return }
             retrievedSecret = nil
+            retrievedNote = nil
             isRevealed = false
             status = .failure
             noteFinishedWhileClosed()
@@ -205,6 +225,7 @@ public final class PanelModel {
         account = identity.account
         persistLabels()
         retrievedSecret = nil
+        retrievedNote = nil
         isRevealed = false
         status = .working
         retrieveGeneration += 1
@@ -213,13 +234,14 @@ public final class PanelModel {
 
     private func fetchSecret(_ identity: SecretIdentity, generation: Int) async {
         do {
-            let secret = try await store.retrieve(identity)
-            applyRetrieveResult(.success(secret), generation: generation)
+            let stored = try await store.retrieve(identity)
+            applyRetrieveResult(.success(stored), generation: generation)
         } catch let error as KeychainError {
             applyRetrieveResult(.failure(error), generation: generation)
         } catch {
             guard generation == retrieveGeneration else { return }
             retrievedSecret = nil
+            retrievedNote = nil
             isRevealed = false
             status = .failure
             noteFinishedWhileClosed()
@@ -237,15 +259,17 @@ public final class PanelModel {
         status = .copied
     }
 
-    private func applyRetrieveResult(_ result: Result<String, KeychainError>, generation: Int) {
+    private func applyRetrieveResult(_ result: Result<StoredSecret, KeychainError>, generation: Int) {
         guard generation == retrieveGeneration else { return }
         switch result {
-        case .success(let secret):
-            retrievedSecret = secret
+        case .success(let stored):
+            retrievedSecret = stored.secret
+            retrievedNote = stored.note
             isRevealed = false
             status = .retrieved
         case .failure(let error):
             retrievedSecret = nil
+            retrievedNote = nil
             isRevealed = false
             status = .from(error: error)
         }

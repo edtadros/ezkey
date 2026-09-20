@@ -3,9 +3,10 @@ import Security
 
 public protocol SecretStore: Sendable {
     func contains(_ identity: SecretIdentity) async throws -> Bool
-    func add(_ identity: SecretIdentity, secret: String) async throws
-    func update(_ identity: SecretIdentity, secret: String) async throws
-    func retrieve(_ identity: SecretIdentity) async throws -> String
+    func add(_ identity: SecretIdentity, secret: String, note: String) async throws
+    func update(_ identity: SecretIdentity, secret: String, note: String) async throws
+    func retrieve(_ identity: SecretIdentity) async throws -> StoredSecret
+    func comment(for identity: SecretIdentity) async throws -> String
     func list(matching query: String) async throws -> [SecretIdentity]
     func delete(_ identity: SecretIdentity) async throws
 }
@@ -56,7 +57,7 @@ public actor LoginKeychainStore: SecretStore {
         }
     }
 
-    public func add(_ identity: SecretIdentity, secret: String) async throws {
+    public func add(_ identity: SecretIdentity, secret: String, note: String = "") async throws {
         try requireValid(identity)
         try requireSecret(secret)
         let keychain = try openLoginKeychain()
@@ -69,6 +70,10 @@ public actor LoginKeychainStore: SecretStore {
             kSecUseKeychain: keychain,
             kSecUseDataProtectionKeychain: false
         ]
+        let trimmedNote = StoredSecret.normalizedNote(note)
+        if !trimmedNote.isEmpty {
+            query[kSecAttrComment] = trimmedNote
+        }
         if let access = makeAccess() {
             query[kSecAttrAccess] = access
         }
@@ -76,7 +81,7 @@ public actor LoginKeychainStore: SecretStore {
         try check(status)
     }
 
-    public func update(_ identity: SecretIdentity, secret: String) async throws {
+    public func update(_ identity: SecretIdentity, secret: String, note: String = "") async throws {
         try requireValid(identity)
         try requireSecret(secret)
         var query = try searchQuery(identity, returnData: false)
@@ -84,21 +89,29 @@ public actor LoginKeychainStore: SecretStore {
             ? kSecUseAuthenticationUIAllow
             : kSecUseAuthenticationUIFail
         let attributes: [CFString: Any] = [
-            kSecValueData: Data(secret.utf8)
+            kSecValueData: Data(secret.utf8),
+            kSecAttrComment: StoredSecret.normalizedNote(note)
         ]
         let status = SecItemUpdate(query as CFDictionary, attributes as CFDictionary)
         try check(status)
     }
 
-    public func retrieve(_ identity: SecretIdentity) async throws -> String {
+    public func retrieve(_ identity: SecretIdentity) async throws -> StoredSecret {
+        try requireValid(identity)
+        var query = try searchQuery(identity, returnData: true)
+        query[kSecReturnAttributes] = true
+        var result: CFTypeRef?
+        let status = SecItemCopyMatching(query as CFDictionary, &result)
+        try check(status)
+        return try storedSecret(from: result)
+    }
+
+    public func comment(for identity: SecretIdentity) async throws -> String {
         try requireValid(identity)
         var result: CFTypeRef?
-        let status = SecItemCopyMatching(try searchQuery(identity, returnData: true) as CFDictionary, &result)
+        let status = SecItemCopyMatching(try searchQuery(identity, returnData: false) as CFDictionary, &result)
         try check(status)
-        guard let data = result as? Data, let secret = String(data: data, encoding: .utf8) else {
-            throw KeychainError.failure(errSecDecode)
-        }
-        return secret
+        return Self.commentString(from: result)
     }
 
     public static let matchLimit = 50
@@ -138,7 +151,8 @@ public actor LoginKeychainStore: SecretStore {
             let label = record[kSecAttrLabel] as? String ?? ""
             let identity = SecretIdentity(service: service, account: account)
             guard identity.isValid else { continue }
-            let haystack = [identity.service, identity.account, label]
+            let comment = Self.commentString(from: record)
+            let haystack = [identity.service, identity.account, label, comment]
             guard haystack.contains(where: { $0.localizedCaseInsensitiveContains(needle) }) else { continue }
             guard seen.insert(identity).inserted else { continue }
             matches.append(identity)
@@ -160,6 +174,37 @@ public actor LoginKeychainStore: SecretStore {
             return
         }
         try check(status)
+    }
+
+    private func storedSecret(from result: CFTypeRef?) throws -> StoredSecret {
+        let note = Self.commentString(from: result)
+        if let data = result as? Data {
+            guard let secret = String(data: data, encoding: .utf8) else {
+                throw KeychainError.failure(errSecDecode)
+            }
+            return StoredSecret(secret: secret, note: note)
+        }
+        guard let dict = result as? NSDictionary else {
+            throw KeychainError.failure(errSecDecode)
+        }
+        guard let data = dict[kSecValueData] as? Data,
+              let secret = String(data: data, encoding: .utf8)
+        else {
+            throw KeychainError.failure(errSecDecode)
+        }
+        return StoredSecret(secret: secret, note: note)
+    }
+
+    static func commentString(from result: Any?) -> String {
+        guard let dict = result as? NSDictionary else { return "" }
+        if let text = dict[kSecAttrComment] as? String {
+            return text
+        }
+        if let data = dict[kSecAttrComment] as? Data,
+           let text = String(data: data, encoding: .utf8) {
+            return text
+        }
+        return ""
     }
 
     private func requireValid(_ identity: SecretIdentity) throws {

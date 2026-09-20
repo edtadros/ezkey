@@ -1,17 +1,37 @@
 {
   "linkset": [
     {
-      "anchor": "https://ezkey.app/",
+      "anchor": "https://ezkey.app/api/v1",
       "service-desc": [
         {
           "href": "https://ezkey.app/openapi.json",
-          "type": "application/json"
+          "type": "application/vnd.oai.openapi+json"
         }
       ],
       "service-doc": [
         {
-          "href": "https://ezkey.app/security/",
+          "href": "https://ezkey.app/developers/",
           "type": "text/html"
+        },
+        {
+          "href": "https://ezkey.app/developers.md",
+          "type": "text/markdown"
+        }
+      ],
+      "service-meta": [
+        {
+          "href": "https://ezkey.app/llms.txt",
+          "type": "text/plain"
+        },
+        {
+          "href": "https://ezkey.app/auth.md",
+          "type": "text/markdown"
+        }
+      ],
+      "status": [
+        {
+          "href": "https://ezkey.app/api/v1/health",
+          "type": "application/json"
         }
       ],
       "item": [

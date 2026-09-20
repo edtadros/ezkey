@@ -9,6 +9,7 @@ struct PanelView: View {
     private enum Field: Hashable {
         case service
         case secret
+        case note
     }
 
     var body: some View {
@@ -83,6 +84,19 @@ struct PanelView: View {
                     }
             }
 
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Notes")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                TextField("optional", text: $model.noteToSave, axis: .vertical)
+                    .textFieldStyle(.roundedBorder)
+                    .lineLimit(2...4)
+                    .focused($focusedField, equals: .note)
+                    .disabled(model.isWorking)
+                    .accessibilityLabel("Notes")
+                    .help("Stored as Keychain Access Comments")
+            }
+
             HStack {
                 if model.status == .needsUpdate {
                     Button("Update") {
@@ -113,39 +127,7 @@ struct PanelView: View {
             .accessibilityHint("Search by part of the Keychain name, or look up an exact pair")
 
             if !model.matches.isEmpty {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Matching entries")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                    ScrollView {
-                        VStack(spacing: 4) {
-                            ForEach(model.matches) { match in
-                                Button {
-                                    Task { await model.selectMatch(match) }
-                                } label: {
-                                    VStack(alignment: .leading, spacing: 1) {
-                                        Text(match.service)
-                                            .font(.body)
-                                            .frame(maxWidth: .infinity, alignment: .leading)
-                                        if match.account != model.currentUser {
-                                            Text(match.account)
-                                                .font(.caption)
-                                                .foregroundStyle(.secondary)
-                                        }
-                                    }
-                                    .padding(.vertical, 4)
-                                    .padding(.horizontal, 6)
-                                    .contentShape(Rectangle())
-                                }
-                                .buttonStyle(.plain)
-                                .background(.quaternary, in: RoundedRectangle(cornerRadius: 6))
-                                .accessibilityLabel("\(match.service), account \(match.account)")
-                                .disabled(model.isWorking)
-                            }
-                        }
-                    }
-                    .frame(maxHeight: 160)
-                }
+                matchPicker
             }
 
             if model.retrievedSecret != nil {
@@ -185,8 +167,82 @@ struct PanelView: View {
                     }
                     .accessibilityHint("Copy the secret, then clear the clipboard after 30 seconds if unchanged")
                 }
+
+                if let note = model.retrievedNote, StoredSecret.normalizedNote(note).isEmpty == false {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Notes")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                        Text(note)
+                            .font(.body)
+                            .textSelection(.enabled)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(6)
+                            .background(.quaternary, in: RoundedRectangle(cornerRadius: 6))
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    .accessibilityElement(children: .combine)
+                    .accessibilityLabel("Notes")
+                    .accessibilityValue(note)
+                }
             }
         }
+    }
+
+    /// MenuBarExtra windows hug the view's fitting size. A ScrollView with only
+    /// maxHeight reports ~0 height, so the picker header showed with no rows.
+    private var matchPicker: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text("Matching entries")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            if model.matches.count > 6 {
+                ScrollView {
+                    matchRows
+                }
+                .frame(height: 180)
+            } else {
+                matchRows
+            }
+        }
+    }
+
+    private var matchRows: some View {
+        VStack(spacing: 6) {
+            ForEach(model.matches) { match in
+                matchRow(match)
+            }
+        }
+    }
+
+    private func matchRow(_ match: SecretIdentity) -> some View {
+        Button {
+            Task { await model.selectMatch(match) }
+        } label: {
+            VStack(alignment: .leading, spacing: 1) {
+                Text(match.service)
+                    .font(.body)
+                    .foregroundStyle(.primary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                if match.account != model.currentUser {
+                    Text(match.account)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
+            .padding(.vertical, 7)
+            .padding(.horizontal, 8)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .background(.quaternary, in: RoundedRectangle(cornerRadius: 6))
+        .overlay {
+            RoundedRectangle(cornerRadius: 6)
+                .strokeBorder(.separator.opacity(0.7), lineWidth: 1)
+        }
+        .accessibilityLabel("\(match.service), account \(match.account)")
+        .accessibilityHint("Retrieve this Keychain entry")
+        .disabled(model.isWorking)
     }
 
     private var statusLine: some View {

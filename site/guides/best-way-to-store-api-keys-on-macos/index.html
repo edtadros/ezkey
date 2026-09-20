@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Best way to store API keys on macOS — ezkey.app</title>
+  <meta name="description" content="For a solo Mac, the best local store for API keys is the login Keychain. Compare .env, zshrc, security CLI, ezkey, and 1Password without pretending one tool wins every job.">
+  <meta name="is-agentic-site-type" content="content">
+  <meta property="og:title" content="Best way to store API keys on macOS — ezkey.app">
+  <meta property="og:description" content="For a solo Mac, the best local store for API keys is the login Keychain. Compare .env, zshrc, security CLI, ezkey, and 1Password without pretending one tool wins every job.">
+  <meta property="og:type" content="article">
+  <meta property="og:image" content="https://ezkey.app/og.png">
+  <meta property="og:url" content="https://ezkey.app/guides/best-way-to-store-api-keys-on-macos/">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+  <link rel="canonical" href="https://ezkey.app/guides/best-way-to-store-api-keys-on-macos/">
+  <link rel="describedby" href="https://ezkey.app/llms.txt" type="text/plain">
+  <link rel="alternate" type="text/markdown" href="https://ezkey.app/guides/best-way-to-store-api-keys-on-macos.md">
+  <link rel="ard" href="https://ezkey.app/.well-known/ard.json">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/webmcp.js" defer></script>
+  <script type="application/ld+json">
+  {"@context": "https://schema.org", "@graph": [{"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "ezkey.app", "item": "https://ezkey.app/"}, {"@type": "ListItem", "position": 2, "name": "Guides", "item": "https://ezkey.app/guides/"}, {"@type": "ListItem", "position": 3, "name": "Best way to store keys", "item": "https://ezkey.app/guides/best-way-to-store-api-keys-on-macos/"}]}, {"@type": "Article", "headline": "What is the best way to store API keys on macOS?", "description": "For a solo Mac, the best local store for API keys is the login Keychain. Compare .env, zshrc, security CLI, ezkey, and 1Password without pretending one tool wins every job.", "datePublished": "2026-09-20", "dateModified": "2026-09-20", "mainEntityOfPage": "https://ezkey.app/guides/best-way-to-store-api-keys-on-macos/", "author": {"@type": "Organization", "name": "ezkey.app", "url": "https://ezkey.app/"}, "publisher": {"@id": "https://ezkey.app/#org"}}, {"@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Is 1Password better than the Keychain?", "acceptedAnswer": {"@type": "Answer", "text": "For family passwords, sharing, and travel recovery, usually yes. For a local API token that should never leave this Mac, the login Keychain avoids an account and a sync channel."}}, {"@type": "Question", "name": "Is envchain or direnv enough?", "acceptedAnswer": {"@type": "Answer", "text": "They are loaders. If they still keep a plaintext file, you have not moved the canonical copy. If they wrap Keychain, they are in the same family as security(1)."}}, {"@type": "Question", "name": "Should I use the Data Protection keychain instead?", "acceptedAnswer": {"@type": "Answer", "text": "Only if your app is written for it. launchd helpers and the classic `security` CLI speak the file-based login Keychain. ezkey targets that file on purpose so CLI items round-trip."}}, {"@type": "Question", "name": "What is the best Name for a key?", "acceptedAnswer": {"@type": "Answer", "text": "A stable handle you will type later, such as my-app-api-token. ezkey uses that string as Keychain Access Name and Where."}}]}]}
+  </script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="top">
+    <a class="mark" href="/">ezkey</a>
+    <nav>
+      <a href="/guides/">Guides</a>
+      <a href="/about/">About</a>
+      <a href="https://github.com/edtadros/ezkey">Source</a>
+    </nav>
+  </header>
+  <main id="main" class="legal">
+    <p><a href="/guides/">Guides</a></p>
+    <h1>What is the best way to store API keys on macOS?</h1>
+    <div class="answer"><p>For a single Mac you control, the best place for the canonical API key is a generic password in the login Keychain. Use Keychain Access, <code>security</code>, or ezkey.app to write it. Use 1Password or a team vault when you must share, audit, or recover across people. Do not treat <code>.env</code> or <code>~/.zshrc</code> as the canonical copy.</p></div>
+    <p>On this page</p>
+    <ul class="toc"><li><a href="#job">Name the job before the tool</a></li><li><a href="#compare">Options compared</a></li><li><a href="#solo">Best default for one Mac</a></li><li><a href="#team">When a hosted vault wins</a></li><li><a href="#ezkey">Where ezkey fits</a></li><li><a href="#related">Related answers</a></li></ul>
+    <h2 id="job">Name the job before the tool</h2>
+    <p>“Best” is not a brand. It is a match between the threat and the workflow. A Stripe live key on a laptop that also has your personal photos is a different job than a staging token on a CI runner. People ask for the best way to save keys when they have just pasted <code>sk-live</code> into a <code>.env</code> and felt sick. That job is: one human, one Mac, keys that must not hit GitHub.</p>
+    <p>If the job is “the intern in another city needs the same key Monday,” stop. That is a shared vault, a platform secret manager, or a short-lived token. The login Keychain will not email it to them, and ezkey will not either.</p>
+    <h2 id="compare">Options compared</h2>
+    <table><thead><tr><th>Method</th><th>Canonical copy lives</th><th>Good for</th><th>Bad for</th></tr></thead><tbody><tr><td>.env in the project</td><td>Disk, often next to code</td><td>Non-secret config</td><td>Anything that spends money if leaked</td></tr><tr><td>export in ~/.zshrc</td><td>Dotfile on disk</td><td>Non-secret PATH tweaks</td><td>API keys; they sit in backups forever</td></tr><tr><td>security CLI</td><td>login Keychain</td><td>Scriptable local secrets</td><td>Daily retrieve if you hate flags</td></tr><tr><td>Keychain Access</td><td>login Keychain</td><td>Seeing what is already there</td><td>Fast save/retrieve of one generic password</td></tr><tr><td>ezkey menu extra</td><td>Same login Keychain</td><td>Named items you already keep locally</td><td>Teams, iOS, recovery after you forget the password</td></tr><tr><td>1Password / Bitwarden</td><td>Vendor vault, usually synced</td><td>People, sharing, travel</td><td>Air-gapped local-only policy</td></tr></tbody></table>
+    <h2 id="solo">Best default for one Mac</h2>
+    <p>Turn FileVault on. Require a password when the screen sleeps. Put the key in the login Keychain. Pull it into the environment only for the command that needs it. Delete the plaintext leftovers. That stack uses software Apple already ships. You can inspect the item in Keychain Access. You can round-trip with <code>security find-generic-password</code>. You can use <a href="https://ezkey.app/">ezkey</a> if you want the same item without memorizing <code>-s</code> and <code>-a</code>.</p>
+    <p>PassStore, NoxKey, and similar apps add their own vault format, Touch ID theater, or MCP tools. Some of them still wrap Keychain. Some invent a second encrypted file. A second format is another thing to back up and another binary to trust. For a handful of generic passwords, the login Keychain is enough.</p>
+    <h2 id="team">When a hosted vault wins</h2>
+    <p>1Password, Bitwarden, and company secret managers win when you need: another person to get the value; a phone in the same account; a recovery story that is not “I hope Time Machine ran”; an audit log. They lose when your rule is “this token never leaves the building” or “I will not create an account for a local file.” See <a href="/compare/macos-keychain-vs-1password-for-api-keys/">macOS Keychain vs 1Password for API keys</a>.</p>
+    <h2 id="ezkey">Where ezkey fits</h2>
+    <p>ezkey is not trying to be the best password manager. It is a menu bar extra for generic passwords in login.keychain-db. Build it from source. It is MIT, as-is. If that is more trust than you want, use Keychain Access and <code>security</code> alone. They already work. The extra exists because retrieve-by-substring and a masked field are faster than clicking through Access Control lists when you do this every day.</p>
+    <h2 id="related">Related answers</h2>
+    <div class="related"><a href="/guides/how-to-save-api-keys-securely-on-mac/">How to save API keys securely on a Mac<small>The step-by-step, including the CLI prompt trick.</small></a><a href="/compare/macos-keychain-vs-1password-for-api-keys/">Keychain vs 1Password<small>Honest split: local vs shared.</small></a><a href="/for/local-api-keys/">For local API keys<small>When the key should never leave this Mac.</small></a><a href="/guides/how-to-store-openai-api-key-on-mac/">Store an OpenAI API key on a Mac<small>The same rule, with OPENAI_API_KEY as the example.</small></a></div>
+    <h2 id="faq-1">Is 1Password better than the Keychain?</h2>
+    <p>For family passwords, sharing, and travel recovery, usually yes. For a local API token that should never leave this Mac, the login Keychain avoids an account and a sync channel.</p><h2 id="faq-2">Is envchain or direnv enough?</h2>
+    <p>They are loaders. If they still keep a plaintext file, you have not moved the canonical copy. If they wrap Keychain, they are in the same family as security(1).</p><h2 id="faq-3">Should I use the Data Protection keychain instead?</h2>
+    <p>Only if your app is written for it. launchd helpers and the classic <code>security</code> CLI speak the file-based login Keychain. ezkey targets that file on purpose so CLI items round-trip.</p><h2 id="faq-4">What is the best Name for a key?</h2>
+    <p>A stable handle you will type later, such as my-app-api-token. ezkey uses that string as Keychain Access Name and Where.</p>
+  </main>
+  <footer>
+    <nav>
+      <a href="/guides/">Guides</a>
+      <a href="/about/">About</a>
+      <a href="/contact/">Contact</a>
+      <a href="/privacy/">Privacy</a>
+      <a href="/security/">Security</a>
+    </nav>
+    <p>MIT. Provided as-is, without warranty.</p>
+  </footer>
+</body>
+</html>

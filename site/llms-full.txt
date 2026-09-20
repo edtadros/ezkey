@@ -28,6 +28,18 @@ macOS still owns the Keychain. When ezkey reads an item another program created,
 
 Report vulnerabilities privately: https://github.com/edtadros/ezkey/security/advisories/new
 
+## About
+
+ezkey is a local macOS menu bar extra for the login Keychain. It is not a hosted password manager, browser extension, or sync service. Source is public. Build it on your Mac.
+
+## Contact
+
+No support desk. Security: https://github.com/edtadros/ezkey/security/advisories/new. Other issues: https://github.com/edtadros/ezkey
+
+## Developers
+
+Public REST at https://ezkey.app/api/v1 (health, overview, build, pages). MCP at /mcp. A2A at /a2a. No authentication. OpenAPI: https://ezkey.app/openapi.json
+
 ## Glossary
 
 - Name: Keychain Access Name. ezkey stores the same string as Where (service).

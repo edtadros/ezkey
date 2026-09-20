@@ -1,0 +1,58 @@
+{
+  "@context": "https://agenticresourcediscovery.org/context/v1",
+  "specVersion": "1.0",
+  "host": {
+    "displayName": "ezkey",
+    "identifier": "did:web:ezkey.app",
+    "url": "https://ezkey.app",
+    "contact": "https://ezkey.app/contact/"
+  },
+  "entries": [
+    {
+      "identifier": "urn:air:ezkey.app:mcp:site",
+      "displayName": "ezkey site MCP",
+      "description": "Read-only MCP server for ezkey product overview, build steps, and Markdown pages.",
+      "type": "application/mcp-server-card+json",
+      "url": "https://ezkey.app/.well-known/mcp/server-card.json",
+      "capabilities": ["get_overview", "get_build_instructions", "get_page"],
+      "representativeQueries": [
+        "what is ezkey",
+        "how do I build ezkey from source",
+        "connect to the ezkey MCP server"
+      ]
+    },
+    {
+      "identifier": "urn:air:ezkey.app:agent:a2a",
+      "displayName": "ezkey A2A agent",
+      "description": "Agent2Agent card for the JSON-RPC endpoint at /a2a.",
+      "type": "application/a2a-agent-card+json",
+      "url": "https://ezkey.app/.well-known/agent-card.json",
+      "representativeQueries": [
+        "find an A2A agent for ezkey",
+        "ask what ezkey stores in the login Keychain"
+      ]
+    },
+    {
+      "identifier": "urn:air:ezkey.app:skill:build-ezkey",
+      "displayName": "build-ezkey",
+      "description": "Agent skill for cloning and building ezkey on macOS.",
+      "type": "application/ai-skill+md",
+      "url": "https://ezkey.app/.well-known/agent-skills/build-ezkey/SKILL.md",
+      "representativeQueries": [
+        "how do I install ezkey",
+        "clone and build ezkey on a Mac"
+      ]
+    },
+    {
+      "identifier": "urn:air:ezkey.app:api:site",
+      "displayName": "ezkey site API",
+      "description": "Public OpenAPI 3.1 REST API for overview, build instructions, and Markdown pages.",
+      "type": "application/vnd.oai.openapi+json",
+      "url": "https://ezkey.app/openapi.json",
+      "representativeQueries": [
+        "ezkey REST API",
+        "fetch ezkey overview as JSON"
+      ]
+    }
+  ]
+}

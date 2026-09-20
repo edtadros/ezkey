@@ -35,6 +35,12 @@ final class ModelsTests: XCTestCase {
         XCTAssertEqual(OperationStatus.from(error: .duplicateEntry), .needsUpdate)
     }
 
+    func testStoredSecretNoteHelpers() {
+        XCTAssertTrue(StoredSecret(secret: "x", note: "keep").hasNote)
+        XCTAssertFalse(StoredSecret(secret: "x", note: "  \n").hasNote)
+        XCTAssertEqual(StoredSecret.normalizedNote("  keep this  "), "keep this")
+    }
+
     func testDisposablePrefixNeverMatchesProductionService() {
         XCTAssertTrue(DisposableEntry.isDisposable(SecretIdentity(service: "ezkey.test.abc", account: "a")))
         XCTAssertFalse(DisposableEntry.isDisposable(SecretIdentity(service: "mail/prod", account: "a")))

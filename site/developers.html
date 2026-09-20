@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Developers — ezkey</title>
+  <meta name="description" content="Public site API, MCP, A2A, and discovery metadata for ezkey. The macOS app has no network API.">
+  <meta name="is-agentic-site-type" content="content">
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+  <meta property="og:title" content="Developers — ezkey">
+  <meta property="og:description" content="Public site API, MCP, A2A, and discovery metadata for ezkey.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://ezkey.app/og.png">
+  <meta property="og:url" content="https://ezkey.app/developers/">
+  <link rel="canonical" href="https://ezkey.app/developers/">
+  <link rel="describedby" href="https://ezkey.app/llms.txt" type="text/plain">
+  <link rel="alternate" type="text/markdown" href="https://ezkey.app/developers.md">
+  <link rel="ard" href="https://ezkey.app/.well-known/ard.json">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/webmcp.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="top">
+    <a class="mark" href="/">ezkey</a>
+    <nav>
+      <a href="/guides/">Guides</a>
+      <a href="/about/">About</a>
+      <a href="/guides/">Guides</a>
+      <a href="/contact/">Contact</a>
+      <a href="https://github.com/edtadros/ezkey">Source</a>
+    </nav>
+  </header>
+  <main id="main" class="legal">
+    <h1>Developers</h1>
+    <p>ezkey is a local macOS menu bar extra. The native app has no network API. This page describes the public website interfaces agents can use to read product docs. Secrets never leave the Mac.</p>
+    <h2>When to use these interfaces</h2>
+    <p>Use them to explain ezkey, fetch build steps, or retrieve a Markdown page. Do not use them to store or sync Keychain items.</p>
+    <h2>REST API</h2>
+    <p>Base URL: <code>https://ezkey.app/api/v1</code>. Current major version is <code>1</code>, also sent as the <code>API-Version</code> response header. Breaking changes require a new major path. Deprecated routes will carry RFC 9745 <code>Deprecation</code> and <code>Sunset</code> headers with at least 90 days of notice. There is no scheduled deprecation today.</p>
+    <ul>
+      <li><code>GET /health</code> — liveness</li>
+      <li><code>GET /overview</code> — product summary</li>
+      <li><code>GET /build</code> — clone and build commands</li>
+      <li><code>GET /pages/{page}</code> — Markdown for a named page</li>
+    </ul>
+    <p>Errors use RFC 9457 <code>application/problem+json</code> with a machine-readable <code>code</code>, a human-readable <code>detail</code>, and a <code>resolution</code> hint. Unknown <code>/api/v1/*</code> paths return HTTP 404 in that shape. Rate limit: 60 requests per minute per client IP. Responses include <code>RateLimit</code> and <code>RateLimit-Policy</code>. HTTP 429 includes <code>Retry-After</code>.</p>
+    <p>OpenAPI: <a href="/openapi.json">/openapi.json</a>. Catalog: <a href="/.well-known/api-catalog">/.well-known/api-catalog</a>.</p>
+    <h2>MCP and A2A</h2>
+    <p>MCP Streamable HTTP is <a href="/mcp">https://ezkey.app/mcp</a> (alias <code>/api/v1/mcp</code>). Tools: <code>get_overview</code>, <code>get_build_instructions</code>, <code>get_page</code>. Server card: <a href="/.well-known/mcp/server-card.json">MCP server card</a>.</p>
+    <p>A2A JSON-RPC is <code>POST /a2a</code>. Agent card: <a href="/.well-known/agent-card.json">/.well-known/agent-card.json</a>. <code>message/send</code> answers from public site text. Tasks are not persisted.</p>
+    <h2>Authentication</h2>
+    <p>None. See <a href="/auth.md">auth.md</a>. The site does not issue OAuth tokens. Protected-resource metadata: <a href="/.well-known/oauth-protected-resource">/.well-known/oauth-protected-resource</a>.</p>
+    <h2>Command-line</h2>
+    <p>There is no npm or Homebrew CLI for the macOS app. Agents can call the public API with curl:</p>
+<pre><code>curl -sS https://ezkey.app/api/v1/overview
+curl -sS https://ezkey.app/api/v1/pages/security</code></pre>
+    <p>The Keychain itself is reached with Apple’s <code>security</code> tool after you build ezkey locally, not through this website.</p>
+  </main>
+  <footer>
+    <nav>
+      <a href="/guides/">Guides</a>
+      <a href="/about/">About</a>
+      <a href="/guides/">Guides</a>
+      <a href="/contact/">Contact</a>
+      <a href="/privacy/">Privacy</a>
+      <a href="/security/">Security</a>
+    </nav>
+  </footer>
+</body>
+</html>

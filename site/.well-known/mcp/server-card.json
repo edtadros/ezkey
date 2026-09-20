@@ -1,5 +1,9 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/mcp-server-card/v1.json",
+  "name": "ezkey",
+  "title": "ezkey",
+  "url": "https://ezkey.app/mcp",
+  "icons": [{ "src": "https://ezkey.app/favicon.svg", "mimeType": "image/svg+xml" }],
   "version": "1.0",
   "protocolVersion": "2025-06-18",
   "serverInfo": {
@@ -10,7 +14,8 @@
   "description": "Read-only information about ezkey, a macOS menu bar extra for the login Keychain.",
   "transport": {
     "type": "streamable-http",
-    "endpoint": "https://ezkey.app/mcp"
+    "endpoint": "https://ezkey.app/mcp",
+    "url": "https://ezkey.app/mcp"
   },
   "authentication": {
     "required": false
@@ -58,7 +63,7 @@
           "page": {
             "type": "string",
             "description": "One of home, privacy, security, glossary",
-            "enum": ["home", "privacy", "security", "glossary"]
+            "enum": ["home", "about", "contact", "privacy", "security", "glossary", "developers", "auth"]
           }
         },
         "required": ["page"],

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>macOS Keychain extra for developers — ezkey.app</title>
+  <meta name="description" content="A macOS menu bar extra that reads and writes the same login Keychain generic passwords as security add-generic-password. Local only. MIT. Build from source.">
+  <meta name="is-agentic-site-type" content="content">
+  <meta property="og:title" content="macOS Keychain extra for developers — ezkey.app">
+  <meta property="og:description" content="A macOS menu bar extra that reads and writes the same login Keychain generic passwords as security add-generic-password. Local only. MIT. Build from source.">
+  <meta property="og:type" content="article">
+  <meta property="og:image" content="https://ezkey.app/og.png">
+  <meta property="og:url" content="https://ezkey.app/for/developers/">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+  <link rel="canonical" href="https://ezkey.app/for/developers/">
+  <link rel="describedby" href="https://ezkey.app/llms.txt" type="text/plain">
+  <link rel="alternate" type="text/markdown" href="https://ezkey.app/for/developers.md">
+  <link rel="ard" href="https://ezkey.app/.well-known/ard.json">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/webmcp.js" defer></script>
+  <script type="application/ld+json">
+  {"@context": "https://schema.org", "@graph": [{"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "ezkey.app", "item": "https://ezkey.app/"}, {"@type": "ListItem", "position": 2, "name": "Guides", "item": "https://ezkey.app/guides/"}, {"@type": "ListItem", "position": 3, "name": "For developers", "item": "https://ezkey.app/for/developers/"}]}, {"@type": "Article", "headline": "ezkey for developers who already use security(1)", "description": "A macOS menu bar extra that reads and writes the same login Keychain generic passwords as security add-generic-password. Local only. MIT. Build from source.", "datePublished": "2026-09-20", "dateModified": "2026-09-20", "mainEntityOfPage": "https://ezkey.app/for/developers/", "author": {"@type": "Organization", "name": "ezkey.app", "url": "https://ezkey.app/"}, "publisher": {"@id": "https://ezkey.app/#org"}}, {"@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Does it work with my existing security CLI items?", "acceptedAnswer": {"@type": "Answer", "text": "If account is your Mac username and you know the service string, Retrieve can find it. Partial names list matches."}}, {"@type": "Question", "name": "Swift version?", "acceptedAnswer": {"@type": "Answer", "text": "Swift 6.1, macOS 14+, Package.swift in the repo."}}, {"@type": "Question", "name": "Sandbox?", "acceptedAnswer": {"@type": "Answer", "text": "No. A sandbox would hide items from security(1). That is a deliberate trade."}}, {"@type": "Question", "name": "CI artifacts?", "acceptedAnswer": {"@type": "Answer", "text": "Tests only. CI does not attach an .app. Unsigned CI zips are not a release."}}]}]}
+  </script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="top">
+    <a class="mark" href="/">ezkey</a>
+    <nav>
+      <a href="/guides/">Guides</a>
+      <a href="/about/">About</a>
+      <a href="https://github.com/edtadros/ezkey">Source</a>
+    </nav>
+  </header>
+  <main id="main" class="legal">
+    <p><a href="/guides/">Guides</a></p>
+    <h1>ezkey for developers who already use security(1)</h1>
+    <div class="answer"><p>ezkey is for people who already treat the login Keychain as the place for local API tokens and are tired of either Keychain Access or a wall of <code>security</code> flags. It is not a cloud vault. You build it. You read the Keychain calls. Items stay in login.keychain-db.</p></div>
+    <p>On this page</p>
+    <ul class="toc"><li><a href="#pain">The developer reality</a></li><li><a href="#how">How ezkey helps</a></li><li><a href="#not">What it will not do</a></li><li><a href="#start">Start from source</a></li><li><a href="#related">Related answers</a></li></ul>
+    <h2 id="pain">The developer reality</h2>
+    <p>You have three tokens for one side project and a live key for a client preview. They live in a password manager, a sticky note, and a <code>.env</code> that is gitignored except for the time it was not. Keychain Access can hold them, but the UI is built for certificates and Wi-Fi. <code>security add-generic-password</code> works until you forget whether the service string had an underscore.</p>
+    <p>You do not want another subscription. You do want the item to be the same one your deploy script can <code>find-generic-password</code>. You want to see a masked value, copy it, and have the pasteboard forget.</p>
+    <p>Monday looks like this: a webhook signing secret for a local tunnel, a personal OpenAI key, a Stripe test key, and a GitHub token that can push to one repo. None of them belong in the same 1Password vault as your bank. All of them belong in a place <code>security</code> can print. Keychain Access can hold them, but you will click Kind, Label, Account, and Where every time. A menu extra with one Name field is the whole product.</p>
+    <p>If you maintain a <code>direnv</code> setup, you still need a canonical store. direnv loads files. Files leak. Keep the live values in the Keychain and, if you must, have a private script call <code>find-generic-password</code> into the environment for that directory. ezkey does not replace direnv. It replaces the plaintext file direnv was about to read.</p>
+    <h2 id="how">How ezkey helps</h2>
+    <ul><li>Save and Retrieve from the menu bar. No Dock icon.</li><li>Name is Keychain Access Name and Where, one field.</li><li>Retrieve by substring, then pick. Secrets stay hidden until you choose.</li><li>Copy clears in 30 seconds if unchanged.</li><li>Same login.keychain-db as the CLI.</li></ul>
+    <p>The source is https://github.com/edtadros/ezkey. Read <code>LoginKeychainStore.swift</code> if you do not trust marketing pages. Tests live in <code>Tests/EZKeyCoreTests</code> and use an <code>ezkey.test.</code> name prefix. CI runs <code>swift test</code> on macos-15. It does not attach an <code>.app</code>. If a random Actions artifact offers you a binary, do not grant it Keychain access.</p>
+    <h2 id="not">What it will not do</h2>
+    <p>It will not rotate keys at OpenAI. It will not sync to a phone. It will not hide from a process running as you. It will not replace 1Password for your bank. It will not ship a notarized binary until someone runs <code>scripts/release.sh</code> with Developer ID. Those are not missing checkboxes. They are the product boundary. See <a href="/for/local-api-keys/">anti-cloud local keys</a>.</p>
+    <h2 id="start">Start from source</h2>
+    <pre><code>git clone https://github.com/edtadros/ezkey.git
+cd ezkey
+./scripts/build-and-run.sh</code></pre>
+    <p>Requires macOS 14+ and Xcode command-line tools. Then follow <a href="/guides/how-to-save-api-keys-securely-on-mac/">how to save API keys securely</a>.</p>
+    <p>If you already have items from <code>security add-generic-password</code>, try Retrieve with part of the service string. If the list is empty, check Account in Keychain Access. ezkey only lists the logged-in Mac user. That is annoying if you used <code>-a</code> as a project name. It is also how the extra stays small. Rename or resave if you want the menu extra to see them.</p>
+    <h2 id="related">Related answers</h2>
+    <div class="related"><a href="/guides/security-add-generic-password/">security add-generic-password<small>Flag map to ezkey fields.</small></a><a href="/compare/ezkey-vs-keychain-access/">ezkey vs Keychain Access<small>Same database.</small></a><a href="/guides/best-way-to-store-api-keys-on-macos/">Best way to store API keys on macOS<small>Where a vault still wins.</small></a><a href="/developers/">Developers (site API)<small>MCP and OpenAPI for this website, not for Keychain.</small></a></div>
+    <h2 id="faq-1">Does it work with my existing security CLI items?</h2>
+    <p>If account is your Mac username and you know the service string, Retrieve can find it. Partial names list matches.</p><h2 id="faq-2">Swift version?</h2>
+    <p>Swift 6.1, macOS 14+, Package.swift in the repo.</p><h2 id="faq-3">Sandbox?</h2>
+    <p>No. A sandbox would hide items from security(1). That is a deliberate trade.</p><h2 id="faq-4">CI artifacts?</h2>
+    <p>Tests only. CI does not attach an .app. Unsigned CI zips are not a release.</p>
+  </main>
+  <footer>
+    <nav>
+      <a href="/guides/">Guides</a>
+      <a href="/about/">About</a>
+      <a href="/contact/">Contact</a>
+      <a href="/privacy/">Privacy</a>
+      <a href="/security/">Security</a>
+    </nav>
+    <p>MIT. Provided as-is, without warranty.</p>
+  </footer>
+</body>
+</html>

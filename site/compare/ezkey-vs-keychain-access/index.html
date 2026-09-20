@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ezkey vs Keychain Access — ezkey.app</title>
+  <meta name="description" content="Both use the macOS login Keychain. Keychain Access is the system UI. ezkey is a menu bar extra for generic passwords with substring retrieve. Same file, different job.">
+  <meta name="is-agentic-site-type" content="content">
+  <meta property="og:title" content="ezkey vs Keychain Access — ezkey.app">
+  <meta property="og:description" content="Both use the macOS login Keychain. Keychain Access is the system UI. ezkey is a menu bar extra for generic passwords with substring retrieve. Same file, different job.">
+  <meta property="og:type" content="article">
+  <meta property="og:image" content="https://ezkey.app/og.png">
+  <meta property="og:url" content="https://ezkey.app/compare/ezkey-vs-keychain-access/">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+  <link rel="canonical" href="https://ezkey.app/compare/ezkey-vs-keychain-access/">
+  <link rel="describedby" href="https://ezkey.app/llms.txt" type="text/plain">
+  <link rel="alternate" type="text/markdown" href="https://ezkey.app/compare/ezkey-vs-keychain-access.md">
+  <link rel="ard" href="https://ezkey.app/.well-known/ard.json">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/webmcp.js" defer></script>
+  <script type="application/ld+json">
+  {"@context": "https://schema.org", "@graph": [{"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "ezkey.app", "item": "https://ezkey.app/"}, {"@type": "ListItem", "position": 2, "name": "Guides", "item": "https://ezkey.app/guides/"}, {"@type": "ListItem", "position": 3, "name": "ezkey vs Keychain Access", "item": "https://ezkey.app/compare/ezkey-vs-keychain-access/"}]}, {"@type": "Article", "headline": "ezkey vs Keychain Access", "description": "Both use the macOS login Keychain. Keychain Access is the system UI. ezkey is a menu bar extra for generic passwords with substring retrieve. Same file, different job.", "datePublished": "2026-09-20", "dateModified": "2026-09-20", "mainEntityOfPage": "https://ezkey.app/compare/ezkey-vs-keychain-access/", "author": {"@type": "Organization", "name": "ezkey.app", "url": "https://ezkey.app/"}, "publisher": {"@id": "https://ezkey.app/#org"}}, {"@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Will an item I create in Access show up in ezkey?", "acceptedAnswer": {"@type": "Answer", "text": "If it is a generic password, account is your Mac user, and you search the Name/Where string, yes. Other item classes will not."}}, {"@type": "Question", "name": "Can ezkey edit Access Control lists?", "acceptedAnswer": {"@type": "Answer", "text": "No. Use Keychain Access."}}, {"@type": "Question", "name": "Does ezkey replace security(1)?", "acceptedAnswer": {"@type": "Answer", "text": "No. It is compatible with add/find-generic-password for the fields it uses."}}, {"@type": "Question", "name": "Why isn’t ezkey sandboxed?", "acceptedAnswer": {"@type": "Answer", "text": "A sandbox would store items where the security CLI cannot see them. Compatibility with CLI items is the point."}}]}]}
+  </script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="top">
+    <a class="mark" href="/">ezkey</a>
+    <nav>
+      <a href="/guides/">Guides</a>
+      <a href="/about/">About</a>
+      <a href="https://github.com/edtadros/ezkey">Source</a>
+    </nav>
+  </header>
+  <main id="main" class="legal">
+    <p><a href="/guides/">Guides</a></p>
+    <h1>ezkey vs Keychain Access</h1>
+    <div class="answer"><p>Keychain Access is Apple’s app for every kind of Keychain item. ezkey.app is a tiny extra for generic passwords: save, retrieve by name or substring, reveal, copy. They can see the same login.keychain-db items when Name/Where and Account match. Use Access for certificates and ACLs. Use ezkey if you live on one Name field in the menu bar.</p></div>
+    <p>On this page</p>
+    <ul class="toc"><li><a href="#same">Same database</a></li><li><a href="#diff">Different job</a></li><li><a href="#when-access">When Keychain Access is better</a></li><li><a href="#when-ezkey">When ezkey is better</a></li><li><a href="#related">Related answers</a></li></ul>
+    <h2 id="same">Same database</h2>
+    <p>ezkey opens <code>~/Library/Keychains/login.keychain-db</code> through Security.framework. Keychain Access shows that file as the login keychain. If you save <code>my-app-api-token</code> in ezkey, Access should list it with Name and Where set to that string and Account set to your user. The <a href="/glossary/">glossary</a> is the field map.</p>
+    <h2 id="diff">Different job</h2>
+    <table><thead><tr><th></th><th>Keychain Access</th><th>ezkey</th></tr></thead><tbody><tr><td>Scope</td><td>Passwords, keys, certs, notes</td><td>Generic passwords only</td></tr><tr><td>Find</td><td>Search box, lots of columns</td><td>Exact Name, then substring list</td></tr><tr><td>Always in the menu bar</td><td>No</td><td>Yes</td></tr><tr><td>Clipboard timer</td><td>No</td><td>30 seconds if unchanged</td></tr><tr><td>ACL editor</td><td>Yes</td><td>No</td></tr><tr><td>Source</td><td>Closed, from Apple</td><td>MIT, github.com/edtadros/ezkey</td></tr></tbody></table>
+    <h2 id="when-access">When Keychain Access is better</h2>
+    <p>Certificates, code signing identities, looking at Access Control, fixing a stuck Always Allow, inspecting iCloud items. ezkey will not grow into that. If you need those tools, open Access. That is not a failure of ezkey. It is the division of labor.</p>
+    <p>Access is also the right place when an item will not delete, when two items share a confusing Where, or when you need to see which apps are trusted. ezkey will not show ACL entries. If Retrieve fails with a prompt you do not understand, open Access, find the item, and read Access Control. Then decide whether Always Allow is something you want to give a binary you compiled.</p>
+    <h2 id="when-ezkey">When ezkey is better</h2>
+    <p>You save and retrieve a handful of API tokens every week. You know the Name. You do not want to hunt Kind columns. You want a masked field and a copy button. You want <code>security</code> to keep working. Then a menu extra that only does generic passwords is calmer than Access. Build it yourself. See <a href="/for/developers/">for developers</a>.</p>
+    <p>ezkey will not import a CSV of passwords. It will not show your Safari logins. If Access is open because you are hunting a Wi-Fi password, stay there. If Access is open because you cannot remember the <code>-s</code> string for a generic password you created last month, the extra’s substring list is the feature.</p>
+    <h2 id="related">Related answers</h2>
+    <div class="related"><a href="/guides/security-add-generic-password/">security add-generic-password<small>The CLI both of you sit on.</small></a><a href="/guides/how-to-save-api-keys-securely-on-mac/">Save API keys securely<small>The actual procedure.</small></a><a href="/compare/macos-keychain-vs-1password-for-api-keys/">Keychain vs 1Password<small>Different layer.</small></a><a href="/security/">Security<small>Prompts and Always Allow.</small></a></div>
+    <h2 id="faq-1">Will an item I create in Access show up in ezkey?</h2>
+    <p>If it is a generic password, account is your Mac user, and you search the Name/Where string, yes. Other item classes will not.</p><h2 id="faq-2">Can ezkey edit Access Control lists?</h2>
+    <p>No. Use Keychain Access.</p><h2 id="faq-3">Does ezkey replace security(1)?</h2>
+    <p>No. It is compatible with add/find-generic-password for the fields it uses.</p><h2 id="faq-4">Why isn’t ezkey sandboxed?</h2>
+    <p>A sandbox would store items where the security CLI cannot see them. Compatibility with CLI items is the point.</p>
+  </main>
+  <footer>
+    <nav>
+      <a href="/guides/">Guides</a>
+      <a href="/about/">About</a>
+      <a href="/contact/">Contact</a>
+      <a href="/privacy/">Privacy</a>
+      <a href="/security/">Security</a>
+    </nav>
+    <p>MIT. Provided as-is, without warranty.</p>
+  </footer>
+</body>
+</html>
