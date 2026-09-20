@@ -26,8 +26,9 @@
     <a class="mark" href="/">ezkey</a>
     <nav>
       <a href="/guides/">Guides</a>
+      <a href="/developers/">Developers</a>
+      <a href="/docs/">Docs</a>
       <a href="/about/">About</a>
-      <a href="/guides/">Guides</a>
       <a href="/contact/">Contact</a>
       <a href="https://github.com/edtadros/ezkey">Source</a>
     </nav>
@@ -44,25 +45,32 @@
       <li><code>GET /overview</code> — product summary</li>
       <li><code>GET /build</code> — clone and build commands</li>
       <li><code>GET /pages/{page}</code> — Markdown for a named page</li>
+      <li><code>GET /</code> — catalog of endpoints</li>
+      <li><code>GET /agent-brief</code> — repo, disclaimer, clone, and run steps</li>
+      <li><code>GET /disclaimer</code> — as-is terms an agent must present</li>
+      <li><code>GET /install</code> — clone and build commands</li>
+      <li><code>GET /auth</code> — no keys; public sandbox</li>
+      <li><code>GET /cli</code> — npx/Homebrew entry</li>
+      <li><code>GET /version</code> — versioning and deprecation policy</li>
     </ul>
     <p>Errors use RFC 9457 <code>application/problem+json</code> with a machine-readable <code>code</code>, a human-readable <code>detail</code>, and a <code>resolution</code> hint. Unknown <code>/api/v1/*</code> paths return HTTP 404 in that shape. Rate limit: 60 requests per minute per client IP. Responses include <code>RateLimit</code> and <code>RateLimit-Policy</code>. HTTP 429 includes <code>Retry-After</code>.</p>
     <p>OpenAPI: <a href="/openapi.json">/openapi.json</a>. Catalog: <a href="/.well-known/api-catalog">/.well-known/api-catalog</a>.</p>
     <h2>MCP and A2A</h2>
-    <p>MCP Streamable HTTP is <a href="/mcp">https://ezkey.app/mcp</a> (alias <code>/api/v1/mcp</code>). Tools: <code>get_overview</code>, <code>get_build_instructions</code>, <code>get_page</code>. Server card: <a href="/.well-known/mcp/server-card.json">MCP server card</a>.</p>
+    <p>MCP Streamable HTTP is <a href="/mcp">https://ezkey.app/mcp</a> (alias <code>/api/v1/mcp</code>). Tools: <code>get_overview</code>, <code>get_build_instructions</code>, <code>get_agent_brief</code>, <code>get_disclaimer</code>, <code>get_page</code>. Server card: <a href="/.well-known/mcp/server-card.json">MCP server card</a>.</p>
     <p>A2A JSON-RPC is <code>POST /a2a</code>. Agent card: <a href="/.well-known/agent-card.json">/.well-known/agent-card.json</a>. <code>message/send</code> answers from public site text. Tasks are not persisted.</p>
     <h2>Authentication</h2>
     <p>None. See <a href="/auth.md">auth.md</a>. The site does not issue OAuth tokens. Protected-resource metadata: <a href="/.well-known/oauth-protected-resource">/.well-known/oauth-protected-resource</a>.</p>
     <h2>Command-line</h2>
-    <p>There is no npm or Homebrew CLI for the macOS app. Agents can call the public API with curl:</p>
-<pre><code>curl -sS https://ezkey.app/api/v1/overview
-curl -sS https://ezkey.app/api/v1/pages/security</code></pre>
-    <p>The Keychain itself is reached with Apple’s <code>security</code> tool after you build ezkey locally, not through this website.</p>
+    <p>Agents can run <code>npx github:edtadros/ezkey</code> to print the disclaimer and build commands. See <a href="/cli/">CLI</a>. No API key is issued. Production is the sandbox.</p>
+<pre><code>curl -sS https://ezkey.app/api/v1/agent-brief
+curl -sS https://ezkey.app/api/v1/overview</code></pre>
+    <p>The Keychain itself is reached with Apple’s <code>security</code> tool after you build ezkey locally, not through this website. Versioning: <a href="/versioning/">versioning policy</a>.</p>
   </main>
   <footer>
     <nav>
       <a href="/guides/">Guides</a>
-      <a href="/about/">About</a>
-      <a href="/guides/">Guides</a>
+      <a href="/docs/">Docs</a>
+      <a href="/cli/">CLI</a>
       <a href="/contact/">Contact</a>
       <a href="/privacy/">Privacy</a>
       <a href="/security/">Security</a>
