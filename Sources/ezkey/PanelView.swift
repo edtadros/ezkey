@@ -23,7 +23,7 @@ struct PanelView: View {
             .accessibilityLabel("Mode")
             .disabled(model.isWorking)
 
-            labeledField("Service", text: $model.service, prompt: "phishhook/jev", field: .service)
+            labeledField("Service", text: $model.service, prompt: "callbrief/staging", field: .service)
             labeledField("Account", text: $model.account, prompt: "account", field: .account)
 
             if model.mode == .save {
@@ -112,7 +112,41 @@ struct PanelView: View {
             }
             .keyboardShortcut(.defaultAction)
             .disabled(model.isWorking)
-            .accessibilityHint("Look up the exact service and account pair")
+            .accessibilityHint("Search by part of the service name, or look up an exact pair")
+
+            if !model.matches.isEmpty {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Matching entries")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    ScrollView {
+                        VStack(spacing: 4) {
+                            ForEach(model.matches) { match in
+                                Button {
+                                    Task { await model.selectMatch(match) }
+                                } label: {
+                                    VStack(alignment: .leading, spacing: 1) {
+                                        Text(match.service)
+                                            .font(.body)
+                                            .frame(maxWidth: .infinity, alignment: .leading)
+                                        Text(match.account)
+                                            .font(.caption)
+                                            .foregroundStyle(.secondary)
+                                    }
+                                    .padding(.vertical, 4)
+                                    .padding(.horizontal, 6)
+                                    .contentShape(Rectangle())
+                                }
+                                .buttonStyle(.plain)
+                                .background(.quaternary, in: RoundedRectangle(cornerRadius: 6))
+                                .accessibilityLabel("\(match.service), account \(match.account)")
+                                .disabled(model.isWorking)
+                            }
+                        }
+                    }
+                    .frame(maxHeight: 160)
+                }
+            }
 
             if model.retrievedSecret != nil {
                 VStack(alignment: .leading, spacing: 4) {

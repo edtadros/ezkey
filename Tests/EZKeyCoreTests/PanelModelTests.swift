@@ -27,6 +27,17 @@ actor MockStore: SecretStore {
         return secret
     }
 
+    func list(matching query: String) async throws -> [SecretIdentity] {
+        let needle = query.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !needle.isEmpty else { return [] }
+        return items.keys
+            .filter {
+                $0.service.localizedCaseInsensitiveContains(needle)
+                    || $0.account.localizedCaseInsensitiveContains(needle)
+            }
+            .sorted { ($0.service, $0.account) < ($1.service, $1.account) }
+    }
+
     func delete(_ identity: SecretIdentity) async throws {
         items[identity] = nil
     }
@@ -167,12 +178,15 @@ final class PanelModelTests: XCTestCase {
     func testRetrieveMissingEntry() async {
         model.service = "ezkey.test.missing"
         await model.retrieve()
-        XCTAssertEqual(model.status, .missingEntry)
+        XCTAssertEqual(model.status, .noMatches)
         XCTAssertNil(model.retrievedSecret)
+        XCTAssertTrue(model.matches.isEmpty)
     }
 
     func testRetrieveCancelledAndDenied() async {
-        model.service = "ezkey.test.cancel"
+        let identity = SecretIdentity(service: "ezkey.test.cancel", account: "testuser")
+        await store.seed(identity, secret: "hidden")
+        model.service = identity.service
         await store.setRetrieveHandler { _ in throw KeychainError.cancelled }
         await model.retrieve()
         XCTAssertEqual(model.status, .cancelled)
@@ -180,6 +194,32 @@ final class PanelModelTests: XCTestCase {
         await store.setRetrieveHandler { _ in throw KeychainError.accessDenied }
         await model.retrieve()
         XCTAssertEqual(model.status, .accessDenied)
+    }
+
+    func testPartialRetrieveListsMatchesWithoutSecrets() async {
+        let staging = SecretIdentity(service: "callbrief/staging/xai", account: "testuser")
+        let prod = SecretIdentity(service: "callbrief/prod/xai", account: "testuser")
+        await store.seed(staging, secret: "staging-secret")
+        await store.seed(prod, secret: "prod-secret")
+        model.service = "callbrief"
+        await model.retrieve()
+        XCTAssertEqual(model.status, .chooseMatch)
+        XCTAssertNil(model.retrievedSecret)
+        XCTAssertEqual(model.matches.map(\.service), ["callbrief/prod/xai", "callbrief/staging/xai"])
+    }
+
+    func testSelectingAMatchRetrievesThatSecret() async {
+        let staging = SecretIdentity(service: "callbrief/staging/xai", account: "testuser")
+        let prod = SecretIdentity(service: "callbrief/prod/xai", account: "testuser")
+        await store.seed(staging, secret: "staging-secret")
+        await store.seed(prod, secret: "prod-secret")
+        model.service = "callbrief"
+        await model.retrieve()
+        await model.selectMatch(staging)
+        XCTAssertEqual(model.status, .retrieved)
+        XCTAssertEqual(model.retrievedSecret, "staging-secret")
+        XCTAssertEqual(model.service, staging.service)
+        XCTAssertTrue(model.matches.isEmpty)
     }
 
     func testRetrieveIsMaskedUntilRevealed() async {
@@ -224,11 +264,13 @@ final class PanelModelTests: XCTestCase {
         let gate = Gate()
         var reopenCount = 0
         model.onOperationFinishedWhileClosed = { reopenCount += 1 }
+        let identity = SecretIdentity(service: "ezkey.test.inflight", account: "testuser")
+        await store.seed(identity, secret: "placeholder")
         await store.setRetrieveHandler { _ in
             await gate.wait()
             return "late-secret"
         }
-        model.service = "ezkey.test.inflight"
+        model.service = identity.service
         let task = Task { await model.retrieve() }
         for _ in 0..<100 where model.status != .working {
             try? await Task.sleep(for: .milliseconds(5))

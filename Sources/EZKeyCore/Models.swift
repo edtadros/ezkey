@@ -4,7 +4,7 @@ import Security
 /// Identity of a generic-password item in the login Keychain.
 /// The pair (service, account) is the lookup key used by both ezkey and
 /// `/usr/bin/security find-generic-password`.
-public struct SecretIdentity: Hashable, Sendable, Equatable {
+public struct SecretIdentity: Hashable, Sendable, Equatable, Identifiable {
     public let service: String
     public let account: String
 
@@ -12,6 +12,8 @@ public struct SecretIdentity: Hashable, Sendable, Equatable {
         self.service = service.trimmingCharacters(in: .whitespacesAndNewlines)
         self.account = account.trimmingCharacters(in: .whitespacesAndNewlines)
     }
+
+    public var id: String { "\(service)\u{1F}\(account)" }
 
     public var isValid: Bool {
         !service.isEmpty && !account.isEmpty
@@ -65,7 +67,9 @@ public enum OperationStatus: Equatable, Sendable {
     case needsUpdate
     case retrieved
     case copied
+    case chooseMatch
     case missingEntry
+    case noMatches
     case accessDenied
     case cancelled
     case failure
@@ -85,10 +89,14 @@ public enum OperationStatus: Equatable, Sendable {
             "An entry already exists. Click Update to replace it."
         case .retrieved:
             "Retrieved."
+        case .chooseMatch:
+            "Select a matching entry."
         case .copied:
             "Copied. Clipboard clears in 30 seconds if unchanged."
         case .missingEntry:
             "No entry for this service and account."
+        case .noMatches:
+            "No Keychain entries match that name."
         case .accessDenied:
             "Keychain access denied."
         case .cancelled:
@@ -102,7 +110,7 @@ public enum OperationStatus: Equatable, Sendable {
 
     public var isError: Bool {
         switch self {
-        case .missingEntry, .accessDenied, .cancelled, .failure, .validation:
+        case .missingEntry, .noMatches, .accessDenied, .cancelled, .failure, .validation:
             true
         default:
             false

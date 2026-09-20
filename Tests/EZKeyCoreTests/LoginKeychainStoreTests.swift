@@ -87,6 +87,20 @@ final class LoginKeychainStoreTests: XCTestCase {
         XCTAssertTrue(exists)
     }
 
+    func testListMatchingIsSubstringAndDoesNotReturnSecrets() async throws {
+        let token = UUID().uuidString
+        let first = SecretIdentity(service: DisposableEntry.servicePrefix + token + ".alpha", account: NSUserName())
+        let second = SecretIdentity(service: DisposableEntry.servicePrefix + token + ".beta", account: NSUserName())
+        let other = uniqueIdentity()
+        try await store.add(first, secret: "alpha-secret")
+        try await store.add(second, secret: "beta-secret")
+        try await store.add(other, secret: "other-secret")
+        created.append(contentsOf: [first, second, other])
+        let matches = try await store.list(matching: token)
+        XCTAssertEqual(Set(matches.map(\.service)), [first.service, second.service])
+        XCTAssertFalse(matches.contains(other))
+    }
+
     func testRefusesToTreatProductionServiceAsDisposable() {
         let production = SecretIdentity(service: "phishhook/jev", account: NSUserName())
         XCTAssertFalse(DisposableEntry.isDisposable(production))

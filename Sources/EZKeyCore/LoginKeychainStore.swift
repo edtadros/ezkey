@@ -6,6 +6,7 @@ public protocol SecretStore: Sendable {
     func add(_ identity: SecretIdentity, secret: String) async throws
     func update(_ identity: SecretIdentity, secret: String) async throws
     func retrieve(_ identity: SecretIdentity) async throws -> String
+    func list(matching query: String) async throws -> [SecretIdentity]
     func delete(_ identity: SecretIdentity) async throws
 }
 
@@ -97,6 +98,58 @@ public actor LoginKeychainStore: SecretStore {
             throw KeychainError.failure(errSecDecode)
         }
         return secret
+    }
+
+    public static let matchLimit = 50
+
+    public func list(matching query: String) async throws -> [SecretIdentity] {
+        let needle = query.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !needle.isEmpty else { return [] }
+        let keychain = try openLoginKeychain()
+        let search: [CFString: Any] = [
+            kSecClass: kSecClassGenericPassword,
+            kSecMatchSearchList: [keychain],
+            kSecUseDataProtectionKeychain: false,
+            kSecReturnAttributes: true,
+            kSecReturnData: false,
+            kSecMatchLimit: kSecMatchLimitAll,
+            kSecUseAuthenticationUI: kSecUseAuthenticationUISkip
+        ]
+        var result: CFTypeRef?
+        let status = SecItemCopyMatching(search as CFDictionary, &result)
+        if status == errSecItemNotFound {
+            return []
+        }
+        try check(status)
+        let records: [NSDictionary]
+        if let dicts = result as? [NSDictionary] {
+            records = dicts
+        } else if let array = result as? NSArray {
+            records = array.compactMap { $0 as? NSDictionary }
+        } else {
+            return []
+        }
+        var seen = Set<SecretIdentity>()
+        var matches: [SecretIdentity] = []
+        for record in records {
+            let service = record[kSecAttrService] as? String ?? ""
+            let account = record[kSecAttrAccount] as? String ?? ""
+            let identity = SecretIdentity(service: service, account: account)
+            guard identity.isValid else { continue }
+            let serviceHit = identity.service.localizedCaseInsensitiveContains(needle)
+            let accountHit = identity.account.localizedCaseInsensitiveContains(needle)
+            guard serviceHit || accountHit else { continue }
+            guard seen.insert(identity).inserted else { continue }
+            matches.append(identity)
+        }
+        matches.sort {
+            ($0.service.localizedLowercase, $0.account.localizedLowercase)
+                < ($1.service.localizedLowercase, $1.account.localizedLowercase)
+        }
+        if matches.count > Self.matchLimit {
+            return Array(matches.prefix(Self.matchLimit))
+        }
+        return matches
     }
 
     public func delete(_ identity: SecretIdentity) async throws {

@@ -9,22 +9,30 @@ public final class PanelModel {
             guard oldValue != mode else { return }
             retrievedSecret = nil
             isRevealed = false
-            if status == .retrieved || status == .copied || status == .needsUpdate {
+            matches = []
+            if status == .retrieved || status == .copied || status == .needsUpdate || status == .chooseMatch {
                 status = .idle
             }
         }
     }
 
     public var service: String {
-        didSet { resetNeedsUpdateIfIdentityChanged() }
+        didSet {
+            resetNeedsUpdateIfIdentityChanged()
+            resetMatchesIfSearchChanged()
+        }
     }
 
     public var account: String {
-        didSet { resetNeedsUpdateIfIdentityChanged() }
+        didSet {
+            resetNeedsUpdateIfIdentityChanged()
+            resetMatchesIfSearchChanged()
+        }
     }
 
     public var secretToSave: String = ""
     public var retrievedSecret: String?
+    public var matches: [SecretIdentity] = []
     public var isRevealed: Bool = false
     public var status: OperationStatus = .idle
     public var isPanelOpen: Bool = false
@@ -87,6 +95,7 @@ public final class PanelModel {
         retrieveGeneration += 1
         secretToSave = ""
         retrievedSecret = nil
+        matches = []
         isRevealed = false
         status = .idle
         identityAtNeedsUpdate = nil
@@ -156,17 +165,32 @@ public final class PanelModel {
         persistLabels()
         retrievedSecret = nil
         isRevealed = false
-        let identity = identity
-        guard identity.isValid else {
-            status = .validation("Service and account are required.")
+        matches = []
+        let query = service.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !query.isEmpty else {
+            status = .validation("Enter a service name to search.")
             return
         }
         status = .working
         retrieveGeneration += 1
         let generation = retrieveGeneration
         do {
-            let secret = try await store.retrieve(identity)
-            applyRetrieveResult(.success(secret), generation: generation)
+            let exact = identity
+            if exact.isValid, try await store.contains(exact) {
+                let secret = try await store.retrieve(exact)
+                applyRetrieveResult(.success(secret), generation: generation)
+                return
+            }
+            let found = try await store.list(matching: query)
+            guard generation == retrieveGeneration else { return }
+            if found.isEmpty {
+                status = .noMatches
+                noteFinishedWhileClosed()
+                return
+            }
+            matches = found
+            status = .chooseMatch
+            noteFinishedWhileClosed()
         } catch let error as KeychainError {
             applyRetrieveResult(.failure(error), generation: generation)
         } catch {
@@ -176,6 +200,13 @@ public final class PanelModel {
             status = .failure
             noteFinishedWhileClosed()
         }
+    }
+
+    public func selectMatch(_ identity: SecretIdentity) async {
+        matches = []
+        service = identity.service
+        account = identity.account
+        await retrieve()
     }
 
     public func toggleReveal() {
@@ -220,6 +251,14 @@ public final class PanelModel {
         if current != identityAtNeedsUpdate {
             status = .idle
             identityAtNeedsUpdate = nil
+        }
+    }
+
+    private func resetMatchesIfSearchChanged() {
+        guard !matches.isEmpty else { return }
+        matches = []
+        if status == .chooseMatch {
+            status = .idle
         }
     }
 }
