@@ -2,7 +2,7 @@
 
 A small native macOS menu bar app for saving, updating, and retrieving secrets in the **login Keychain**. It is local software. It is not a hosted password manager.
 
-**Provided as-is, without warranty or liability.** See [LICENSE](LICENSE) and [DISCLAIMER.md](DISCLAIMER.md).
+**Provided as-is, without warranty or liability.** See [LICENSE](LICENSE) and [DISCLAIMER.md](DISCLAIMER.md). Site: [ezkey.app](https://ezkey.app).
 
 ezkey talks to the same file-based Keychain as:
 

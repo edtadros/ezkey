@@ -11,6 +11,10 @@ xcuserdata/
 # Packaged app output (rebuild with scripts/build-and-run.sh)
 build/
 
+# Wrangler
+.wrangler/
+.dev.vars
+
 .DS_Store
 *.swp
 

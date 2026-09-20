@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ezkey</title>
+  <meta name="description" content="A macOS menu bar extra for the login Keychain you already have. Local only. No account, no server, no warranty.">
+  <meta property="og:title" content="ezkey">
+  <meta property="og:description" content="A macOS menu bar extra for the login Keychain you already have.">
+  <meta property="og:url" content="https://ezkey.app/">
+  <link rel="canonical" href="https://ezkey.app/">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="top">
+    <a class="mark" href="/">
+      <svg width="22" height="22" viewBox="0 0 32 32" aria-hidden="true">
+        <rect width="32" height="32" rx="7" fill="#0071e3"/>
+        <path fill="#fff" d="M19.2 9.2a5.6 5.6 0 1 0-4.85 5.55L8.4 20.7v2.6h3V26h2.7v-2.7h2.2v-2.5l2.05-2.05a5.6 5.6 0 0 0 2.85-9.55zm-5.6 2.05a2.15 2.15 0 1 1 2.15 2.15 2.15 2.15 0 0 1-2.15-2.15z"/>
+      </svg>
+      ezkey
+    </a>
+    <nav>
+      <a href="https://github.com/edtadros/ezkey">Source</a>
+      <a href="/privacy/">Privacy</a>
+      <a href="/security/">Security</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <h1>In the menu bar.</h1>
+    <p class="lede">ezkey is a small macOS extra for the login Keychain you already have. No account. No server. No warranty.</p>
+    <div class="cta-row">
+      <a class="cta" href="https://github.com/edtadros/ezkey">View source</a>
+      <a class="cta ghost" href="https://github.com/edtadros/ezkey/blob/master/DISCLAIMER.md">Disclaimer</a>
+    </div>
+  </section>
+
+  <div class="stage" aria-hidden="true">
+    <div class="desktop">
+      <div class="menubar">
+        <div class="menubar-left">
+          <span class="apple"></span>
+          <span>Finder</span>
+          <span>File</span>
+          <span>Edit</span>
+        </div>
+        <div class="menubar-right">
+          <span class="key-slot">
+            <svg width="11" height="11" viewBox="0 0 16 16" fill="#0071e3">
+              <path d="M10.2 3.2a3.4 3.4 0 1 0-2.95 3.37L3.2 10.6V12h1.7v1.6H6.6V12H8v-1.5l1.15-1.15A3.4 3.4 0 0 0 10.2 3.2zM7 5.4a1.4 1.4 0 1 1 1.4 1.4A1.4 1.4 0 0 1 7 5.4z"/>
+            </svg>
+          </span>
+          <span>Wi-Fi</span>
+          <span>9:41</span>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="lights"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+        <div class="seg"><i>Save</i><b>Retrieve</b></div>
+        <p class="field-label">Name</p>
+        <div class="field">my-app-api-token</div>
+        <span class="btn">Retrieve</span>
+        <div class="panel-foot"><span>License</span><span>Quit ezkey</span></div>
+      </div>
+    </div>
+  </div>
+
+  <main class="wrap">
+    <section class="group">
+      <h2>How it works</h2>
+      <div class="row"><div>Name</div><span>Keychain Access Name and Where</span></div>
+      <div class="row"><div>Account</div><span>Your Mac user, kept hidden</span></div>
+      <div class="row"><div>Retrieve</div><span>Type part of a name, then pick</span></div>
+      <div class="row"><div>Reveal</div><span>Masked until you ask</span></div>
+      <div class="row"><div>Copy</div><span>Clears in 30 seconds if unchanged</span></div>
+    </section>
+
+    <section class="group">
+      <h2>Build it on your Mac</h2>
+      <div class="row"><div>Requires</div><span>macOS 14+, Xcode CLT</span></div>
+    </section>
+<pre><code>git clone https://github.com/edtadros/ezkey.git
+cd ezkey
+./scripts/build-and-run.sh</code></pre>
+
+    <p class="note">There is no official downloadable app until a GitHub Release is Developer ID signed and notarized by Apple. If you did not compile it, do not grant it Keychain access. Always Allow is a standing grant to that code signature.</p>
+  </main>
+
+  <footer>
+    <nav>
+      <a href="/privacy/">Privacy</a>
+      <a href="/security/">Security</a>
+      <a href="https://github.com/edtadros/ezkey/blob/master/LICENSE">License</a>
+    </nav>
+    <p>MIT. Provided as-is, without warranty.</p>
+  </footer>
+</body>
+</html>
