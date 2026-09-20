@@ -4,182 +4,40 @@
     "title": "ezkey site API",
     "version": "1.0.0",
     "summary": "Public read-only JSON API for ezkey documentation.",
-    "description": "Public site API for ezkey, a local macOS menu bar extra. The native app has no network API and never sends Keychain secrets here.\n\nVersioning: current major version is 1 in the URL path (`/api/v1`) and the `API-Version` response header. Breaking changes require a new major path. Deprecated routes will carry RFC 9745 Deprecation and Sunset headers with at least 90 days of notice. There is no scheduled deprecation today.\n\nRate limits: 60 requests per minute per client IP. Responses include RateLimit and RateLimit-Policy. HTTP 429 includes Retry-After.\n\nAuthentication: none. See https://ezkey.app/auth.md.",
-    "contact": {
-      "name": "ezkey",
-      "url": "https://ezkey.app/contact/"
-    },
-    "license": {
-      "name": "MIT",
-      "url": "https://github.com/edtadros/ezkey/blob/master/LICENSE"
-    },
-    "x-deprecation-policy": "Breaking changes require a new major URL path. Deprecated routes send RFC 9745 Deprecation and Sunset headers with at least 90 days of notice. No route is deprecated today."
+    "description": "Documentation API only. The native macOS app has no network API. Authentication: none. Version 1 at /api/v1. Breaking changes require /api/v2. Deprecated routes use RFC 9745 Deprecation/Sunset with 90 days notice. Rate limit 60/min.",
+    "contact": { "name": "ezkey", "url": "https://ezkey.app/contact/" },
+    "license": { "name": "MIT", "url": "https://github.com/edtadros/ezkey/blob/master/LICENSE" }
   },
-  "servers": [
-    {
-      "url": "https://ezkey.app/api/v1",
-      "description": "Current public API"
-    }
-  ],
-  "tags": [
-    { "name": "site", "description": "Read-only documentation" }
-  ],
+  "servers": [{ "url": "https://ezkey.app/api/v1", "description": "Current public API" }],
+  "tags": [{ "name": "site", "description": "Read-only documentation" }],
   "paths": {
-    "/health": {
-      "get": {
-        "operationId": "getHealth",
-        "tags": ["site"],
-        "summary": "Liveness",
-        "description": "Return a liveness payload for the site API.",
-        "parameters": [{ "$ref": "#/components/parameters/verbose" }],
-        "responses": {
-          "200": {
-            "description": "The API is up.",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/Health" }
-              }
-            }
-          },
-          "400": { "$ref": "#/components/responses/BadRequest" },
-          "404": { "$ref": "#/components/responses/NotFound" },
-          "429": { "$ref": "#/components/responses/TooManyRequests" }
-        }
-      }
-    },
-    "/overview": {
-      "get": {
-        "operationId": "getOverview",
-        "tags": ["site"],
-        "summary": "Product overview",
-        "description": "Return a short description of ezkey and where to get the source.",
-        "parameters": [{ "$ref": "#/components/parameters/verbose" }],
-        "responses": {
-          "200": {
-            "description": "Overview payload.",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/Overview" }
-              }
-            }
-          },
-          "400": { "$ref": "#/components/responses/BadRequest" },
-          "404": { "$ref": "#/components/responses/NotFound" },
-          "429": { "$ref": "#/components/responses/TooManyRequests" }
-        }
-      }
-    },
-    "/build": {
-      "get": {
-        "operationId": "getBuildInstructions",
-        "tags": ["site"],
-        "summary": "Build instructions",
-        "description": "Return commands to clone and build ezkey on macOS.",
-        "parameters": [{ "$ref": "#/components/parameters/verbose" }],
-        "responses": {
-          "200": {
-            "description": "Build instructions.",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/Build" }
-              }
-            }
-          },
-          "400": { "$ref": "#/components/responses/BadRequest" },
-          "404": { "$ref": "#/components/responses/NotFound" },
-          "429": { "$ref": "#/components/responses/TooManyRequests" }
-        }
-      }
-    },
-    "/pages/{page}": {
-      "get": {
-        "operationId": "getPage",
-        "tags": ["site"],
-        "summary": "Get a Markdown page",
-        "description": "Return Markdown for a named site page.",
-        "parameters": [
-          {
-            "name": "page",
-            "in": "path",
-            "required": true,
-            "description": "Page id.",
-            "schema": {
-              "type": "string",
-              "enum": ["home", "about", "contact", "privacy", "security", "glossary", "developers", "auth"]
-            }
-          },
-          { "$ref": "#/components/parameters/verbose" }
-        ],
-        "responses": {
-          "200": {
-            "description": "Markdown page.",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/Page" }
-              }
-            }
-          },
-          "400": { "$ref": "#/components/responses/BadRequest" },
-          "404": { "$ref": "#/components/responses/NotFound" },
-          "429": { "$ref": "#/components/responses/TooManyRequests" }
-        }
-      }
-    }
+    "/health": { "get": { "operationId": "getHealth", "tags": ["site"], "summary": "Liveness", "description": "Return a liveness payload.", "responses": { "200": { "description": "The API is up.", "content": { "application/json": { "schema": { "type": "object" } } } }, "400": { "$ref": "#/components/responses/Problem" }, "404": { "$ref": "#/components/responses/Problem" }, "429": { "$ref": "#/components/responses/Problem" }, "500": { "$ref": "#/components/responses/Problem" } } } },
+    "/overview": { "get": { "operationId": "getOverview", "tags": ["site"], "summary": "Product overview", "description": "Short description and source URL.", "responses": { "200": { "description": "OK", "content": { "application/json": { "schema": { "type": "object" } } } }, "400": { "$ref": "#/components/responses/Problem" }, "404": { "$ref": "#/components/responses/Problem" }, "429": { "$ref": "#/components/responses/Problem" }, "500": { "$ref": "#/components/responses/Problem" } } } },
+    "/build": { "get": { "operationId": "getBuildInstructions", "tags": ["site"], "summary": "Build instructions", "description": "Clone and build commands.", "responses": { "200": { "description": "OK", "content": { "application/json": { "schema": { "type": "object" } } } }, "400": { "$ref": "#/components/responses/Problem" }, "404": { "$ref": "#/components/responses/Problem" }, "429": { "$ref": "#/components/responses/Problem" }, "500": { "$ref": "#/components/responses/Problem" } } } },
+    "/pages/{page}": { "get": { "operationId": "getPage", "tags": ["site"], "summary": "Markdown page", "description": "Return Markdown for a named page.", "parameters": [{ "name": "page", "in": "path", "required": true, "schema": { "type": "string" } }], "responses": { "200": { "description": "Markdown wrapper.", "content": { "application/json": { "schema": { "type": "object" } } } }, "400": { "$ref": "#/components/responses/Problem" }, "404": { "$ref": "#/components/responses/Problem" }, "429": { "$ref": "#/components/responses/Problem" }, "500": { "$ref": "#/components/responses/Problem" } } } },
+    "/": { "get": { "operationId": "getCatalog", "tags": ["site"], "summary": "API catalog", "description": "List public endpoints. Authentication is none.", "responses": { "200": { "description": "OK", "content": { "application/json": { "schema": { "type": "object" } } } }, "400": { "$ref": "#/components/responses/Problem" }, "404": { "$ref": "#/components/responses/Problem" }, "429": { "$ref": "#/components/responses/Problem" }, "500": { "$ref": "#/components/responses/Problem" } } } },
+    "/agent-brief": { "get": { "operationId": "getAgentBrief", "tags": ["site"], "summary": "Agent brief", "description": "Repo, disclaimer, and clone/build steps to present before running ezkey.", "responses": { "200": { "description": "OK", "content": { "application/json": { "schema": { "type": "object" } } } }, "400": { "$ref": "#/components/responses/Problem" }, "404": { "$ref": "#/components/responses/Problem" }, "429": { "$ref": "#/components/responses/Problem" }, "500": { "$ref": "#/components/responses/Problem" } } } },
+    "/disclaimer": { "get": { "operationId": "getDisclaimer", "tags": ["site"], "summary": "Disclaimer", "description": "As-is terms an agent should present first.", "responses": { "200": { "description": "OK", "content": { "application/json": { "schema": { "type": "object" } } } }, "400": { "$ref": "#/components/responses/Problem" }, "404": { "$ref": "#/components/responses/Problem" }, "429": { "$ref": "#/components/responses/Problem" }, "500": { "$ref": "#/components/responses/Problem" } } } },
+    "/install": { "get": { "operationId": "getInstall", "tags": ["site"], "summary": "Install", "description": "Clone and build commands plus CLI hint.", "responses": { "200": { "description": "OK", "content": { "application/json": { "schema": { "type": "object" } } } }, "400": { "$ref": "#/components/responses/Problem" }, "404": { "$ref": "#/components/responses/Problem" }, "429": { "$ref": "#/components/responses/Problem" }, "500": { "$ref": "#/components/responses/Problem" } } } },
+    "/auth": { "get": { "operationId": "getAuth", "tags": ["site"], "summary": "Auth policy", "description": "No API keys. Public sandbox.", "responses": { "200": { "description": "OK", "content": { "application/json": { "schema": { "type": "object" } } } }, "400": { "$ref": "#/components/responses/Problem" }, "404": { "$ref": "#/components/responses/Problem" }, "429": { "$ref": "#/components/responses/Problem" }, "500": { "$ref": "#/components/responses/Problem" } } } },
+    "/cli": { "get": { "operationId": "getCli", "tags": ["site"], "summary": "CLI", "description": "npx github:edtadros/ezkey and Homebrew formula path.", "responses": { "200": { "description": "OK", "content": { "application/json": { "schema": { "type": "object" } } } }, "400": { "$ref": "#/components/responses/Problem" }, "404": { "$ref": "#/components/responses/Problem" }, "429": { "$ref": "#/components/responses/Problem" }, "500": { "$ref": "#/components/responses/Problem" } } } },
+    "/version": { "get": { "operationId": "getVersion", "tags": ["site"], "summary": "Versioning", "description": "Current major version and deprecation policy.", "responses": { "200": { "description": "OK", "content": { "application/json": { "schema": { "type": "object" } } } }, "400": { "$ref": "#/components/responses/Problem" }, "404": { "$ref": "#/components/responses/Problem" }, "429": { "$ref": "#/components/responses/Problem" }, "500": { "$ref": "#/components/responses/Problem" } } } }
   },
   "components": {
-    "parameters": {
-      "verbose": {
-        "name": "verbose",
-        "in": "query",
-        "required": false,
-        "description": "If true, include extra documentation links in the payload.",
-        "schema": { "type": "boolean", "default": false }
+    "responses": {
+      "Problem": {
+        "description": "RFC 9457 problem details.",
+        "content": {
+          "application/problem+json": {
+            "schema": { "$ref": "#/components/schemas/Problem" }
+          }
+        }
       }
     },
     "schemas": {
-      "Health": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": ["ok", "name", "version"],
-        "properties": {
-          "ok": { "type": "boolean" },
-          "name": { "type": "string" },
-          "version": { "type": "string" }
-        }
-      },
-      "Overview": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": ["name", "summary", "source", "site"],
-        "properties": {
-          "name": { "type": "string" },
-          "summary": { "type": "string" },
-          "source": { "type": "string", "format": "uri" },
-          "site": { "type": "string", "format": "uri" }
-        }
-      },
-      "Build": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": ["commands", "requires"],
-        "properties": {
-          "commands": { "type": "string" },
-          "requires": { "type": "string" }
-        }
-      },
-      "Page": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": ["page", "markdown"],
-        "properties": {
-          "page": { "type": "string" },
-          "markdown": { "type": "string" }
-        }
-      },
       "Problem": {
         "type": "object",
-        "additionalProperties": true,
-        "required": ["type", "title", "status", "code", "detail", "resolution"],
+        "required": ["title", "status", "code", "detail", "resolution"],
         "properties": {
           "type": { "type": "string", "format": "uri" },
           "title": { "type": "string" },
@@ -188,38 +46,6 @@
           "detail": { "type": "string" },
           "instance": { "type": "string" },
           "resolution": { "type": "string" }
-        }
-      }
-    },
-    "responses": {
-      "BadRequest": {
-        "description": "The request was malformed.",
-        "content": {
-          "application/problem+json": {
-            "schema": { "$ref": "#/components/schemas/Problem" }
-          }
-        }
-      },
-      "NotFound": {
-        "description": "The path or page does not exist.",
-        "content": {
-          "application/problem+json": {
-            "schema": { "$ref": "#/components/schemas/Problem" }
-          }
-        }
-      },
-      "TooManyRequests": {
-        "description": "Rate limit exceeded.",
-        "headers": {
-          "Retry-After": {
-            "schema": { "type": "integer" },
-            "description": "Seconds to wait before retrying."
-          }
-        },
-        "content": {
-          "application/problem+json": {
-            "schema": { "$ref": "#/components/schemas/Problem" }
-          }
         }
       }
     }
