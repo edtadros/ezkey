@@ -43,8 +43,7 @@ public final class PanelModel {
     private let clipboard: ClipboardGuard
     @ObservationIgnored
     private let defaults: UserDefaults
-    @ObservationIgnored
-    private let currentUser: String
+    public let currentUser: String
     @ObservationIgnored
     private var retrieveGeneration = 0
     @ObservationIgnored
@@ -68,21 +67,18 @@ public final class PanelModel {
         self.defaults = defaults
         self.currentUser = currentUser
         self.service = defaults.string(forKey: Self.serviceDefaultsKey) ?? ""
-        let storedAccount = defaults.string(forKey: Self.accountDefaultsKey) ?? ""
-        self.account = storedAccount.isEmpty ? currentUser : storedAccount
+        self.account = currentUser
     }
 
     public var isWorking: Bool { status == .working }
 
     public var identity: SecretIdentity {
-        SecretIdentity(service: service, account: account)
+        SecretIdentity(service: service, account: currentUser)
     }
 
     public func panelDidOpen() {
         isPanelOpen = true
-        if account.isEmpty {
-            account = currentUser
-        }
+        account = currentUser
     }
 
     public func panelDidClose() {
@@ -103,9 +99,10 @@ public final class PanelModel {
 
     public func save() async {
         persistLabels()
+        account = currentUser
         let identity = identity
         guard identity.isValid else {
-            status = .validation("Name and account are required.")
+            status = .validation("Name is required.")
             return
         }
         guard !secretToSave.isEmpty else {
@@ -136,9 +133,10 @@ public final class PanelModel {
 
     public func update() async {
         persistLabels()
+        account = currentUser
         let identity = identity
         guard identity.isValid else {
-            status = .validation("Name and account are required.")
+            status = .validation("Name is required.")
             return
         }
         guard !secretToSave.isEmpty else {
@@ -175,10 +173,9 @@ public final class PanelModel {
         retrieveGeneration += 1
         let generation = retrieveGeneration
         do {
-            let exact = identity
-            if exact.isValid, try await store.contains(exact) {
-                let secret = try await store.retrieve(exact)
-                applyRetrieveResult(.success(secret), generation: generation)
+            let owned = SecretIdentity(service: query, account: currentUser)
+            if owned.isValid, try await store.contains(owned) {
+                await fetchSecret(owned, generation: generation)
                 return
             }
             let found = try await store.list(matching: query)
@@ -206,7 +203,27 @@ public final class PanelModel {
         matches = []
         service = identity.service
         account = identity.account
-        await retrieve()
+        persistLabels()
+        retrievedSecret = nil
+        isRevealed = false
+        status = .working
+        retrieveGeneration += 1
+        await fetchSecret(identity, generation: retrieveGeneration)
+    }
+
+    private func fetchSecret(_ identity: SecretIdentity, generation: Int) async {
+        do {
+            let secret = try await store.retrieve(identity)
+            applyRetrieveResult(.success(secret), generation: generation)
+        } catch let error as KeychainError {
+            applyRetrieveResult(.failure(error), generation: generation)
+        } catch {
+            guard generation == retrieveGeneration else { return }
+            retrievedSecret = nil
+            isRevealed = false
+            status = .failure
+            noteFinishedWhileClosed()
+        }
     }
 
     public func toggleReveal() {
@@ -242,7 +259,7 @@ public final class PanelModel {
 
     private func persistLabels() {
         defaults.set(service, forKey: Self.serviceDefaultsKey)
-        defaults.set(account, forKey: Self.accountDefaultsKey)
+        defaults.set(currentUser, forKey: Self.accountDefaultsKey)
     }
 
     private func resetNeedsUpdateIfIdentityChanged() {

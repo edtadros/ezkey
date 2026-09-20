@@ -8,7 +8,6 @@ struct PanelView: View {
 
     private enum Field: Hashable {
         case service
-        case account
         case secret
     }
 
@@ -24,7 +23,6 @@ struct PanelView: View {
             .disabled(model.isWorking)
 
             labeledField("Name", text: $model.service, prompt: "edwardtadros-ai-gateway-token", field: .service)
-            labeledField("Account", text: $model.account, prompt: "edward", field: .account)
 
             if model.mode == .save {
                 saveSection
@@ -129,9 +127,11 @@ struct PanelView: View {
                                         Text(match.service)
                                             .font(.body)
                                             .frame(maxWidth: .infinity, alignment: .leading)
-                                        Text(match.account)
-                                            .font(.caption)
-                                            .foregroundStyle(.secondary)
+                                        if match.account != model.currentUser {
+                                            Text(match.account)
+                                                .font(.caption)
+                                                .foregroundStyle(.secondary)
+                                        }
                                     }
                                     .padding(.vertical, 4)
                                     .padding(.horizontal, 6)

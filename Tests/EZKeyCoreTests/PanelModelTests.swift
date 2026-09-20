@@ -115,7 +115,7 @@ final class PanelModelTests: XCTestCase {
         model.service = "  "
         model.secretToSave = "secret"
         await model.save()
-        XCTAssertEqual(model.status, .validation("Name and account are required."))
+        XCTAssertEqual(model.status, .validation("Name is required."))
     }
 
     func testSaveRejectsEmptySecret() async {

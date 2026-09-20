@@ -120,7 +120,7 @@ public enum OperationStatus: Equatable, Sendable {
     public static func from(error: KeychainError) -> OperationStatus {
         switch error {
         case .invalidIdentity:
-            .validation("Name and account are required.")
+            .validation("Name is required.")
         case .emptySecret:
             .validation("Enter a secret to save.")
         case .missingEntry:
