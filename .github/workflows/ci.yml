@@ -22,12 +22,20 @@ jobs:
         run: |
           echo "CI does not attach ezkey.app. Unsigned CI binaries are not a distribution channel."
 
+  site-test:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+      - name: Site worker tests
+        run: node --experimental-strip-types --test tests/site/worker.test.ts
+
   ci-gate:
     if: always()
-    needs: [test]
+    needs: [test, site-test]
     runs-on: ubuntu-24.04
     permissions:
       contents: read
     steps:
       - name: Require test success
-        run: test "${{ needs.test.result }}" = "success"
+        run: test "${{ needs.test.result }}" = "success" && test "${{ needs.site-test.result }}" = "success"

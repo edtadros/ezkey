@@ -31,6 +31,14 @@
       }
     });
     mc.registerTool({
+      name: "get_agent_brief",
+      description: "Return the repo URL, disclaimer, and clone/build steps an agent must present before running ezkey.",
+      inputSchema: { type: "object", properties: {}, additionalProperties: false },
+      execute: function () {
+        return json("/api/v1/agent-brief");
+      }
+    });
+    mc.registerTool({
       name: "get_page",
       description: "Return Markdown for a site page.",
       inputSchema: {

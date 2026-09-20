@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CLI — ezkey.app</title>
+  <meta name="description" content="Official ezkey CLI that prints the disclaimer and macOS build steps.">
+  <meta name="is-agentic-site-type" content="content">
+  <meta property="og:title" content="CLI — ezkey.app">
+  <meta property="og:description" content="Official ezkey CLI that prints the disclaimer and macOS build steps.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://ezkey.app/og.png">
+  <meta property="og:url" content="https://ezkey.app/cli/">
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+  <link rel="canonical" href="https://ezkey.app/cli/">
+  <link rel="describedby" href="https://ezkey.app/llms.txt" type="text/plain">
+  <link rel="alternate" type="text/markdown" href="https://ezkey.app/cli.md">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/webmcp.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="top">
+    <a class="mark" href="/">ezkey</a>
+    <nav>
+      <a href="/guides/">Guides</a>
+      <a href="/developers/">Developers</a>
+      <a href="/docs/">Docs</a>
+      <a href="/about/">About</a>
+      <a href="https://github.com/edtadros/ezkey">Source</a>
+    </nav>
+  </header>
+  <main id="main" class="legal">
+    <h1>CLI</h1>
+    <p>The official CLI is for agents and humans who need the source path. It does not save or retrieve Keychain secrets.</p>
+    <h2>Install and run</h2>
+    <pre><code>npx github:edtadros/ezkey</code></pre>
+    <p>That prints what ezkey is, the as-is disclaimer, clone/build commands, and the GitHub URL. Homebrew formula: <code>Formula/ezkey.rb</code>.</p>
+    <h2>Public API equivalent</h2>
+    <pre><code>curl -sS https://ezkey.app/api/v1/agent-brief
+curl -sS https://ezkey.app/api/v1/cli</code></pre>
+    <p>No API key. See <a href="/developers/">developers</a> and the <a href="https://github.com/edtadros/ezkey/blob/master/DISCLAIMER.md">disclaimer</a>.</p>
+  </main>
+  <footer>
+    <nav>
+      <a href="/developers/">Developers</a>
+      <a href="/docs/">Docs</a>
+      <a href="/cli/">CLI</a>
+      <a href="/contact/">Contact</a>
+      <a href="/privacy/">Privacy</a>
+    </nav>
+  </footer>
+</body>
+</html>
