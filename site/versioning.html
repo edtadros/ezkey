@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Versioning — ezkey.app</title>
+  <meta name="description" content="URL versioning and deprecation policy for the ezkey.app site API.">
+  <meta name="is-agentic-site-type" content="content">
+  <meta property="og:title" content="Versioning — ezkey.app">
+  <meta property="og:description" content="URL versioning and deprecation policy for the ezkey.app site API.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://ezkey.app/og.png">
+  <meta property="og:url" content="https://ezkey.app/versioning/">
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+  <link rel="canonical" href="https://ezkey.app/versioning/">
+  <link rel="describedby" href="https://ezkey.app/llms.txt" type="text/plain">
+  <link rel="alternate" type="text/markdown" href="https://ezkey.app/versioning.md">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/webmcp.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="top">
+    <a class="mark" href="/">ezkey</a>
+    <nav>
+      <a href="/guides/">Guides</a>
+      <a href="/developers/">Developers</a>
+      <a href="/docs/">Docs</a>
+      <a href="/about/">About</a>
+      <a href="https://github.com/edtadros/ezkey">Source</a>
+    </nav>
+  </header>
+  <main id="main" class="legal">
+    <h1>Versioning and deprecation</h1>
+    <p>The ezkey.app site API uses URL path versioning. The current major version is <code>1</code> at <code>https://ezkey.app/api/v1</code> and in the <code>API-Version</code> response header.</p>
+    <h2>Compatibility</h2>
+    <ul>
+      <li>Additive JSON fields may appear in a major version.</li>
+      <li>Breaking changes require a new major path such as <code>/api/v2</code>.</li>
+      <li>Clients should ignore unknown fields.</li>
+    </ul>
+    <h2>Deprecation</h2>
+    <p>No route is deprecated today. Deprecated routes will send RFC 9745 <code>Deprecation</code> and <code>Sunset</code> headers with at least 90 days of notice, plus <code>Link rel="deprecation"</code> to this page.</p>
+    <p>See <a href="/developers/">developers</a> and <a href="/openapi.json">OpenAPI</a>.</p>
+  </main>
+  <footer>
+    <nav>
+      <a href="/developers/">Developers</a>
+      <a href="/docs/">Docs</a>
+      <a href="/cli/">CLI</a>
+      <a href="/contact/">Contact</a>
+      <a href="/privacy/">Privacy</a>
+    </nav>
+  </footer>
+</body>
+</html>

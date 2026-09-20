@@ -1,0 +1,27 @@
+{
+  "name": "ezkey",
+  "version": "1.0.0",
+  "description": "Print ezkey disclaimer and macOS build instructions. Does not access the Keychain.",
+  "bin": {
+    "ezkey": "./cli/ezkey.mjs"
+  },
+  "files": [
+    "cli/ezkey.mjs"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/edtadros/ezkey.git"
+  },
+  "homepage": "https://ezkey.app/",
+  "keywords": [
+    "ezkey",
+    "macos",
+    "keychain",
+    "agent"
+  ],
+  "scripts": {
+    "test:site": "node --experimental-strip-types --test tests/site/worker.test.ts"
+  },
+  "type": "module"
+}

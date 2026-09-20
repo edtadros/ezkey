@@ -54,6 +54,7 @@ struct EZKeyApp: App {
     }
 }
 
+@MainActor
 enum MenuBarIcon {
     static let image: NSImage = {
         let source = load() ?? NSImage(systemSymbolName: "key.fill", accessibilityDescription: "ezkey") ?? NSImage()

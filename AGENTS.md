@@ -19,6 +19,8 @@ Requires macOS 14 or later and Xcode command-line tools. The script runs tests, 
 - `swift test` — unit tests. Disposable Keychain items use the `ezkey.test.` name prefix only.
 - `./scripts/build-and-run.sh` — test, package, launch locally (ad-hoc signed).
 - `npx wrangler deploy` — publish this website to Cloudflare (`ezkey.app`).
+- `npx github:edtadros/ezkey` — print disclaimer and clone/build steps (does not touch Keychain).
+- `node --experimental-strip-types --test tests/site/worker.test.ts` — site worker tests.
 - `./scripts/render-marketing.sh` — snapshot the real SwiftUI panel into `site/images/` (generic example names, no Keychain).
 
 ## Conventions

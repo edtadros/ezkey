@@ -19,7 +19,7 @@ Do not use ezkey for:
 - Browser passwords, passkeys, or iCloud Keychain management.
 - Storing or retrieving secrets through this website or the MCP server. Those interfaces are documentation only.
 
-How to call: read Markdown pages (`Accept: text/markdown` or `/index.md`), GET `https://ezkey.app/api/v1/overview`, or POST JSON-RPC to `https://ezkey.app/mcp`.
+How to call: GET `https://ezkey.app/api/v1/agent-brief` first (repo, disclaimer, clone/build). Then Markdown pages (`Accept: text/markdown`), `GET /api/v1/overview`, CLI `npx github:edtadros/ezkey`, or POST JSON-RPC to `https://ezkey.app/mcp` (`get_agent_brief`).
 
 ## Pages
 
@@ -37,6 +37,10 @@ How to call: read Markdown pages (`Accept: text/markdown` or `/index.md`), GET `
 - [About](https://ezkey.app/about.md): What ezkey is and is not
 - [Contact](https://ezkey.app/contact.md): Issues and security reports
 - [Developers](https://ezkey.app/developers.md): REST, MCP, A2A, rate limits, versioning
+- [Docs](https://ezkey.app/docs): Alias of developers
+- [CLI](https://ezkey.app/cli.md): npx github:edtadros/ezkey
+- [Versioning](https://ezkey.app/versioning.md): API deprecation policy
+- [Disclaimer](https://ezkey.app/disclaimer.md): As-is terms to present before build
 - [Privacy](https://ezkey.app/privacy.md): The app and site collect no personal data
 - [Security](https://ezkey.app/security.md): Keychain access prompts and vulnerability reporting
 - [Glossary](https://ezkey.app/glossary.md): Name, Account, Where, Comments/Notes, and related Keychain terms
@@ -53,6 +57,9 @@ How to call: read Markdown pages (`Accept: text/markdown` or `/index.md`), GET `
 
 - [Full site in Markdown](https://ezkey.app/llms-full.txt): Concatenated page text
 - [OpenAPI](https://ezkey.app/openapi.json): Site REST description
+- [Agent brief](https://ezkey.app/api/v1/agent-brief): JSON handoff for clone/build
+- [DNS-AID](https://ezkey.app/.well-known/dns-aid.json): DNS discovery catalog
+- [MCP server.json](https://ezkey.app/server.json): MCP registry manifest
 - [MCP server](https://ezkey.app/mcp): Read-only tools for site overview and build steps
 - [MCP server card](https://ezkey.app/.well-known/mcp/server-card.json): Discovery metadata
 - [A2A agent card](https://ezkey.app/.well-known/agent-card.json): JSON-RPC at /a2a

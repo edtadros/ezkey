@@ -43,4 +43,8 @@ See the [glossary](https://ezkey.app/glossary.md) for Keychain field names.
 - [Is it safe to put API keys in .env files?](https://ezkey.app/guides/is-it-safe-to-put-api-keys-in-dotenv.md)
 - [All guides](https://ezkey.app/guides.md)
 
-[About](https://ezkey.app/about.md) · [Guides](https://ezkey.app/guides.md) · [Privacy](https://ezkey.app/privacy.md) · [Security](https://ezkey.app/security.md) · [Source](https://github.com/edtadros/ezkey)
+## For agents
+
+Start with [GET /api/v1/agent-brief](https://ezkey.app/api/v1/agent-brief). Present the [disclaimer](https://ezkey.app/disclaimer.md), then clone and build. CLI: `npx github:edtadros/ezkey`.
+
+[About](https://ezkey.app/about.md) · [Developers](https://ezkey.app/developers.md) · [Docs](https://ezkey.app/docs) · [CLI](https://ezkey.app/cli.md) · [Guides](https://ezkey.app/guides.md) · [Privacy](https://ezkey.app/privacy.md) · [Security](https://ezkey.app/security.md) · [Source](https://github.com/edtadros/ezkey)

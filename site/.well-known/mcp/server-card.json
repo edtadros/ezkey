@@ -3,7 +3,12 @@
   "name": "ezkey",
   "title": "ezkey",
   "url": "https://ezkey.app/mcp",
-  "icons": [{ "src": "https://ezkey.app/favicon.svg", "mimeType": "image/svg+xml" }],
+  "icons": [
+    {
+      "src": "https://ezkey.app/favicon.svg",
+      "mimeType": "image/svg+xml"
+    }
+  ],
   "version": "1.0",
   "protocolVersion": "2025-06-18",
   "serverInfo": {
@@ -54,6 +59,38 @@
       }
     },
     {
+      "name": "get_agent_brief",
+      "title": "Get agent brief",
+      "description": "Return the repo URL, disclaimer, and clone/build steps an agent must present before running ezkey.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "get_disclaimer",
+      "title": "Get disclaimer",
+      "description": "Return the as-is disclaimer an agent should show the user before building ezkey.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
       "name": "get_page",
       "title": "Get page",
       "description": "Return Markdown for a site page.",
@@ -63,10 +100,21 @@
           "page": {
             "type": "string",
             "description": "One of home, privacy, security, glossary",
-            "enum": ["home", "about", "contact", "privacy", "security", "glossary", "developers", "auth"]
+            "enum": [
+              "home",
+              "about",
+              "contact",
+              "privacy",
+              "security",
+              "glossary",
+              "developers",
+              "auth"
+            ]
           }
         },
-        "required": ["page"],
+        "required": [
+          "page"
+        ],
         "additionalProperties": false
       },
       "annotations": {

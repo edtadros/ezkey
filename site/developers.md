@@ -21,6 +21,13 @@ Base URL: `https://ezkey.app/api/v1`
 | GET | `/overview` | `getOverview` |
 | GET | `/build` | `getBuildInstructions` |
 | GET | `/pages/{page}` | `getPage` |
+| GET | `/` | `getCatalog` |
+| GET | `/agent-brief` | `getAgentBrief` |
+| GET | `/disclaimer` | `getDisclaimer` |
+| GET | `/install` | `getInstall` |
+| GET | `/auth` | `getAuth` |
+| GET | `/cli` | `getCli` |
+| GET | `/version` | `getVersion` |
 
 Example:
 
@@ -44,7 +51,7 @@ OpenAPI: https://ezkey.app/openapi.json
 
 ## MCP
 
-Streamable HTTP at https://ezkey.app/mcp (alias https://ezkey.app/api/v1/mcp). Read-only tools: `get_overview`, `get_build_instructions`, `get_page`. No authentication.
+Streamable HTTP at https://ezkey.app/mcp (alias https://ezkey.app/api/v1/mcp). Read-only tools: `get_overview`, `get_build_instructions`, `get_agent_brief`, `get_disclaimer`, `get_page`. No authentication.
 
 Server card: https://ezkey.app/.well-known/mcp/server-card.json
 
@@ -67,11 +74,23 @@ None. See [auth.md](https://ezkey.app/auth.md). Protected-resource metadata: htt
 
 ## Command-line
 
-There is no npm/Homebrew CLI for the macOS app. Agents can call the public API with curl:
+```
+npx github:edtadros/ezkey
+```
+
+That CLI prints the disclaimer and clone/build steps. It does not touch the Keychain. Homebrew formula: `Formula/ezkey.rb`.
 
 ```
+curl -sS https://ezkey.app/api/v1/agent-brief
 curl -sS https://ezkey.app/api/v1/overview
-curl -sS https://ezkey.app/api/v1/pages/security
 ```
+
+## Onboarding
+
+No API keys. Production is the sandbox. Authentication is none. See [auth.md](https://ezkey.app/auth.md) and `GET /api/v1/auth`.
+
+## Versioning and deprecation
+
+See [versioning](https://ezkey.app/versioning.md). Current major version is 1. No route is deprecated.
 
 The Keychain itself is reached with Apple's `security` tool after you build ezkey locally, not through this website.
