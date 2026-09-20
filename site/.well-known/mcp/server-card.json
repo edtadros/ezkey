@@ -1,0 +1,75 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/mcp-server-card/v1.json",
+  "version": "1.0",
+  "protocolVersion": "2025-06-18",
+  "serverInfo": {
+    "name": "ezkey",
+    "title": "ezkey",
+    "version": "1.0.0"
+  },
+  "description": "Read-only information about ezkey, a macOS menu bar extra for the login Keychain.",
+  "transport": {
+    "type": "streamable-http",
+    "endpoint": "https://ezkey.app/mcp"
+  },
+  "authentication": {
+    "required": false
+  },
+  "tools": [
+    {
+      "name": "get_overview",
+      "title": "Get overview",
+      "description": "Return a short description of ezkey and where to get the source.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "get_build_instructions",
+      "title": "Get build instructions",
+      "description": "Return commands to clone and build ezkey on macOS.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "get_page",
+      "title": "Get page",
+      "description": "Return Markdown for a site page.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "string",
+            "description": "One of home, privacy, security, glossary",
+            "enum": ["home", "privacy", "security", "glossary"]
+          }
+        },
+        "required": ["page"],
+        "additionalProperties": false
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    }
+  ]
+}

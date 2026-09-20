@@ -1,0 +1,51 @@
+# As a condition of accessing this website, you agree to abide by the
+# following content signals:
+#
+# (a) If a content-signal = yes, you may collect content for the
+#     corresponding use.
+# (b) If a content-signal = no, you may not collect content for the
+#     corresponding use.
+#
+# search: building a search index and providing search results.
+# ai-input: inputting content into one or more AI models (RAG, grounding,
+#           or other real-time taking of content for generative answers).
+# ai-train: using content to train or fine-tune AI models.
+
+User-agent: *
+Allow: /
+Content-Signal: search=yes, ai-input=yes, ai-train=yes
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-User
+Allow: /
+
+User-agent: Claude-SearchBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: Amazonbot
+Allow: /
+
+Sitemap: https://ezkey.app/sitemap.xml

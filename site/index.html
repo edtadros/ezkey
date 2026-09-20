@@ -8,11 +8,18 @@
   <meta property="og:title" content="ezkey">
   <meta property="og:description" content="A macOS menu bar extra for the login Keychain you already have.">
   <meta property="og:url" content="https://ezkey.app/">
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
   <link rel="canonical" href="https://ezkey.app/">
+  <link rel="describedby" href="https://ezkey.app/llms.txt" type="text/plain">
+  <link rel="alternate" type="text/markdown" href="https://ezkey.app/index.md">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="/styles.css">
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"SoftwareApplication","name":"ezkey","url":"https://ezkey.app/","applicationCategory":"UtilitiesApplication","operatingSystem":"macOS 14+","description":"A macOS menu bar extra for the login Keychain. Local only.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"license":"https://github.com/edtadros/ezkey/blob/master/LICENSE"}
+  </script>
 </head>
 <body>
+  <a class="skip" href="#main">Skip to content</a>
   <header class="top">
     <a class="mark" href="/">
       <svg width="22" height="22" viewBox="0 0 32 32" aria-hidden="true">
@@ -67,7 +74,7 @@
     </div>
   </div>
 
-  <main class="wrap">
+  <main id="main" class="wrap">
     <section class="group">
       <h2>How it works</h2>
       <div class="row"><div>Name</div><span>Keychain Access Name and Where</span></div>
@@ -85,7 +92,7 @@
 cd ezkey
 ./scripts/build-and-run.sh</code></pre>
 
-    <p class="note">There is no official downloadable app until a GitHub Release is Developer ID signed and notarized by Apple. If you did not compile it, do not grant it Keychain access. Always Allow is a standing grant to that code signature.</p>
+    <p class="note">There is no official downloadable app until a GitHub Release is Developer ID signed and notarized by Apple. If you did not compile it, do not grant it Keychain access. Always Allow is a standing grant to that code signature. See the <a href="/glossary/">glossary</a>.</p>
   </main>
 
   <footer>

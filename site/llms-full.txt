@@ -1,0 +1,36 @@
+# ezkey
+
+> A macOS menu bar extra for the login Keychain. Local only. No account, no server, no warranty.
+
+## Home
+
+ezkey is a small macOS extra for the login Keychain you already have. No account. No server. No warranty.
+
+Name is Keychain Access Name and Where. Account is your Mac user and stays hidden. Retrieve: type part of a name, then pick. Secrets stay masked until Reveal. Copy clears in 30 seconds if unchanged.
+
+Build:
+
+```
+git clone https://github.com/edtadros/ezkey.git
+cd ezkey
+./scripts/build-and-run.sh
+```
+
+Requires macOS 14+ and Xcode command-line tools. There is no official downloadable app until a GitHub Release is Developer ID signed and notarized by Apple.
+
+## Privacy
+
+ezkey does not include analytics, crash reporters, advertising, accounts, or network calls. Secret values are stored only in the macOS login Keychain. The website is static files on Cloudflare with no cookies or third-party scripts.
+
+## Security
+
+macOS still owns the Keychain. When ezkey reads an item another program created, macOS may ask for the login Keychain password. Always Allow is a standing grant to this app’s code signature.
+
+Report vulnerabilities privately: https://github.com/edtadros/ezkey/security/advisories/new
+
+## Glossary
+
+- Name: Keychain Access Name. ezkey stores the same string as Where (service).
+- Account: Keychain account attribute. ezkey always uses the logged-in Mac username.
+- Where: Keychain Access field for the generic-password service (`security -s`).
+- login Keychain: `~/Library/Keychains/login.keychain-db`

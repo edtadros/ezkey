@@ -1,0 +1,9 @@
+{
+  "skills": [
+    {
+      "name": "build-ezkey",
+      "description": "Clone and build the ezkey macOS menu bar app from source.",
+      "url": "https://ezkey.app/.well-known/agent-skills/build-ezkey.md"
+    }
+  ]
+}

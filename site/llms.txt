@@ -1,0 +1,22 @@
+# ezkey
+
+> A macOS menu bar extra for the login Keychain. Local only. No account, no server, no warranty.
+
+## Pages
+
+- [Home](https://ezkey.app/index.md): What ezkey is and how to build it from source
+- [Privacy](https://ezkey.app/privacy.md): The app and site collect no personal data
+- [Security](https://ezkey.app/security.md): Keychain access prompts and vulnerability reporting
+- [Glossary](https://ezkey.app/glossary.md): Name, Account, Where, and related Keychain terms
+
+## Source
+
+- [GitHub repository](https://github.com/edtadros/ezkey): Source, license, and build script
+- [Disclaimer](https://github.com/edtadros/ezkey/blob/master/DISCLAIMER.md): As-is terms
+- [SECURITY.md](https://github.com/edtadros/ezkey/blob/master/SECURITY.md): Private advisory process
+
+## Optional
+
+- [Full site in Markdown](https://ezkey.app/llms-full.txt): Concatenated page text
+- [MCP server](https://ezkey.app/mcp): Read-only tools for site overview and build steps
+- [MCP server card](https://ezkey.app/.well-known/mcp/server-card.json): Discovery metadata

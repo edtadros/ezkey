@@ -1,0 +1,28 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "ezkey site",
+    "version": "1.0.0",
+    "description": "Public site and read-only MCP endpoint for ezkey. The macOS app has no network API."
+  },
+  "servers": [{ "url": "https://ezkey.app" }],
+  "paths": {
+    "/": {
+      "get": {
+        "summary": "Product home page",
+        "responses": {
+          "200": { "description": "HTML or Markdown depending on Accept" }
+        }
+      }
+    },
+    "/mcp": {
+      "post": {
+        "summary": "MCP Streamable HTTP",
+        "description": "JSON-RPC tools: get_overview, get_build_instructions, get_page",
+        "responses": {
+          "200": { "description": "JSON-RPC response" }
+        }
+      }
+    }
+  }
+}

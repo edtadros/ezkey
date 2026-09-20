@@ -5,11 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Security — ezkey</title>
   <meta name="description" content="How ezkey uses the login Keychain, and how to report a problem privately.">
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+  <meta property="og:title" content="Security — ezkey">
+  <meta property="og:description" content="How ezkey uses the login Keychain, and how to report a problem privately.">
   <link rel="canonical" href="https://ezkey.app/security/">
+  <link rel="describedby" href="https://ezkey.app/llms.txt" type="text/plain">
+  <link rel="alternate" type="text/markdown" href="https://ezkey.app/security.md">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="/styles.css">
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"WebPage","name":"Security","url":"https://ezkey.app/security/","isPartOf":{"@type":"WebSite","name":"ezkey","url":"https://ezkey.app/"}}
+  </script>
 </head>
 <body>
+  <a class="skip" href="#main">Skip to content</a>
   <header class="top">
     <a class="mark" href="/">ezkey</a>
     <nav>
@@ -17,7 +26,7 @@
       <a href="/privacy/">Privacy</a>
     </nav>
   </header>
-  <main class="legal">
+  <main id="main" class="legal">
     <h1>Security</h1>
     <p>macOS still owns the Keychain. ezkey is a front door, not a vault.</p>
     <p>Report vulnerabilities privately via <a href="https://github.com/edtadros/ezkey/security/advisories/new">GitHub security advisories</a>. Do not open a public issue and do not attach secrets.</p>
@@ -31,7 +40,7 @@
     </ul>
     <p>CI on GitHub runs tests. It does not attach an <code>.app</code>. Unsigned CI artifacts are not a release channel.</p>
     <h2>Limits</h2>
-    <p>ezkey is not sandboxed. Sandboxing would store items where the <code>security</code> CLI cannot see them. The source is public so you can read the Keychain calls yourself. There is still no warranty that it is free of defects.</p>
+    <p>ezkey is not sandboxed. Sandboxing would store items where the <code>security</code> CLI cannot see them. The source is public so you can read the Keychain calls yourself. There is still no warranty that it is free of defects. See the <a href="/glossary/">glossary</a>.</p>
   </main>
   <footer>
     <nav>

@@ -1,0 +1,31 @@
+{
+  "linkset": [
+    {
+      "anchor": "https://ezkey.app/",
+      "service-desc": [
+        {
+          "href": "https://ezkey.app/openapi.json",
+          "type": "application/json"
+        }
+      ],
+      "service-doc": [
+        {
+          "href": "https://ezkey.app/security/",
+          "type": "text/html"
+        }
+      ],
+      "item": [
+        {
+          "href": "https://ezkey.app/mcp",
+          "rel": "item",
+          "type": "application/json"
+        },
+        {
+          "href": "https://ezkey.app/.well-known/mcp/server-card.json",
+          "rel": "describedby",
+          "type": "application/json"
+        }
+      ]
+    }
+  ]
+}
