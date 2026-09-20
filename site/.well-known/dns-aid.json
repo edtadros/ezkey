@@ -1,0 +1,32 @@
+{
+  "spec": "draft-mozleywilliams-dnsop-dnsaid-02",
+  "domain": "ezkey.app",
+  "documentation": "https://ezkey.app/dns-aid.md",
+  "dnssec": "Publish DS at the registrar after enabling Cloudflare DNSSEC.",
+  "records": [
+    {
+      "name": "_index._agents.ezkey.app",
+      "type": "SVCB",
+      "ttl": 3600,
+      "priority": 1,
+      "target": "ezkey.app",
+      "params": { "alpn": ["h2", "h3"], "port": 443 }
+    },
+    {
+      "name": "_mcp._agents.ezkey.app",
+      "type": "SVCB",
+      "ttl": 3600,
+      "priority": 1,
+      "target": "ezkey.app",
+      "params": { "alpn": ["h2"], "port": 443 }
+    },
+    {
+      "name": "_a2a._agents.ezkey.app",
+      "type": "SVCB",
+      "ttl": 3600,
+      "priority": 1,
+      "target": "ezkey.app",
+      "params": { "alpn": ["h2"], "port": 443 }
+    }
+  ]
+}

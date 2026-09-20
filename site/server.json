@@ -1,0 +1,15 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/server.json",
+  "name": "io.github.edtadros/ezkey",
+  "title": "ezkey",
+  "description": "Read-only MCP server for ezkey: overview, disclaimer, and macOS build steps. Does not access Keychain secrets.",
+  "version": "1.0.0",
+  "status": "active",
+  "websiteUrl": "https://ezkey.app/",
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://ezkey.app/mcp"
+    }
+  ]
+}
