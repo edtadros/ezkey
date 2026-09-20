@@ -94,7 +94,7 @@ public enum OperationStatus: Equatable, Sendable {
         case .copied:
             "Copied. Clipboard clears in 30 seconds if unchanged."
         case .missingEntry:
-            "No entry for this service and account."
+            "No entry for this name and account."
         case .noMatches:
             "No Keychain entries match that name."
         case .accessDenied:
@@ -120,7 +120,7 @@ public enum OperationStatus: Equatable, Sendable {
     public static func from(error: KeychainError) -> OperationStatus {
         switch error {
         case .invalidIdentity:
-            .validation("Service and account are required.")
+            .validation("Name and account are required.")
         case .emptySecret:
             .validation("Enter a secret to save.")
         case .missingEntry:

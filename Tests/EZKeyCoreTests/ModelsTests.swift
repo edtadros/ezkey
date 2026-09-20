@@ -29,7 +29,7 @@ final class ModelsTests: XCTestCase {
         XCTAssertEqual(OperationStatus.saved.message, "Saved.")
         XCTAssertEqual(OperationStatus.updated.message, "Updated.")
         XCTAssertTrue(OperationStatus.needsUpdate.message.contains("Update"))
-        XCTAssertEqual(OperationStatus.missingEntry.message, "No entry for this service and account.")
+        XCTAssertEqual(OperationStatus.missingEntry.message, "No entry for this name and account.")
         XCTAssertEqual(OperationStatus.accessDenied.message, "Keychain access denied.")
         XCTAssertEqual(OperationStatus.cancelled.message, "Keychain access cancelled.")
         XCTAssertEqual(OperationStatus.from(error: .duplicateEntry), .needsUpdate)

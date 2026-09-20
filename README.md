@@ -32,12 +32,12 @@ Look for the key icon in the menu bar (often near the notch, not next to Control
 
 1. Click the key icon.
 2. Choose **Save** or **Retrieve**.
-3. Enter a **Service** and **Account** (account defaults to your Unix username).
+3. Enter a **Name** and **Account**. These are the same fields Keychain Access shows as **Name** / **Where** and **Account**. Account defaults to your Unix username. Example: Name `edwardtadros-ai-gateway-token`, Account `edward`.
 4. **Save** writes a new item. If that pair already exists, you must click **Update**.
-5. **Retrieve** looks up an exact service and account pair when both match. If you type only part of the service name, ezkey lists matching entries (name and account only). Click one to retrieve that secret. macOS may ask for your login Keychain password the first time ezkey reads an item created by another app. After you Allow, the panel returns with the secret masked. **Reveal**, **Hide**, and **Copy** follow. **Always Allow** is a standing grant to this app’s code signature; use it only for a build you compiled or a notarized GitHub Release.
+5. **Retrieve** looks up an exact name and account when both match. If you type only part of the name (Keychain Access **Name** or **Where**), ezkey lists matching entries without showing secrets. Click one to retrieve that secret. macOS may ask for your login Keychain password the first time ezkey reads an item created by another app. After you Allow, the panel returns with the secret masked. **Reveal**, **Hide**, and **Copy** follow. **Always Allow** is a standing grant to this app’s code signature; use it only for a build you compiled or a notarized GitHub Release.
 6. **Quit ezkey** exits. **License** opens the MIT text bundled in the app.
 
-Service and account labels may be remembered. Secret values are not.
+Name and account labels may be remembered. Secret values are not. When ezkey saves, it sets Keychain Access **Name** and **Where** to the same value, which is how those items already look.
 
 ## What this software does not do
 

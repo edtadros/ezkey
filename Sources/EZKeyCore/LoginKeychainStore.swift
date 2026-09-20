@@ -63,6 +63,7 @@ public actor LoginKeychainStore: SecretStore {
         var query: [CFString: Any] = [
             kSecClass: kSecClassGenericPassword,
             kSecAttrService: identity.service,
+            kSecAttrLabel: identity.service,
             kSecAttrAccount: identity.account,
             kSecValueData: Data(secret.utf8),
             kSecUseKeychain: keychain,
@@ -134,11 +135,11 @@ public actor LoginKeychainStore: SecretStore {
         for record in records {
             let service = record[kSecAttrService] as? String ?? ""
             let account = record[kSecAttrAccount] as? String ?? ""
+            let label = record[kSecAttrLabel] as? String ?? ""
             let identity = SecretIdentity(service: service, account: account)
             guard identity.isValid else { continue }
-            let serviceHit = identity.service.localizedCaseInsensitiveContains(needle)
-            let accountHit = identity.account.localizedCaseInsensitiveContains(needle)
-            guard serviceHit || accountHit else { continue }
+            let haystack = [identity.service, identity.account, label]
+            guard haystack.contains(where: { $0.localizedCaseInsensitiveContains(needle) }) else { continue }
             guard seen.insert(identity).inserted else { continue }
             matches.append(identity)
         }

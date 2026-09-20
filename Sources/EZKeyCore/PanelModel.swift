@@ -105,7 +105,7 @@ public final class PanelModel {
         persistLabels()
         let identity = identity
         guard identity.isValid else {
-            status = .validation("Service and account are required.")
+            status = .validation("Name and account are required.")
             return
         }
         guard !secretToSave.isEmpty else {
@@ -138,7 +138,7 @@ public final class PanelModel {
         persistLabels()
         let identity = identity
         guard identity.isValid else {
-            status = .validation("Service and account are required.")
+            status = .validation("Name and account are required.")
             return
         }
         guard !secretToSave.isEmpty else {
@@ -168,7 +168,7 @@ public final class PanelModel {
         matches = []
         let query = service.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !query.isEmpty else {
-            status = .validation("Enter a service name to search.")
+            status = .validation("Enter a name to search.")
             return
         }
         status = .working

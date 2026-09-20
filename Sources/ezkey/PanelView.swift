@@ -23,8 +23,8 @@ struct PanelView: View {
             .accessibilityLabel("Mode")
             .disabled(model.isWorking)
 
-            labeledField("Service", text: $model.service, prompt: "callbrief/staging", field: .service)
-            labeledField("Account", text: $model.account, prompt: "account", field: .account)
+            labeledField("Name", text: $model.service, prompt: "edwardtadros-ai-gateway-token", field: .service)
+            labeledField("Account", text: $model.account, prompt: "edward", field: .account)
 
             if model.mode == .save {
                 saveSection
@@ -112,7 +112,7 @@ struct PanelView: View {
             }
             .keyboardShortcut(.defaultAction)
             .disabled(model.isWorking)
-            .accessibilityHint("Search by part of the service name, or look up an exact pair")
+            .accessibilityHint("Search by part of the Keychain name, or look up an exact pair")
 
             if !model.matches.isEmpty {
                 VStack(alignment: .leading, spacing: 4) {
