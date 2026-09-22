@@ -19,7 +19,7 @@ Do not use ezkey for:
 - Browser passwords, passkeys, or iCloud Keychain management.
 - Storing or retrieving secrets through this website or the MCP server. Those interfaces are documentation only.
 
-How to call: GET `https://ezkey.app/api/v1/agent-brief` first (repo, disclaimer, clone/build). Then Markdown pages (`Accept: text/markdown`), `GET /api/v1/overview`, CLI `npx github:edtadros/ezkey`, or POST JSON-RPC to `https://ezkey.app/mcp` (`get_agent_brief`).
+How to call: GET `https://ezkey.app/api/v1/agent-brief` first (repo, disclaimer, clone/build). The homepage prompt is: read that brief and `https://ezkey.app/llms.txt`, show the disclaimer, clone `https://github.com/edtadros/ezkey`, run `./scripts/build-and-run.sh`. Do not download an unsigned `.app`. Then Markdown pages (`Accept: text/markdown`), `GET /api/v1/overview`, CLI `npx github:edtadros/ezkey`, or POST JSON-RPC to `https://ezkey.app/mcp` (`get_agent_brief`).
 
 ## Pages
 

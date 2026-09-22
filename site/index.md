@@ -5,9 +5,13 @@ description: A macOS menu bar extra for the login Keychain you already have. Loc
 
 # ezkey
 
-In the menu bar.
+Ask your agent to install ezkey.
 
-ezkey is a small macOS extra for the login Keychain you already have. No account. No server. No warranty.
+A menu-bar extra for the login Keychain on this Mac. No account, no server, no unsigned download. Source: [github.com/edtadros/ezkey](https://github.com/edtadros/ezkey).
+
+```
+Install ezkey on this Mac. Read https://ezkey.app/api/v1/agent-brief and https://ezkey.app/llms.txt. Show me the disclaimer, then clone https://github.com/edtadros/ezkey and run ./scripts/build-and-run.sh. Do not download an unsigned .app. Do not send Keychain secrets anywhere.
+```
 
 ![ezkey Save panel](https://ezkey.app/images/panel-save.png)
 

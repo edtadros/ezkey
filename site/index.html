@@ -18,6 +18,7 @@
   <link rel="ard" href="https://ezkey.app/.well-known/ard.json">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="/styles.css">
+  <script src="/theme.js"></script>
   <script src="/webmcp.js" defer></script>
 </head>
 <body>
@@ -33,27 +34,24 @@
     </nav>
   </header>
   <section class="hero">
-    <h1>In the menu bar.</h1>
-    <p class="lede">ezkey is a small macOS extra for the login Keychain you already have. No account. No server. No warranty.</p>
+    <h1>Ask your agent to install ezkey.</h1>
+    <p class="lede">A menu-bar extra for the login Keychain on this Mac. No account, no server, no unsigned download. Your agent reads the brief, shows you the disclaimer, then builds it from the <a href="https://github.com/edtadros/ezkey">GitHub repo</a>.</p>
     <div class="cta-row">
-      <a class="cta" href="https://github.com/edtadros/ezkey">View source</a>
-      <a class="cta ghost" href="https://github.com/edtadros/ezkey/blob/master/DISCLAIMER.md">Disclaimer</a>
+      <button class="cta" type="button" id="copy-install" data-prompt="Install ezkey on this Mac. Read https://ezkey.app/api/v1/agent-brief and https://ezkey.app/llms.txt. Show me the disclaimer, then clone https://github.com/edtadros/ezkey and run ./scripts/build-and-run.sh. Do not download an unsigned .app. Do not send Keychain secrets anywhere.">Ask your agent to install</button>
+      <a class="cta ghost" href="https://github.com/edtadros/ezkey">GitHub</a>
     </div>
+    <p class="cta-hint" id="copy-status">Your agent reads the brief, shows you the disclaimer, then builds from GitHub.</p>
   </section>
   <div class="stage">
     <div class="shots">
       <figure>
-        <picture>
-          <source srcset="/images/panel-save-dark.png" media="(prefers-color-scheme: dark)">
-          <img src="/images/panel-save.png" width="340" height="294" alt="The ezkey Save panel. Name is my-app-api-token. Secret is masked.">
-        </picture>
+        <img class="for-light" src="/images/panel-save.png" width="340" height="294" alt="The ezkey Save panel. Name is my-app-api-token. Secret is masked.">
+        <img class="for-dark" src="/images/panel-save-dark.png" width="340" height="294" alt="">
         <figcaption>Save</figcaption>
       </figure>
       <figure>
-        <picture>
-          <source srcset="/images/panel-matches-dark.png" media="(prefers-color-scheme: dark)">
-          <img src="/images/panel-matches.png" width="340" height="350" alt="The ezkey Retrieve panel listing matching Keychain names.">
-        </picture>
+        <img class="for-light" src="/images/panel-matches.png" width="340" height="350" alt="The ezkey Retrieve panel listing matching Keychain names.">
+        <img class="for-dark" src="/images/panel-matches-dark.png" width="340" height="350" alt="">
         <figcaption>Retrieve</figcaption>
       </figure>
     </div>
@@ -71,10 +69,10 @@
     <section class="group">
       <h2>Build it on your Mac</h2>
       <div class="row"><div>Requires</div><span>macOS 14+, Xcode CLT</span></div>
-    </section>
-<pre><code>git clone https://github.com/edtadros/ezkey.git
+      <pre><code>git clone https://github.com/edtadros/ezkey.git
 cd ezkey
 ./scripts/build-and-run.sh</code></pre>
+    </section>
     <section class="group q-list">
       <h2>Questions people ask</h2>
       <div class="row"><a href="/guides/how-to-save-api-keys-securely-on-mac/">How can I save API keys securely on a Mac?</a></div>
@@ -98,8 +96,29 @@ cd ezkey
       <a href="/contact/">Contact</a>
       <a href="/privacy/">Privacy</a>
       <a href="/security/">Security</a>
+      <a href="https://github.com/edtadros/ezkey">GitHub</a>
     </nav>
     <p>MIT. Provided as-is, without warranty.</p>
   </footer>
+  <script>
+    (function () {
+      var button = document.getElementById("copy-install");
+      var status = document.getElementById("copy-status");
+      if (!button || !status) return;
+      button.addEventListener("click", function () {
+        var text = button.getAttribute("data-prompt") || "";
+        function done(message) { status.textContent = message; }
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(function () {
+            done("Copied. Paste it into your agent.");
+          }, function () {
+            done("Select the prompt below and copy it.");
+          });
+        } else {
+          done("Select the prompt below and copy it.");
+        }
+      });
+    })();
+  </script>
 </body>
 </html>

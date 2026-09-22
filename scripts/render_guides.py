@@ -202,6 +202,7 @@ def render_html(page: dict) -> str:
   <link rel="ard" href="{ORIGIN}/.well-known/ard.json">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="/styles.css">
+  <script src="/theme.js"></script>
   <script src="/webmcp.js" defer></script>
   <script type="application/ld+json">
   {json.dumps(ld, ensure_ascii=False)}
@@ -769,6 +770,7 @@ def render_hub() -> tuple[str, str]:
   <link rel="ard" href="{ORIGIN}/.well-known/ard.json">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="/styles.css">
+  <script src="/theme.js"></script>
   <script src="/webmcp.js" defer></script>
 </head>
 <body>
