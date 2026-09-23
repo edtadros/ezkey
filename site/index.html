@@ -67,11 +67,14 @@
       <div class="row"><div>Copy</div><span>Clears in 30 seconds if unchanged</span></div>
     </section>
     <section class="group">
-      <h2>Build it on your Mac</h2>
+      <h2>Install</h2>
       <div class="row"><div>Requires</div><span>macOS 14+, Xcode CLT</span></div>
+      <div class="row"><div>Where it goes</div><span>/Applications/ezkey.app</span></div>
+      <div class="row"><div>After install</div><span>Opens, and starts when you log in</span></div>
       <pre><code>git clone https://github.com/edtadros/ezkey.git
 cd ezkey
 ./scripts/install.sh</code></pre>
+      <p>Open at Login is on by default. Turn it off from the ezkey panel. There is no Dock icon.</p>
     </section>
     <section class="group q-list">
       <h2>Questions people ask</h2>
@@ -82,7 +85,7 @@ cd ezkey
     </section>
     <section class="group">
       <h2>For agents</h2>
-      <p>Start with <a href="/api/v1/agent-brief"><code>GET /api/v1/agent-brief</code></a>. Present the <a href="/disclaimer.md">disclaimer</a>, then clone and build. CLI: <code>npx github:edtadros/ezkey</code>.</p>
+      <p>Start with <a href="/api/v1/agent-brief"><code>GET /api/v1/agent-brief</code></a>. Present the <a href="/disclaimer.md">disclaimer</a>, then run <code>./scripts/install.sh</code>. That copies the app to <code>/Applications/ezkey.app</code> and turns on Open at Login. CLI: <code>npx github:edtadros/ezkey</code>.</p>
     </section>
     <p class="note">There is no official downloadable app until a GitHub Release is Developer ID signed and notarized by Apple. If you did not compile it, do not grant it Keychain access. Always Allow is a standing grant to that code signature. See the <a href="/glossary/">glossary</a> and <a href="/guides/">guides</a>.</p>
   </main>

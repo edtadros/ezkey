@@ -8,15 +8,15 @@ ezkey is a small macOS extra for the login Keychain you already have. No account
 
 Name is Keychain Access Name and Where. Account is your Mac user and stays hidden. Retrieve: type part of a name, then pick. Secrets stay masked until Reveal. Copy clears in 30 seconds if unchanged.
 
-Build:
+Install:
 
 ```
 git clone https://github.com/edtadros/ezkey.git
 cd ezkey
-./scripts/build-and-run.sh
+./scripts/install.sh
 ```
 
-Requires macOS 14+ and Xcode command-line tools. There is no official downloadable app until a GitHub Release is Developer ID signed and notarized by Apple.
+That copies the app to `/Applications/ezkey.app`, opens it, and turns on Open at Login. Requires macOS 14+ and Xcode command-line tools. There is no official downloadable app until a GitHub Release is Developer ID signed and notarized by Apple.
 
 ## Privacy
 

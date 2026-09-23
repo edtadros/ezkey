@@ -26,9 +26,11 @@ Install ezkey on this Mac. Read https://ezkey.app/api/v1/agent-brief and https:/
 - **Reveal** — masked until you ask
 - **Copy** — clears in 30 seconds if unchanged
 
-## Build it on your Mac
+## Install
 
 Requires macOS 14+ and Xcode command-line tools.
+
+`./scripts/install.sh` copies the app to `/Applications/ezkey.app`, opens it, and turns on Open at Login. Turn that off from the ezkey panel. There is no Dock icon.
 
 ```
 git clone https://github.com/edtadros/ezkey.git
@@ -49,6 +51,6 @@ See the [glossary](https://ezkey.app/glossary.md) for Keychain field names.
 
 ## For agents
 
-Start with [GET /api/v1/agent-brief](https://ezkey.app/api/v1/agent-brief). Present the [disclaimer](https://ezkey.app/disclaimer.md), then clone and build. CLI: `npx github:edtadros/ezkey`.
+Start with [GET /api/v1/agent-brief](https://ezkey.app/api/v1/agent-brief). Present the [disclaimer](https://ezkey.app/disclaimer.md), then run `./scripts/install.sh`. That copies the app to `/Applications/ezkey.app` and turns on Open at Login. CLI: `npx github:edtadros/ezkey`.
 
 [About](https://ezkey.app/about.md) · [Developers](https://ezkey.app/developers.md) · [Docs](https://ezkey.app/docs) · [CLI](https://ezkey.app/cli.md) · [Guides](https://ezkey.app/guides.md) · [Privacy](https://ezkey.app/privacy.md) · [Security](https://ezkey.app/security.md) · [Source](https://github.com/edtadros/ezkey)

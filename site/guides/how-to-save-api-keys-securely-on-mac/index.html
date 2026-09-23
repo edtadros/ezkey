@@ -52,7 +52,7 @@
     <p>Build <a href="https://ezkey.app/">ezkey</a> from source, click the key in the menu bar, choose Save, type a Name such as <code>my-app-api-token</code>, paste the secret, save. Account is the logged-in Mac user and stays hidden. Retrieve can take a substring of the name and list matches without showing secrets until you pick one. Copy clears in 30 seconds if the pasteboard still holds what ezkey put there.</p>
     <figure><picture><source srcset="/images/panel-save-dark.png" media="(prefers-color-scheme: dark)"><img src="/images/panel-save.png" width="340" alt="ezkey Save panel"></picture><figcaption>ezkey Save panel</figcaption></figure>
     <figure><picture><source srcset="/images/panel-matches-dark.png" media="(prefers-color-scheme: dark)"><img src="/images/panel-matches.png" width="340" alt="ezkey Retrieve with matching names"></picture><figcaption>ezkey Retrieve with matching names</figcaption></figure>
-    <p>There is no official unsigned download. Clone https://github.com/edtadros/ezkey and run <code>./scripts/install.sh</code>. Do not grant Keychain access to a random <code>.app</code>.</p>
+    <p>There is no official unsigned download. Clone https://github.com/edtadros/ezkey and run <code>./scripts/install.sh</code>. That copies <code>ezkey.app</code> to <code>/Applications</code> and turns on Open at Login. Do not grant Keychain access to a random <code>.app</code>.</p>
     <h2 id="cli">Save from Terminal without shell history</h2>
     <pre><code>security add-generic-password -U -a &quot;$USER&quot; -s &quot;my-app-api-token&quot; -w &quot;$HOME/Library/Keychains/login.keychain-db&quot;
 # omit the password after -w so security prompts
