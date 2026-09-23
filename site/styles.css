@@ -68,29 +68,33 @@ a:hover { text-decoration: underline; }
 .top {
   max-width: 980px;
   margin: 0 auto;
-  padding: 18px 22px 0;
+  padding: 14px 22px 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  min-height: 44px;
 }
 
 .mark {
   display: flex;
   align-items: center;
   gap: 8px;
+  height: 28px;
   color: var(--ink);
   font-weight: 600;
   font-size: 17px;
+  line-height: 1;
   text-decoration: none;
 }
 
 .mark::before {
   content: "";
-  width: 16px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   background-color: currentColor;
-  -webkit-mask: url("/mark.svg") no-repeat center / contain;
-  mask: url("/mark.svg") no-repeat center / contain;
+  /* The source viewBox is taller than the shield, so a contained mask sits high. */
+  -webkit-mask: url("/mark.svg") center top / 18px 22.5px no-repeat;
+  mask: url("/mark.svg") center top / 18px 22.5px no-repeat;
   flex-shrink: 0;
 }
 
@@ -100,6 +104,18 @@ nav {
   display: flex;
   gap: 22px;
   font-size: 14px;
+}
+
+header.top nav {
+  align-items: center;
+  height: 28px;
+}
+
+header.top nav a {
+  display: inline-flex;
+  align-items: center;
+  height: 28px;
+  line-height: 1;
 }
 
 nav a { color: var(--ink); }
@@ -172,13 +188,22 @@ button.theme-toggle {
 }
 
 .theme-toggle {
-  height: 32px;
-  padding: 0 12px;
-  border-radius: 980px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border-radius: 0;
   background: transparent;
   color: var(--ink);
-  box-shadow: inset 0 0 0 1px var(--line);
-  font-size: 13px;
+  box-shadow: none;
+}
+
+.theme-toggle svg {
+  display: block;
+  width: 18px;
+  height: 18px;
 }
 
 .stage {
