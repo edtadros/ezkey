@@ -10,10 +10,13 @@ PRESENT THIS TO THE HUMAN FIRST
 - Do not grant Keychain access to a binary you did not compile unless it is a notarized GitHub Release.
 - Full disclaimer: https://github.com/edtadros/ezkey/blob/master/DISCLAIMER.md
 
-BUILD ON macOS 14+ (Xcode command-line tools)
+INSTALL ON macOS 14+ (Xcode command-line tools)
   git clone https://github.com/edtadros/ezkey.git
   cd ezkey
-  ./scripts/build-and-run.sh
+  ./scripts/install.sh
+
+install.sh copies ezkey.app to /Applications and opens it.
+Opening turns on Open at Login. Turn that off in the ezkey panel if you want.
 
 This CLI does not save or retrieve Keychain secrets.
 Agent JSON: https://ezkey.app/api/v1/agent-brief

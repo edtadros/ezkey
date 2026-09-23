@@ -128,9 +128,9 @@ export const OVERVIEW =
 
 export const BUILD = `git clone https://github.com/edtadros/ezkey.git
 cd ezkey
-./scripts/build-and-run.sh
+./scripts/install.sh
 
-Requires macOS 14+ and Xcode command-line tools. Do not grant Keychain access to a binary you did not compile unless it is a notarized GitHub Release.`;
+install.sh builds from source, copies the app to /Applications/ezkey.app, opens it, and turns on Open at Login. Requires macOS 14+ and Xcode command-line tools. Do not grant Keychain access to a binary you did not compile unless it is a notarized GitHub Release.`;
 
 export const DISCLAIMER = `ezkey is free software provided as is, with no warranty and no support obligation. It is a local macOS utility, not a hosted password manager.
 

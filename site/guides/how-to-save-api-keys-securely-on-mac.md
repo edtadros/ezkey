@@ -39,7 +39,7 @@ Build [ezkey](https://ezkey.app/) from source, click the key in the menu bar, ch
 
 ![ezkey Retrieve with matching names](https://ezkey.app/images/panel-matches.png)
 
-There is no official unsigned download. Clone https://github.com/edtadros/ezkey and run `./scripts/build-and-run.sh`. Do not grant Keychain access to a random `.app`.
+There is no official unsigned download. Clone https://github.com/edtadros/ezkey and run `./scripts/install.sh`. Do not grant Keychain access to a random `.app`.
 
 ## Save from Terminal without shell history
 

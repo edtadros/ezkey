@@ -9,15 +9,16 @@ ezkey is a native macOS menu bar app that saves and retrieves generic passwords 
 ```
 git clone https://github.com/edtadros/ezkey.git
 cd ezkey
-./scripts/build-and-run.sh
+./scripts/install.sh
 ```
 
-Requires macOS 14 or later and Xcode command-line tools. The script runs tests, packages `build/ezkey.app`, and launches it.
+Requires macOS 14 or later and Xcode command-line tools. `install.sh` runs tests, copies `/Applications/ezkey.app`, opens it, and turns on Open at Login.
 
 ## Commands
 
 - `swift test` — unit tests. Disposable Keychain items use the `ezkey.test.` name prefix only.
-- `./scripts/build-and-run.sh` — test, package, launch locally (ad-hoc signed).
+- `./scripts/install.sh` — install into `/Applications` and open (ad-hoc signed).
+- `./scripts/build-and-run.sh` — same script `install.sh` runs. `SKIP_INSTALL=1` packages `build/ezkey.app` only.
 - `npx wrangler deploy` — publish this website to Cloudflare (`ezkey.app`).
 - GitHub Actions `deploy-site` — same publish from `master` after repo secrets `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` exist. Manual run: Actions → deploy-site → Run workflow.
 - `npx github:edtadros/ezkey` — print disclaimer and clone/build steps (does not touch Keychain).

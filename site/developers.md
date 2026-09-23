@@ -78,7 +78,7 @@ None. See [auth.md](https://ezkey.app/auth.md). Protected-resource metadata: htt
 npx github:edtadros/ezkey
 ```
 
-That CLI prints the disclaimer and clone/build steps. It does not touch the Keychain. Homebrew formula: `Formula/ezkey.rb`.
+That CLI prints the disclaimer and the install command (`./scripts/install.sh`). It does not touch the Keychain. The install copies `/Applications/ezkey.app` and turns on Open at Login. Homebrew formula: `Formula/ezkey.rb`.
 
 ```
 curl -sS https://ezkey.app/api/v1/agent-brief

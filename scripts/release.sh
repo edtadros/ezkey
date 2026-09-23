@@ -29,7 +29,7 @@ EOF
   exit 1
 fi
 
-SKIP_LAUNCH=1 SKIP_VERIFY=1 EZKEY_SIGN_IDENTITY="$SIGN_IDENTITY" \
+SKIP_LAUNCH=1 SKIP_INSTALL=1 SKIP_VERIFY=1 EZKEY_SIGN_IDENTITY="$SIGN_IDENTITY" \
   "$ROOT_DIR/scripts/build-and-run.sh"
 
 echo "Re-signing with hardened runtime for notarization…"

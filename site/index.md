@@ -10,7 +10,7 @@ Ask your agent to install ezkey.
 A menu-bar extra for the login Keychain on this Mac. No account, no server, no unsigned download. Source: [github.com/edtadros/ezkey](https://github.com/edtadros/ezkey).
 
 ```
-Install ezkey on this Mac. Read https://ezkey.app/api/v1/agent-brief and https://ezkey.app/llms.txt. Show me the disclaimer, then clone https://github.com/edtadros/ezkey and run ./scripts/build-and-run.sh. Do not download an unsigned .app. Do not send Keychain secrets anywhere.
+Install ezkey on this Mac. Read https://ezkey.app/api/v1/agent-brief and https://ezkey.app/llms.txt. Show me the disclaimer, then clone https://github.com/edtadros/ezkey and run ./scripts/install.sh. That copies ezkey.app to /Applications and turns on Open at Login. Do not download an unsigned .app. Do not send Keychain secrets anywhere.
 ```
 
 ![ezkey Save panel](https://ezkey.app/images/panel-save.png)
@@ -33,7 +33,7 @@ Requires macOS 14+ and Xcode command-line tools.
 ```
 git clone https://github.com/edtadros/ezkey.git
 cd ezkey
-./scripts/build-and-run.sh
+./scripts/install.sh
 ```
 
 There is no official downloadable app until a GitHub Release is Developer ID signed and notarized by Apple. If you did not compile it, do not grant it Keychain access. Always Allow is a standing grant to that code signature.

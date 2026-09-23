@@ -33,7 +33,7 @@ function agentBrief(): Record<string, unknown> {
     present_to_user: [
       "ezkey is local macOS software for the login Keychain. No account, no server, no warranty.",
       "Always Allow is a standing grant to this app's code signature. Grant it only for a build you compiled or a notarized GitHub Release.",
-      "Build from source: git clone https://github.com/edtadros/ezkey.git && cd ezkey && ./scripts/build-and-run.sh",
+      "Install: git clone https://github.com/edtadros/ezkey.git && cd ezkey && ./scripts/install.sh — this puts ezkey.app in /Applications and turns on Open at Login.",
     ],
     disclaimer: DISCLAIMER,
     disclaimer_url: "https://github.com/edtadros/ezkey/blob/master/DISCLAIMER.md",

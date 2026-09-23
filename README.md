@@ -19,12 +19,12 @@ security find-generic-password -a "$USER" -s "your-service-name" -w "$HOME/Libra
 ```sh
 git clone https://github.com/edtadros/ezkey.git
 cd ezkey
-./scripts/build-and-run.sh
+./scripts/install.sh
 ```
 
 Requires macOS 14 or later and Xcode 16+ / Swift 6.1 command-line tools.
 
-The script packages `build/ezkey.app` and ad-hoc signs it for this machine. **Do not give that binary to other people.** A distributable zip exists only if `scripts/release.sh` succeeds at Developer ID signing **and** Apple notarization. CI never attaches an `.app`.
+`install.sh` builds the app, copies it to `/Applications/ezkey.app` (the Applications folder in Finder), opens it, and turns on **Open at Login**. You can turn that off from the panel. The copy in `build/ezkey.app` is only the build output. **Do not give an ad-hoc signed binary to other people.** A distributable zip exists only if `scripts/release.sh` succeeds at Developer ID signing **and** Apple notarization. CI never attaches an `.app`.
 
 Look for the shield-and-key icon in the menu bar (often near the notch, not next to Control Center). There is no Dock icon. The mark is Noun Project “VPN” (5544559).
 

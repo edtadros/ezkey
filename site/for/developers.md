@@ -36,7 +36,7 @@ It will not rotate keys at OpenAI. It will not sync to a phone. It will not hide
 ```
 git clone https://github.com/edtadros/ezkey.git
 cd ezkey
-./scripts/build-and-run.sh
+./scripts/install.sh
 ```
 
 Requires macOS 14+ and Xcode command-line tools. Then follow [how to save API keys securely](/guides/how-to-save-api-keys-securely-on-mac/).

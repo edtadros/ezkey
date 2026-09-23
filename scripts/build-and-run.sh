@@ -51,8 +51,25 @@ if [[ "${SKIP_VERIFY:-0}" != "1" ]]; then
   "$APP_DIR/Contents/MacOS/${APP_NAME}" --self-test
 fi
 
-if [[ "${SKIP_LAUNCH:-0}" != "1" ]]; then
-  pkill -x ezkey >/dev/null 2>&1 || true
-  open "$APP_DIR"
-  echo "Launched ezkey. Look for the key icon in the menu bar."
+if [[ "${SKIP_INSTALL:-0}" != "1" ]]; then
+  INSTALL_DIR="${EZKEY_INSTALL_DIR:-/Applications}"
+  mkdir -p "$INSTALL_DIR"
+  INSTALLED="$INSTALL_DIR/${APP_NAME}.app"
+  ditto "$APP_DIR" "$INSTALLED"
+  if [[ -n "$SIGN_IDENTITY" ]]; then
+    codesign --force --sign "$SIGN_IDENTITY" --identifier "$BUNDLE_ID" "$INSTALLED"
+  else
+    codesign --force --sign - --identifier "$BUNDLE_ID" "$INSTALLED"
+  fi
+  echo "Installed: $INSTALLED"
+  if [[ "$INSTALLED" == "/Applications/${APP_NAME}.app" && -d "$HOME/Applications/${APP_NAME}.app" ]]; then
+    rm -rf "$HOME/Applications/${APP_NAME}.app"
+    echo "Removed the earlier copy in ~/Applications."
+  fi
+
+  if [[ "${SKIP_LAUNCH:-0}" != "1" ]]; then
+    pkill -x ezkey >/dev/null 2>&1 || true
+    open "$INSTALLED"
+    echo "Opened ${INSTALLED}. Open at Login is on unless you turn it off in the panel."
+  fi
 fi

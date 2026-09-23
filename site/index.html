@@ -37,7 +37,7 @@
     <h1>Ask your agent to install ezkey.</h1>
     <p class="lede">A menu-bar extra for the login Keychain on this Mac. No account, no server, no unsigned download. Your agent reads the brief, shows you the disclaimer, then builds it from the <a href="https://github.com/edtadros/ezkey">GitHub repo</a>.</p>
     <div class="cta-row">
-      <button class="cta" type="button" id="copy-install" data-prompt="Install ezkey on this Mac. Read https://ezkey.app/api/v1/agent-brief and https://ezkey.app/llms.txt. Show me the disclaimer, then clone https://github.com/edtadros/ezkey and run ./scripts/build-and-run.sh. Do not download an unsigned .app. Do not send Keychain secrets anywhere.">Ask your agent to install</button>
+      <button class="cta" type="button" id="copy-install" data-prompt="Install ezkey on this Mac. Read https://ezkey.app/api/v1/agent-brief and https://ezkey.app/llms.txt. Show me the disclaimer, then clone https://github.com/edtadros/ezkey and run ./scripts/install.sh. That copies ezkey.app to /Applications and turns on Open at Login. Do not download an unsigned .app. Do not send Keychain secrets anywhere.">Ask your agent to install</button>
       <a class="cta ghost" href="https://github.com/edtadros/ezkey">GitHub</a>
     </div>
     <p class="cta-hint" id="copy-status">Your agent reads the brief, shows you the disclaimer, then builds from GitHub.</p>
@@ -71,7 +71,7 @@
       <div class="row"><div>Requires</div><span>macOS 14+, Xcode CLT</span></div>
       <pre><code>git clone https://github.com/edtadros/ezkey.git
 cd ezkey
-./scripts/build-and-run.sh</code></pre>
+./scripts/install.sh</code></pre>
     </section>
     <section class="group q-list">
       <h2>Questions people ask</h2>
