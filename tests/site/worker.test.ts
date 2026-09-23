@@ -67,7 +67,8 @@ test("agent-brief includes repo, disclaimer, and build commands", async () => {
   };
   assert.equal(body.repository, "https://github.com/edtadros/ezkey");
   assert.match(body.disclaimer, /no warranty/i);
-  assert.match(body.install.commands, /build-and-run\.sh/);
+  assert.match(body.install.commands, /install\.sh/);
+  assert.match(body.install.commands, /\/Applications\/ezkey\.app/);
   assert.ok(body.present_to_user.length >= 3);
 });
 
@@ -116,6 +117,7 @@ test("CLI binary prints disclaimer and clone command", async () => {
   const { execFileSync } = await import("node:child_process");
   const out = execFileSync(process.execPath, [join(root, "cli/ezkey.mjs")], { encoding: "utf8" });
   assert.match(out, /DISCLAIMER|no warranty/i);
-  assert.match(out, /build-and-run\.sh/);
+  assert.match(out, /install\.sh/);
+  assert.match(out, /\/Applications/);
   assert.match(out, /github.com\/edtadros\/ezkey/);
 });

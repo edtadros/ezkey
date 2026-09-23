@@ -5,6 +5,8 @@ import SwiftUI
 struct PanelView: View {
     @Bindable var model: PanelModel
     @FocusState private var focusedField: Field?
+    @State private var opensAtLogin = false
+    @State private var loginItemNote = ""
 
     private enum Field: Hashable {
         case service
@@ -35,6 +37,27 @@ struct PanelView: View {
 
             Divider()
 
+            Toggle(isOn: Binding(
+                get: { opensAtLogin },
+                set: { newValue in
+                    loginItemNote = LoginItem.setEnabled(newValue)
+                    opensAtLogin = LoginItem.isEnabled || LoginItem.needsApproval
+                }
+            )) {
+                Text("Open at Login")
+            }
+            .toggleStyle(.switch)
+            .controlSize(.small)
+            .help(loginItemNote.isEmpty
+                ? "Start ezkey when you log in"
+                : loginItemNote)
+            if !loginItemNote.isEmpty {
+                Text(loginItemNote)
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+
             HStack {
                 Button("License") {
                     openLicense()
@@ -55,6 +78,10 @@ struct PanelView: View {
         .frame(width: 340)
         .onAppear {
             model.panelDidOpen()
+            opensAtLogin = LoginItem.isEnabled || LoginItem.needsApproval
+            if LoginItem.needsApproval {
+                loginItemNote = "Allow ezkey in System Settings → General → Login Items."
+            }
             focusedField = .service
         }
         .onDisappear {

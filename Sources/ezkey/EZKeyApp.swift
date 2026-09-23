@@ -86,6 +86,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         // Do not call setActivationPolicy(.accessory) here. LSUIElement in
         // Info.plist already hides the Dock icon; switching policy after
         // SwiftUI constructs MenuBarExtra removes the status item.
+        if !CommandLine.arguments.contains("--self-test"),
+           !CommandLine.arguments.contains("--render-marketing") {
+            LoginItem.sync()
+        }
         if CommandLine.arguments.contains("--self-test") {
             Task { @MainActor in
                 exit(await SelfTest.run())

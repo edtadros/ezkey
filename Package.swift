@@ -20,7 +20,10 @@ let package = Package(
         ),
         .executableTarget(
             name: "ezkey",
-            dependencies: ["EZKeyCore"]
+            dependencies: ["EZKeyCore"],
+            linkerSettings: [
+                .linkedFramework("ServiceManagement"),
+            ]
         ),
         .testTarget(
             name: "EZKeyCoreTests",
