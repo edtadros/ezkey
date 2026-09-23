@@ -22,16 +22,21 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
-      - name: Require Cloudflare secrets
+      - name: Check Cloudflare secrets
+        id: check-secrets
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
           if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
-            echo "Add repository secrets CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID, then re-run this workflow."
-            exit 1
+            echo "notice=Cloudflare secrets not configured; skipping Worker deploy. Add repository secrets CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID to enable." >> "$GITHUB_OUTPUT"
+            echo "secrets-present=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Cloudflare secrets not configured; skipping Worker deploy. Add repository secrets CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID to enable."
+          else
+            echo "secrets-present=true" >> "$GITHUB_OUTPUT"
           fi
       - name: Deploy Worker
+        if: steps.check-secrets.outputs.secrets-present == 'true'
         uses: cloudflare/wrangler-action@v4
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
