@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/usr/bin/env bash
 # Scan tracked files for live secrets and personal data.
 # Public identity edtadros and hello@ezkey.app are allowed.
 # Exit 0 when the tracked tree is clean.

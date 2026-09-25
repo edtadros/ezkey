@@ -6,7 +6,7 @@ import test from "node:test";
 const root = join(import.meta.dirname, "../..");
 
 test("tracked tree has no secrets or personal data", () => {
-  const out = execFileSync("zsh", [join(root, "scripts/scan-public.sh")], {
+  const out = execFileSync(join(root, "scripts/scan-public.sh"), {
     cwd: root,
     encoding: "utf8",
   });

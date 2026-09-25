@@ -2,7 +2,7 @@
 .gnosys/
 
 # SwiftPM / Xcode
-.build/
+.build
 .swiftpm/
 DerivedData/
 *.xcodeproj
