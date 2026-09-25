@@ -1,5 +1,7 @@
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
+import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
 
@@ -27,6 +29,12 @@ test("gitignore blocks credential and local-state files", () => {
     "build/ezkey.app",
     ".build",
     "node_modules/left-pad/index.js",
+    "id_rsa",
+    "id_dsa",
+    "id_ecdsa",
+    "id_ed25519",
+    ".netrc",
+    "production.env",
   ];
   const out = execFileSync("git", ["check-ignore", "-v", ...paths], {
     cwd: root,
@@ -35,4 +43,30 @@ test("gitignore blocks credential and local-state files", () => {
   for (const path of paths) {
     assert.match(out, new RegExp(path.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
   }
+});
+
+test("classifier flags a second address and an OpenAI token outside the tree", () => {
+  const dir = mkdtempSync(join(tmpdir(), "ezkey-scan-"));
+  const file = join(dir, "fixture.txt");
+  const allowed = "hello" + "@" + "ezkey.app";
+  const personal = "edward" + "." + "tadros" + "@" + "proticom.com";
+  const token = "sk-" + "proj-" + "a".repeat(32);
+  writeFileSync(file, allowed + " " + personal + "\nOPENAI_API_KEY=" + token + "\n");
+  const script = join(root, "scripts/scan-public.sh");
+  let out = "";
+  let code = 0;
+  try {
+    out = execFileSync(script, ["--extra", file], { cwd: root, encoding: "utf8" });
+  } catch (err) {
+    const failed = err as { status?: number; stdout?: string };
+    code = failed.status ?? 1;
+    out = failed.stdout ?? "";
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+  assert.equal(code, 1);
+  assert.match(out, /HIT email/);
+  assert.equal(out.includes(personal), true);
+  assert.match(out, /HIT secret/);
+  assert.equal(out.includes(token), true);
 });
