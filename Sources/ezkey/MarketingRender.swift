@@ -38,7 +38,7 @@ enum MarketingRender {
                 try snapshot(name: "panel-retrieved\(suffix)", scheme: scheme, directory: dir) { model in
                     model.mode = .retrieve
                     model.service = "my-app-api-token"
-                    model.retrievedSecret = "sk_test_example"
+                    model.retrievedSecret = "example-retrieved"
                     model.retrievedNote = "local staging token"
                     model.isRevealed = false
                     model.status = .retrieved

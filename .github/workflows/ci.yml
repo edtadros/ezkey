@@ -14,6 +14,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          persist-credentials: false
       - name: Show Swift
         run: swift --version
       - name: Test
@@ -27,8 +29,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          persist-credentials: false
       - name: Site worker tests
-        run: node --experimental-strip-types --test tests/site/worker.test.ts
+        run: node --experimental-strip-types --test tests/site/worker.test.ts tests/site/public-repo.test.ts
 
   ci-gate:
     if: always()

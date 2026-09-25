@@ -11,9 +11,26 @@ xcuserdata/
 # Packaged app output (rebuild with scripts/build-and-run.sh)
 build/
 
-# Wrangler
+# Wrangler local state and secrets
 .wrangler/
 .dev.vars
+.dev.vars.*
+
+# Environment files and credentials
+.env
+.env.*
+*.pem
+*.p12
+*.p8
+*.key
+*.mobileprovision
+*credentials*.json
+service-account*.json
+AuthKey_*.p8
+
+# Dependency and editor caches
+node_modules/
+npm-debug.log*
 
 .DS_Store
 *.swp
