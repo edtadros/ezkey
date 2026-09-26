@@ -55,6 +55,7 @@ if [[ "${SKIP_INSTALL:-0}" != "1" ]]; then
   INSTALL_DIR="${EZKEY_INSTALL_DIR:-/Applications}"
   mkdir -p "$INSTALL_DIR"
   INSTALLED="$INSTALL_DIR/${APP_NAME}.app"
+  rm -rf "$INSTALLED"
   ditto "$APP_DIR" "$INSTALLED"
   if [[ -n "$SIGN_IDENTITY" ]]; then
     codesign --force --sign "$SIGN_IDENTITY" --identifier "$BUNDLE_ID" "$INSTALLED"

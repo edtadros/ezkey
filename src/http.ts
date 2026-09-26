@@ -138,7 +138,7 @@ install.sh runs tests, builds, runs a Keychain self-test on ezkey.test.* items, 
 
 export const DISCLAIMER = `ezkey is free software provided as is, with no warranty and no support obligation. It is a local macOS utility, not a hosted password manager.
 
-ezkey asks for your login password every time it shows a secret, including secrets ezkey saved itself. That is on purpose. By default, macOS lets the app that saved a Keychain item read it again without asking. ezkey turns that off for everything it saves, because ezkey has no login of its own: without the prompt, anyone using your unlocked Mac could open ezkey and read your keys. Clicking Always Allow does not change this. It is the same protection Keychain Access gives when you show a password. Names and notes stay readable without the password so you can search; only the secret is protected.
+ezkey asks for your login password every time it shows a secret it saved. Secrets other apps saved follow the rules those apps set, which usually means a prompt too. That is on purpose. By default, macOS lets the app that saved a Keychain item read it again without asking. ezkey turns that off for everything it saves, because ezkey has no login of its own: without the prompt, anyone using your unlocked Mac could open ezkey and read your keys. Clicking Always Allow does not change this. It is the same protection Keychain Access gives when you show a password. Names and notes stay readable without the password so you can search; only the secret is protected.
 
 ezkey is open source. You build it on your own Mac, from the newest release tag on GitHub. If you want to check it first, ask your own agent to review the code. We encourage that. The install skill includes a review checklist.
 
