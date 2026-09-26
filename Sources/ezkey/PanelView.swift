@@ -216,7 +216,7 @@ struct PanelView: View {
         }
     }
 
-    /// MenuBarExtra windows hug the view's fitting size. A ScrollView with only
+    /// The popover hugs the view's fitting size. A ScrollView with only
     /// maxHeight reports ~0 height, so the picker header showed with no rows.
     private var matchPicker: some View {
         VStack(alignment: .leading, spacing: 6) {

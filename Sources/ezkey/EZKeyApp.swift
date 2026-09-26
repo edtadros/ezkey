@@ -2,55 +2,55 @@ import AppKit
 import EZKeyCore
 import SwiftUI
 
-@MainActor
-@Observable
-final class EZKeySession {
-    let model = PanelModel()
-
-    init() {
-        model.onOperationFinishedWhileClosed = {
-            Task { @MainActor in
-                try? await Task.sleep(for: .milliseconds(250))
-                MenuBarReopener.reopen()
-            }
-        }
-    }
-}
-
-@MainActor
-enum MenuBarReopener {
-    /// MenuBarExtra has no public present API. Click this process's status item
-    /// so the panel comes back after a Keychain password dialog dismisses it.
-    static func reopen() {
-        NSApp.activate()
-        guard let pointerArray = NSStatusBar.system.value(forKey: "items") as? NSPointerArray else {
-            return
-        }
-        for index in 0..<pointerArray.count {
-            guard let pointer = pointerArray.pointer(at: index) else { continue }
-            let item = Unmanaged<NSStatusItem>.fromOpaque(pointer).takeUnretainedValue()
-            if let button = item.button {
-                button.performClick(nil)
-                return
-            }
-        }
-    }
-}
-
 @main
 struct EZKeyApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
-    @State private var session = EZKeySession()
 
     var body: some Scene {
-        MenuBarExtra {
-            PanelView(model: session.model)
-        } label: {
-            Image(nsImage: MenuBarIcon.image)
-                .renderingMode(.template)
-                .accessibilityLabel("ezkey")
+        Settings { EmptyView() }
+    }
+}
+
+/// The menu bar icon and its popover. ezkey owns both, so reopening the panel
+/// after a Keychain password dialog is a public `NSPopover.show` call.
+@MainActor
+final class MenuBarController: NSObject {
+    private let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
+    private let popover = NSPopover()
+
+    init(model: PanelModel) {
+        super.init()
+        item.button?.image = MenuBarIcon.image
+        item.button?.setAccessibilityLabel("ezkey")
+        item.button?.target = self
+        item.button?.action = #selector(toggle)
+        let host = NSHostingController(rootView: PanelView(model: model))
+        // Without this the popover is placed for SwiftUI's first size guess
+        // and floats about 180 pt below the menu bar.
+        host.sizingOptions = [.preferredContentSize]
+        popover.contentViewController = host
+        popover.behavior = .transient
+        model.onOperationFinishedWhileClosed = { [weak self] in
+            Task { @MainActor in
+                try? await Task.sleep(for: .milliseconds(250))
+                self?.show()
+            }
         }
-        .menuBarExtraStyle(.window)
+    }
+
+    @objc private func toggle() {
+        if popover.isShown {
+            popover.performClose(nil)
+        } else {
+            show()
+        }
+    }
+
+    private func show() {
+        guard let button = item.button, !popover.isShown else { return }
+        NSApp.activate()
+        popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
+        popover.contentViewController?.view.window?.makeKey()
     }
 }
 
@@ -81,30 +81,28 @@ enum MenuBarIcon {
     }
 }
 
+@MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
+    private var menuBar: MenuBarController?
+
     func applicationDidFinishLaunching(_ notification: Notification) {
-        // Do not call setActivationPolicy(.accessory) here. LSUIElement in
-        // Info.plist already hides the Dock icon; switching policy after
-        // SwiftUI constructs MenuBarExtra removes the status item.
-        if !CommandLine.arguments.contains("--self-test"),
-           !CommandLine.arguments.contains("--render-marketing") {
-            LoginItem.sync()
-        }
-        if CommandLine.arguments.contains("--self-test") {
+        let arguments = CommandLine.arguments
+        if arguments.contains("--self-test") {
             Task { @MainActor in
                 exit(await SelfTest.run())
             }
             return
         }
-        if let index = CommandLine.arguments.firstIndex(of: "--render-marketing") {
-            let next = CommandLine.arguments.index(after: index)
-            let directory = next < CommandLine.arguments.endIndex
-                ? CommandLine.arguments[next]
-                : "site/images"
+        if let index = arguments.firstIndex(of: "--render-marketing") {
+            let next = arguments.index(after: index)
+            let directory = next < arguments.endIndex ? arguments[next] : "site/images"
             Task { @MainActor in
                 exit(await MarketingRender.run(outputDirectory: directory))
             }
+            return
         }
+        LoginItem.sync()
+        menuBar = MenuBarController(model: PanelModel())
     }
 
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {

@@ -31,9 +31,9 @@ ezkey opens `~/Library/Keychains/login.keychain-db` through Security.framework. 
 
 ## When Keychain Access is better
 
-Certificates, code signing identities, looking at Access Control, fixing a stuck Always Allow, inspecting iCloud items. ezkey will not grow into that. If you need those tools, open Access. That is not a failure of ezkey. It is the division of labor.
+Certificates, code signing identities, looking at Access Control, inspecting iCloud items. ezkey will not grow into that. If you need those tools, open Access. That is not a failure of ezkey. It is the division of labor.
 
-Access is also the right place when an item will not delete, when two items share a confusing Where, or when you need to see which apps are trusted. ezkey will not show ACL entries. If Retrieve fails with a prompt you do not understand, open Access, find the item, and read Access Control. Then decide whether Always Allow is something you want to give a binary you compiled.
+Access is also the right place when an item will not delete, when two items share a confusing Where, or when you need to see which apps are trusted. ezkey will not show ACL entries. If Retrieve fails with a prompt you do not understand, open Access, find the item, and read Access Control. Then decide whether to allow it. macOS may ask again even after Always Allow.
 
 ## When ezkey is better
 

@@ -28,4 +28,4 @@ curl -sS https://ezkey.app/api/v1/agent-brief
 curl -sS https://ezkey.app/api/v1/cli
 ```
 
-No API key. `/api/v1/cli` stays for compatibility. It returns `"cli": null` and points to the skill. There is no prebuilt app. Do not download a `.app` from anywhere.
+No API key. `/api/v1/cli` stays for compatibility. It returns `"cli": null` and points to the skill. You build the app from source on your Mac. Only run ezkey you built yourself.

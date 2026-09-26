@@ -32,7 +32,7 @@ security add-generic-password -U -a "$USER" -s "my-app-api-token" -w \
   "$HOME/Library/Keychains/login.keychain-db"
 ```
 
-ss64 and `man security` document the rest. Creator codes and `-T` trusted apps are how Access Control lists get weird. Default trust includes the creating app. ezkey’s code signature is what Always Allow binds to later.
+ss64 and `man security` document the rest. Creator codes and `-T` trusted apps are how Access Control lists get weird. Default trust includes the creating app. Always Allow asks macOS to add ezkey to that list, but macOS may still ask again.
 
 A common copy-paste sets `-a` to the service name and `-s` to the key name, or the reverse. Then Keychain Access looks empty when you search the string you remember. Pick a convention and keep it. ezkey’s convention is: the Name you type is both label and service; account is the Mac user. If you already have CLI items with a different account string, Retrieve will not see them until you save under the Mac user or search from Access.
 

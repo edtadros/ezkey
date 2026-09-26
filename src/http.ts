@@ -134,13 +134,13 @@ cd ezkey
 
 <tag> is the newest v* release tag. Only the maintainer can create, move, or delete v* tags. Before running install.sh, review the code with the checklist in ${SKILL_URL} and wait for the human's go-ahead. The review lowers risk. It does not prove the code is safe.
 
-install.sh runs tests, builds, runs a Keychain self-test on ezkey.test.* items, copies the app to /Applications/ezkey.app, opens it, and turns on Open at Login. Requires macOS 14+ and Xcode command-line tools. There is no prebuilt app. Do not download a .app.`;
+install.sh runs tests, builds, runs a Keychain self-test on ezkey.test.* items, copies the app to /Applications/ezkey.app, opens it, and turns on Open at Login. Requires macOS 14+ and Xcode command-line tools. Only run ezkey you built yourself.`;
 
 export const DISCLAIMER = `ezkey is free software provided as is, with no warranty and no support obligation. It is a local macOS utility, not a hosted password manager.
 
-macOS will ask before ezkey can read a Keychain item created by another program. Allow and Always Allow are decisions you make. Always Allow is a standing grant to the code signature of the build you compiled. Each rebuild changes that signature, so macOS may ask again after an update.
+macOS asks for your login password when ezkey reads a secret that another app saved. It can ask again next time, even after you click Always Allow. ezkey does not suppress or work around that prompt. That is on purpose: you get the same protection as Keychain Access, which asks every time you show a password. Secrets you save with ezkey usually open without a prompt.
 
-The only supported way to obtain ezkey is to build it from source, from the newest release tag on GitHub. There is no prebuilt app.
+ezkey is open source. You build it on your own Mac, from the newest release tag on GitHub. If you want to check it first, ask your own agent to review the code. We encourage that. The install skill includes a review checklist.
 
 Full text: https://github.com/edtadros/ezkey/blob/master/DISCLAIMER.md`;
 

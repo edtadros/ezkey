@@ -6,7 +6,7 @@ Do not put API keys, passwords, Keychain dumps, or real service/account pairs in
 
 ## Pull requests
 
-Non-maintainers should open a PR. Do not include personal filesystem paths, signing identities, or notarization credentials.
+Non-maintainers should open a PR. Do not include personal filesystem paths, or signing identities.
 
 CI must pass (`ci-gate`).
 

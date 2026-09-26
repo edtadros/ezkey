@@ -7,7 +7,7 @@ description: A macOS menu bar extra for the login Keychain you already have. Loc
 
 Ask your agent to install ezkey.
 
-A menu-bar extra for the login Keychain on this Mac. No account, no server, no prebuilt app. Source: [github.com/edtadros/ezkey](https://github.com/edtadros/ezkey).
+A menu-bar extra for the login Keychain on this Mac. No account, no server. Open source. Source: [github.com/edtadros/ezkey](https://github.com/edtadros/ezkey).
 
 ```
 Install ezkey on this Mac. Follow https://ezkey.app/.well-known/agent-skills/build-ezkey/SKILL.md. Show me the disclaimer first. Clone the newest release tag and review the code with the checklist in that file before building. Show me the results and wait for my go-ahead before running ./scripts/install.sh. Do not download a prebuilt app. Do not send Keychain secrets anywhere.
@@ -40,7 +40,7 @@ cd ezkey
 
 Replace `<tag>` with the newest `v*` release tag. Only the maintainer can create, move, or delete those tags. To review the code before building, follow the [build-ezkey skill](https://ezkey.app/.well-known/agent-skills/build-ezkey/SKILL.md).
 
-There is no prebuilt app. A local build is ad-hoc signed for this Mac. It is not notarized and does not need to be: it was never downloaded, so Gatekeeper does not check it. Always Allow is a standing grant to the code signature of the build you compiled. Each rebuild changes that signature, so macOS may ask again after an update.
+ezkey is open source. You build it on your own Mac. macOS asks for your login password when ezkey reads a secret that another app saved. It can ask again next time, even after you click Always Allow. ezkey does not suppress or work around that prompt. That is on purpose: you get the same protection as Keychain Access, which asks every time you show a password. Secrets you save with ezkey usually open without a prompt.
 
 See the [glossary](https://ezkey.app/glossary.md) for Keychain field names.
 

@@ -129,9 +129,23 @@ enum MarketingRender {
         RunLoop.main.run(until: Date(timeIntervalSinceNow: 0.05))
 
         let bounds = hosting.bounds
-        guard let bitmap = hosting.bitmapImageRepForCachingDisplay(in: bounds) else {
+        // Fixed 2x so the site images match on any display, Retina or not.
+        let scale: CGFloat = 2
+        guard let bitmap = NSBitmapImageRep(
+            bitmapDataPlanes: nil,
+            pixelsWide: Int(bounds.width * scale),
+            pixelsHigh: Int(bounds.height * scale),
+            bitsPerSample: 8,
+            samplesPerPixel: 4,
+            hasAlpha: true,
+            isPlanar: false,
+            colorSpaceName: .deviceRGB,
+            bytesPerRow: 0,
+            bitsPerPixel: 0
+        ) else {
             throw RenderError.noBitmap
         }
+        bitmap.size = bounds.size
         hosting.cacheDisplay(in: bounds, to: bitmap)
         let image = NSImage(size: bounds.size)
         image.addRepresentation(bitmap)
