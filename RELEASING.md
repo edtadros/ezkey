@@ -11,3 +11,5 @@ A release is a `v*` tag on `master`. Installs clone the newest one (see `site/.w
    ```
 
 Only admins can create, move, or delete `v*` tags (`release-tags` ruleset). Never move a published tag: agents and users pin to it.
+
+Use a plain tag (`git tag`, not `git tag -a`). With an annotated tag, `git clone --depth 1 --branch <tag>` prints "is not a commit!", which a reviewing agent may flag. GitHub prints "Cannot create ref due to creations being restricted" when an admin bypasses the ruleset; the tag is still created.
