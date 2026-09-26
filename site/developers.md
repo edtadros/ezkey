@@ -45,7 +45,7 @@ The current major version is `1`, in the URL path and the `API-Version` response
 
 ### Rate limits
 
-60 requests per minute per client IP on REST, MCP, and A2A. Responses include `RateLimit` and `RateLimit-Policy`. HTTP 429 includes `Retry-After`.
+10 requests per 10 seconds per client IP on REST, MCP, and A2A, enforced by Cloudflare. Responses include `RateLimit-Policy`. HTTP 429 includes `Retry-After`.
 
 OpenAPI: https://ezkey.app/openapi.json
 
@@ -74,11 +74,7 @@ None. See [auth.md](https://ezkey.app/auth.md). Protected-resource metadata: htt
 
 ## Command-line
 
-```
-npx github:edtadros/ezkey
-```
-
-That CLI prints the disclaimer and the install command (`./scripts/install.sh`). It does not touch the Keychain. The install copies `/Applications/ezkey.app` and turns on Open at Login. Homebrew formula: `Formula/ezkey.rb`.
+There is no ezkey CLI package. Agents install ezkey by following the [build-ezkey skill](https://ezkey.app/.well-known/agent-skills/build-ezkey/SKILL.md): disclaimer, clone of the newest release tag, code review, then `./scripts/install.sh` after the human says go. The install copies `/Applications/ezkey.app` and turns on Open at Login. See [CLI](https://ezkey.app/cli.md).
 
 ```
 curl -sS https://ezkey.app/api/v1/agent-brief

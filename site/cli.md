@@ -1,25 +1,25 @@
 ---
 title: CLI — ezkey.app
-description: Official ezkey CLI that prints the disclaimer and macOS build steps. It does not access the Keychain.
+description: There is no ezkey CLI. Install ezkey from source with your agent.
 ---
 
 # ezkey CLI
 
-The official CLI is for agents and humans who need the source path. It does not save or retrieve Keychain secrets.
+There is no ezkey CLI package. There is no npm package and no Homebrew formula. Nothing to install with `npx` or `brew`.
 
-## When to use this
+## Install instead
 
-You have been pointed at ezkey.app and need to present the disclaimer, clone the repository, and run `./scripts/install.sh`. That copies the app to `/Applications/ezkey.app` and turns on Open at Login.
+Ask your agent to follow the [build-ezkey skill](https://ezkey.app/.well-known/agent-skills/build-ezkey/SKILL.md). It shows you the disclaimer, clones the newest `v*` release tag, reviews the code, and shows you the results. It runs `./scripts/install.sh` only after you say go. That copies the app to `/Applications/ezkey.app` and turns on Open at Login.
 
-## Install and run
+By hand:
 
 ```
-npx github:edtadros/ezkey
+git clone --depth 1 --branch <tag> https://github.com/edtadros/ezkey.git
+cd ezkey
+./scripts/install.sh
 ```
 
-That prints what ezkey is, the as-is disclaimer, clone/build commands, and the GitHub URL.
-
-Homebrew formula in the source tree: `Formula/ezkey.rb`.
+Replace `<tag>` with the newest `v*` release tag.
 
 ## Public API equivalent
 
@@ -28,4 +28,4 @@ curl -sS https://ezkey.app/api/v1/agent-brief
 curl -sS https://ezkey.app/api/v1/cli
 ```
 
-No API key. Do not grant Keychain access to a binary the user did not compile unless it is a notarized GitHub Release.
+No API key. `/api/v1/cli` stays for compatibility. It returns `"cli": null` and points to the skill. There is no prebuilt app. Do not download a `.app` from anywhere.

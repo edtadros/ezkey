@@ -7,12 +7,14 @@ ezkey is a native macOS menu bar app that saves and retrieves generic passwords 
 ## Setup
 
 ```
-git clone https://github.com/edtadros/ezkey.git
+git clone --depth 1 --branch <tag> https://github.com/edtadros/ezkey.git
 cd ezkey
 ./scripts/install.sh
 ```
 
-Requires macOS 14 or later and Xcode command-line tools. `install.sh` runs tests, copies `/Applications/ezkey.app`, opens it, and turns on Open at Login.
+Replace `<tag>` with the newest `v*` release tag. To review the code before building, follow the build-ezkey skill: https://ezkey.app/.well-known/agent-skills/build-ezkey/SKILL.md
+
+Requires macOS 14 or later and Xcode command-line tools. `install.sh` runs tests, builds, runs a Keychain self-test on `ezkey.test.*` items, copies `/Applications/ezkey.app`, opens it, and turns on Open at Login.
 
 ## Commands
 
@@ -20,12 +22,11 @@ Requires macOS 14 or later and Xcode command-line tools. `install.sh` runs tests
 - `./scripts/install.sh` — install into `/Applications` and open (ad-hoc signed).
 - `./scripts/build-and-run.sh` — same script `install.sh` runs. `SKIP_INSTALL=1` packages `build/ezkey.app` only.
 - `npx wrangler deploy` — publish this website to Cloudflare (`ezkey.app`).
-- `npx github:edtadros/ezkey` — print disclaimer and clone/build steps (does not touch Keychain).
 - `node --experimental-strip-types --test tests/site/worker.test.ts` — site worker tests.
 
 ## Conventions
 
 - Do not log or commit secrets.
 - Do not add network calls, analytics, or auto-update to the app.
-- Public binaries require `scripts/release.sh` with Developer ID and Apple notarization.
+- The only supported install is building from source at the newest `v*` release tag. There is no prebuilt app, npm package, or Homebrew formula.
 - Site copy stays generic. Do not use personal names in examples.

@@ -23,10 +23,10 @@ ezkey is a local UI for generic passwords in the current user's macOS **login Ke
 
 ## What to report
 
-Useful: unexpected Keychain writes, secret values appearing in logs or files, clipboard clearing failures, signing/notarization issues, supply-chain problems in release artifacts.
+Useful: unexpected Keychain writes, secret values appearing in logs or files, clipboard clearing failures, code the install skill's review should have caught but did not.
 
 Not useful: "Keychain asked me for a password" (that is macOS working).
 
 ## Supported versions
 
-Only the latest source on `master` and any tagged release that is both signed with the published Developer ID and notarized by Apple.
+Only the newest `v*` release tag.

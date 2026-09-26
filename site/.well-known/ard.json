@@ -29,7 +29,7 @@
     {
       "identifier": "urn:air:ezkey.app:skill:build-ezkey",
       "displayName": "build-ezkey",
-      "description": "Agent skill for cloning and building ezkey on macOS.",
+      "description": "Agent skill for cloning the newest ezkey release tag, reviewing the code, and building it on macOS after the human approves.",
       "type": "application/ai-skill+md",
       "url": "https://ezkey.app/.well-known/agent-skills/build-ezkey/SKILL.md",
       "representativeQueries": [

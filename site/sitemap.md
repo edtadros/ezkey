@@ -21,7 +21,7 @@
 - [llms.txt](https://ezkey.app/llms.txt): Agent index
 - [AGENTS.md](https://ezkey.app/AGENTS.md): Notes for coding agents
 - [OpenAPI](https://ezkey.app/openapi.json): Site REST description
-- [CLI](https://ezkey.app/cli/): npx github:edtadros/ezkey
+- [CLI](https://ezkey.app/cli/): There is no ezkey CLI; install from source with your agent
 - [Versioning](https://ezkey.app/versioning/): API deprecation policy
 - [Disclaimer](https://ezkey.app/disclaimer.md): As-is terms
 - [Agent brief](https://ezkey.app/api/v1/agent-brief): JSON handoff

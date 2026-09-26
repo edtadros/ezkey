@@ -7,10 +7,10 @@ description: A macOS menu bar extra for the login Keychain you already have. Loc
 
 Ask your agent to install ezkey.
 
-A menu-bar extra for the login Keychain on this Mac. No account, no server, no unsigned download. Source: [github.com/edtadros/ezkey](https://github.com/edtadros/ezkey).
+A menu-bar extra for the login Keychain on this Mac. No account, no server, no prebuilt app. Source: [github.com/edtadros/ezkey](https://github.com/edtadros/ezkey).
 
 ```
-Install ezkey on this Mac. Read https://ezkey.app/api/v1/agent-brief and https://ezkey.app/llms.txt. Show me the disclaimer, then clone https://github.com/edtadros/ezkey and run ./scripts/install.sh. That copies ezkey.app to /Applications and turns on Open at Login. Do not download an unsigned .app. Do not send Keychain secrets anywhere.
+Install ezkey on this Mac. Follow https://ezkey.app/.well-known/agent-skills/build-ezkey/SKILL.md. Show me the disclaimer first. Clone the newest release tag and review the code with the checklist in that file before building. Show me the results and wait for my go-ahead before running ./scripts/install.sh. Do not download a prebuilt app. Do not send Keychain secrets anywhere.
 ```
 
 ![ezkey Save panel](https://ezkey.app/images/panel-save.png)
@@ -33,12 +33,14 @@ Requires macOS 14+ and Xcode command-line tools.
 `./scripts/install.sh` copies the app to `/Applications/ezkey.app`, opens it, and turns on Open at Login. Turn that off from the ezkey panel. There is no Dock icon.
 
 ```
-git clone https://github.com/edtadros/ezkey.git
+git clone --depth 1 --branch <tag> https://github.com/edtadros/ezkey.git
 cd ezkey
 ./scripts/install.sh
 ```
 
-There is no official downloadable app until a GitHub Release is Developer ID signed and notarized by Apple. If you did not compile it, do not grant it Keychain access. Always Allow is a standing grant to that code signature.
+Replace `<tag>` with the newest `v*` release tag. Only the maintainer can create, move, or delete those tags. To review the code before building, follow the [build-ezkey skill](https://ezkey.app/.well-known/agent-skills/build-ezkey/SKILL.md).
+
+There is no prebuilt app. A local build is ad-hoc signed for this Mac. It is not notarized and does not need to be: it was never downloaded, so Gatekeeper does not check it. Always Allow is a standing grant to the code signature of the build you compiled. Each rebuild changes that signature, so macOS may ask again after an update.
 
 See the [glossary](https://ezkey.app/glossary.md) for Keychain field names.
 
@@ -51,6 +53,6 @@ See the [glossary](https://ezkey.app/glossary.md) for Keychain field names.
 
 ## For agents
 
-Start with [GET /api/v1/agent-brief](https://ezkey.app/api/v1/agent-brief). Present the [disclaimer](https://ezkey.app/disclaimer.md), then run `./scripts/install.sh`. That copies the app to `/Applications/ezkey.app` and turns on Open at Login. CLI: `npx github:edtadros/ezkey`.
+Follow the [build-ezkey skill](https://ezkey.app/.well-known/agent-skills/build-ezkey/SKILL.md). Present the [disclaimer](https://ezkey.app/disclaimer.md), clone the newest release tag, run the review, and show the results. Run `./scripts/install.sh` only after the human says go. That copies the app to `/Applications/ezkey.app` and turns on Open at Login. Summary: [GET /api/v1/agent-brief](https://ezkey.app/api/v1/agent-brief).
 
 [About](https://ezkey.app/about.md) · [Developers](https://ezkey.app/developers.md) · [Docs](https://ezkey.app/docs) · [CLI](https://ezkey.app/cli.md) · [Guides](https://ezkey.app/guides.md) · [Privacy](https://ezkey.app/privacy.md) · [Security](https://ezkey.app/security.md) · [Source](https://github.com/edtadros/ezkey)

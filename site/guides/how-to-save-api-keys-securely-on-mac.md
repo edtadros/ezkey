@@ -39,7 +39,7 @@ Build [ezkey](https://ezkey.app/) from source, click the key in the menu bar, ch
 
 ![ezkey Retrieve with matching names](https://ezkey.app/images/panel-matches.png)
 
-There is no official unsigned download. Clone https://github.com/edtadros/ezkey and run `./scripts/install.sh`. That copies `ezkey.app` to `/Applications` and turns on Open at Login. Do not grant Keychain access to a random `.app`.
+There is no prebuilt app. Clone the newest release tag of https://github.com/edtadros/ezkey and run `./scripts/install.sh`. That copies `ezkey.app` to `/Applications` and turns on Open at Login. To have your agent review the code first, use the [build-ezkey skill](https://ezkey.app/.well-known/agent-skills/build-ezkey/SKILL.md). Do not grant Keychain access to a random `.app`.
 
 ## Save from Terminal without shell history
 
@@ -91,4 +91,4 @@ No. There is no account and no server. Copying a Keychain to another machine is 
 
 ## Is Always Allow safe?
 
-Always Allow is a standing grant to that app’s code signature. Use it only for a binary you compiled or a notarized GitHub Release.
+Always Allow is a standing grant to the code signature of the build you compiled. Each rebuild changes that signature, so macOS may ask again after an update. Do not give it to a downloaded .app.

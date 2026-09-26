@@ -13,14 +13,13 @@ Report vulnerabilities privately via [GitHub security advisories](https://github
 
 When ezkey reads an item another program created, macOS may ask for your login Keychain password. That prompt is the operating system. ezkey cannot suppress it.
 
-**Always Allow** means: trust this app’s code signature for that item. A later ezkey signed with the same Developer ID can then read it without asking again. A random unsigned download cannot honestly claim that trust, and you should not give it.
+**Always Allow** means: trust the code signature of the ezkey build you compiled for that item. A local build is ad-hoc signed for that Mac. Each rebuild changes the signature, so macOS may ask again after an update. A random downloaded `.app` cannot honestly claim that trust, and you should not give it.
 
 ## What you should install
 
-- Source from [github.com/edtadros/ezkey](https://github.com/edtadros/ezkey), built on your Mac, or
-- A GitHub Release whose zip is Developer ID signed, Apple-notarized, and whose SHA-256 matches the published checksum.
+Source from the newest `v*` release tag of [github.com/edtadros/ezkey](https://github.com/edtadros/ezkey), reviewed and built on your Mac. That is the only supported version. The [build-ezkey skill](https://ezkey.app/.well-known/agent-skills/build-ezkey/SKILL.md) walks an agent through the review. A review lowers risk. It does not prove the code is safe. Only the maintainer can create, move, or delete `v*` tags.
 
-CI on GitHub runs tests. It does not attach an `.app`. Unsigned CI artifacts are not a release channel.
+There is no prebuilt app. A local build is not notarized and does not need to be: it was never downloaded, so Gatekeeper does not check it. CI on GitHub runs tests. It does not attach an `.app`. CI artifacts are not a release channel.
 
 ## Limits
 

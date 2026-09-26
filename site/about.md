@@ -9,7 +9,7 @@ ezkey is a small open-source macOS application. It lives in the menu bar and tal
 
 The product exists because the security command-line tool and Keychain Access already store generic passwords, and a compact extra is easier for day-to-day save and retrieve. Name in ezkey is the same string Keychain Access shows as Name and Where. Account is the logged-in Mac user and is not shown in the extra.
 
-The software is provided as-is, without warranty or a support contract. The source is public so anyone can read the Keychain calls, build the app locally, and decide whether to grant it access. There is no official unsigned download. Until a GitHub Release is Developer ID signed and notarized, the supported path is clone and run `./scripts/install.sh`. That copies `ezkey.app` into `/Applications` and turns on Open at Login.
+The software is provided as-is, without warranty or a support contract. The source is public so anyone can read the Keychain calls, build the app locally, and decide whether to grant it access. There is no prebuilt app. The supported path is to clone the newest release tag, review the code, and run `./scripts/install.sh`. Your agent can do this with the [build-ezkey skill](https://ezkey.app/.well-known/agent-skills/build-ezkey/SKILL.md). That copies `ezkey.app` into `/Applications` and turns on Open at Login.
 
 ezkey is not a hosted password manager, not a browser extension, and not a sync service. It does not replace 1Password, iCloud Keychain, or the security CLI. It is a local extra for generic-password items you already keep in login.keychain-db.
 

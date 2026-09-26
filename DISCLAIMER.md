@@ -8,13 +8,13 @@ It is a local macOS utility. It is not a hosted password manager, not a backup s
 
 macOS will ask before ezkey can read a Keychain item created by another program. **Allow** and **Always Allow** are decisions you make.
 
-**Always Allow** attaches to ezkey's code signature. Later copies of ezkey signed with the same Developer ID may be able to read those items without another prompt. Grant that only if you intend to trust this program, including future versions you install from a channel you have verified.
+**Always Allow** attaches to the code signature of the build you compiled. Each rebuild changes it, so macOS may ask again after an update. Grant it only if you intend to trust this program.
 
 Do not grant Keychain access to unofficial builds, random `.app` files from the web, or forks you have not reviewed.
 
-## No official unsigned binary
+## No official binary
 
-The supported way to obtain ezkey is to **build it from the source on GitHub**. A prebuilt app is official only if it is a GitHub Release that Apple has notarized. Until such a release exists, treat any downloadable `.app` or `.dmg` as unofficial.
+The only supported way to obtain ezkey is to **build it from a release tag of the source on GitHub**. There is no prebuilt app. Treat any downloadable `.app` or `.dmg` as unofficial. An agent's code review before building lowers risk. It does not prove the code is safe.
 
 ## Limitation of liability
 

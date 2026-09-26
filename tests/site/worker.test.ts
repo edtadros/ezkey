@@ -113,15 +113,6 @@ test("OpenAPI operations have operationId and Problem 4xx/5xx", () => {
   }
 });
 
-test("CLI binary prints disclaimer and clone command", async () => {
-  const { execFileSync } = await import("node:child_process");
-  const out = execFileSync(process.execPath, [join(root, "cli/ezkey.mjs")], { encoding: "utf8" });
-  assert.match(out, /DISCLAIMER|no warranty/i);
-  assert.match(out, /install\.sh/);
-  assert.match(out, /\/Applications/);
-  assert.match(out, /github.com\/edtadros\/ezkey/);
-});
-
 test("every response carries the security headers", async () => {
   const requests = [
     new Request("https://ezkey.app/index.md"),
@@ -151,5 +142,21 @@ test("inherited object keys are unknown pages, not 500s", async () => {
     const body = (await mcp.json()) as { result: { isError: boolean; content: { text: string }[] } };
     assert.equal(body.result.isError, true, page);
     assert.match(body.result.content[0].text, /^Unknown page/, page);
+  }
+});
+
+test("/api/v1/cli says there is no CLI and points to the install skill", async () => {
+  const res = await handleRequest(new Request("https://ezkey.app/api/v1/cli"), env);
+  const body = (await res.json()) as { cli: unknown; install: string; note: string };
+  assert.equal(body.cli, null);
+  assert.match(body.install, /https:\/\/ezkey\.app\/\.well-known\/agent-skills\/build-ezkey\/SKILL\.md/);
+  assert.doesNotMatch(JSON.stringify(body), /npx|homebrew/i);
+});
+
+test("rate-limit headers state the enforced policy and nothing invented", async () => {
+  const res = await handleRequest(new Request("https://ezkey.app/api/v1/overview"), env);
+  assert.equal(res.headers.get("RateLimit-Policy"), "10;w=10");
+  for (const name of ["RateLimit", "RateLimit-Limit", "RateLimit-Remaining", "RateLimit-Reset"]) {
+    assert.equal(res.headers.get(name), null, name);
   }
 });

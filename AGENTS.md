@@ -6,11 +6,7 @@ ezkey is a native macOS menu bar app that saves and retrieves generic passwords 
 
 ## Setup
 
-```
-git clone https://github.com/edtadros/ezkey.git
-cd ezkey
-./scripts/install.sh
-```
+To install ezkey for a user, follow https://ezkey.app/.well-known/agent-skills/build-ezkey/SKILL.md. Clone the newest `v*` tag, run the review there, show the human the results, and run `./scripts/install.sh` only after they approve.
 
 Requires macOS 14 or later and Xcode command-line tools. `install.sh` runs tests, copies `/Applications/ezkey.app`, opens it, and turns on Open at Login.
 
@@ -19,9 +15,8 @@ Requires macOS 14 or later and Xcode command-line tools. `install.sh` runs tests
 - `swift test` — unit tests. Disposable Keychain items use the `ezkey.test.` name prefix only.
 - `./scripts/install.sh` — install into `/Applications` and open (ad-hoc signed).
 - `./scripts/build-and-run.sh` — same script `install.sh` runs. `SKIP_INSTALL=1` packages `build/ezkey.app` only.
-- `npx wrangler deploy` — publish this website to Cloudflare (`ezkey.app`).
-- GitHub Actions `deploy-site` — same publish from `master` after repo secrets `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` exist. Manual run: Actions → deploy-site → Run workflow.
-- `npx github:edtadros/ezkey` — print disclaimer and clone/build steps (does not touch Keychain).
+- `npx wrangler@4.61.1 deploy` — publish this website to Cloudflare (`ezkey.app`). Deploys are by hand from `master` after a merge; there is no deploy workflow. Check the live site afterward.
+- `node --experimental-strip-types --test tests/site/review-checklist.test.ts` — the skill's review commands must match the code. Update the skill and this test together.
 - `node --experimental-strip-types --test tests/site/worker.test.ts` — site worker tests.
 - `./scripts/render-marketing.sh` — snapshot the real SwiftUI panel into `site/images/` (generic example names, no Keychain).
 
@@ -29,5 +24,5 @@ Requires macOS 14 or later and Xcode command-line tools. `install.sh` runs tests
 
 - Do not log or commit secrets.
 - Do not add network calls, analytics, or auto-update to the app.
-- Public binaries require `scripts/release.sh` with Developer ID and Apple notarization.
+- No prebuilt binaries. Install is source-only, from a `v*` tag.
 - Site copy stays generic. Do not use personal names in examples.

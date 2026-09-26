@@ -51,10 +51,10 @@
       <li><code>GET /disclaimer</code> — as-is terms an agent must present</li>
       <li><code>GET /install</code> — clone and build commands</li>
       <li><code>GET /auth</code> — no keys; public sandbox</li>
-      <li><code>GET /cli</code> — npx/Homebrew entry</li>
+      <li><code>GET /cli</code> — no CLI; points to the install skill</li>
       <li><code>GET /version</code> — versioning and deprecation policy</li>
     </ul>
-    <p>Errors use RFC 9457 <code>application/problem+json</code> with a machine-readable <code>code</code>, a human-readable <code>detail</code>, and a <code>resolution</code> hint. Unknown <code>/api/v1/*</code> paths return HTTP 404 in that shape. Rate limit: 60 requests per minute per client IP. Responses include <code>RateLimit</code> and <code>RateLimit-Policy</code>. HTTP 429 includes <code>Retry-After</code>.</p>
+    <p>Errors use RFC 9457 <code>application/problem+json</code> with a machine-readable <code>code</code>, a human-readable <code>detail</code>, and a <code>resolution</code> hint. Unknown <code>/api/v1/*</code> paths return HTTP 404 in that shape. Rate limit: 10 requests per 10 seconds per client IP, enforced by Cloudflare. Responses include <code>RateLimit-Policy</code>. HTTP 429 includes <code>Retry-After</code>.</p>
     <p>OpenAPI: <a href="/openapi.json">/openapi.json</a>. Catalog: <a href="/.well-known/api-catalog">/.well-known/api-catalog</a>.</p>
     <h2>MCP and A2A</h2>
     <p>MCP Streamable HTTP is <a href="/mcp">https://ezkey.app/mcp</a> (alias <code>/api/v1/mcp</code>). Tools: <code>get_overview</code>, <code>get_build_instructions</code>, <code>get_agent_brief</code>, <code>get_disclaimer</code>, <code>get_page</code>. Server card: <a href="/.well-known/mcp/server-card.json">MCP server card</a>.</p>
@@ -62,7 +62,7 @@
     <h2>Authentication</h2>
     <p>None. See <a href="/auth.md">auth.md</a>. The site does not issue OAuth tokens. Protected-resource metadata: <a href="/.well-known/oauth-protected-resource">/.well-known/oauth-protected-resource</a>.</p>
     <h2>Command-line</h2>
-    <p>Agents can run <code>npx github:edtadros/ezkey</code> to print the disclaimer and build commands. See <a href="/cli/">CLI</a>. No API key is issued. Production is the sandbox.</p>
+    <p>There is no ezkey CLI package. Agents install ezkey by following the <a href="/.well-known/agent-skills/build-ezkey/SKILL.md">build-ezkey skill</a>: disclaimer, clone of the newest release tag, code review, then <code>./scripts/install.sh</code> after the human says go. See <a href="/cli/">CLI</a>. No API key is issued. Production is the sandbox.</p>
 <pre><code>curl -sS https://ezkey.app/api/v1/agent-brief
 curl -sS https://ezkey.app/api/v1/overview</code></pre>
     <p>The Keychain itself is reached with Apple’s <code>security</code> tool after you build ezkey locally, not through this website. Versioning: <a href="/versioning/">versioning policy</a>.</p>
