@@ -20,9 +20,14 @@ jobs:
         run: swift --version
       - name: Test
         run: swift test --package-path .
-      - name: Refuse to upload an app
+      - name: Build the app the way install.sh does (not uploaded)
+        env:
+          SKIP_TESTS: "1"
+          SKIP_VERIFY: "1"
+          SKIP_INSTALL: "1"
         run: |
-          echo "CI does not attach ezkey.app. Unsigned CI binaries are not a distribution channel."
+          ./scripts/build-and-run.sh
+          codesign --verify --deep --strict build/ezkey.app
 
   site-test:
     runs-on: ubuntu-24.04
@@ -32,7 +37,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Site worker tests
-        run: node --experimental-strip-types --test tests/site/worker.test.ts tests/site/public-repo.test.ts
+        run: node --experimental-strip-types --test tests/site/worker.test.ts tests/site/public-repo.test.ts tests/site/review-checklist.test.ts
 
   ci-gate:
     if: always()
