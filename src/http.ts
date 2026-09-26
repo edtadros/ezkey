@@ -4,8 +4,8 @@ export type Env = {
 
 export const ORIGIN = "https://ezkey.app";
 export const API_VERSION = "1";
-export const RATE_LIMIT = 60;
-export const RATE_WINDOW = 60;
+export const RATE_LIMIT = 10;
+export const RATE_WINDOW = 10;
 
 export const PAGE_MD: Record<string, string> = {
   "/": "/index.md",
@@ -98,45 +98,49 @@ export const PAGE_MD: Record<string, string> = {
   "/compare/ezkey-vs-keychain-access.md": "/compare/ezkey-vs-keychain-access.md",
 };
 
-export const PAGE_FILES: Record<string, string> = {
-  home: "/index.md",
-  about: "/about.md",
-  contact: "/contact.md",
-  privacy: "/privacy.md",
-  security: "/security.md",
-  glossary: "/glossary.md",
-  developers: "/developers.md",
-  auth: "/auth.md",
-  cli: "/cli.md",
-  versioning: "/versioning.md",
-  disclaimer: "/disclaimer.md",
-  "dns-aid": "/dns-aid.md",
-  guides: "/guides.md",
-  "save-api-keys": "/guides/how-to-save-api-keys-securely-on-mac.md",
-  "best-way": "/guides/best-way-to-store-api-keys-on-macos.md",
-  dotenv: "/guides/is-it-safe-to-put-api-keys-in-dotenv.md",
-  "openai-key": "/guides/how-to-store-openai-api-key-on-mac.md",
-  "security-cli": "/guides/security-add-generic-password.md",
-  "for-developers": "/for/developers.md",
-  "local-keys": "/for/local-api-keys.md",
-  "vs-1password": "/compare/macos-keychain-vs-1password-for-api-keys.md",
-  "vs-access": "/compare/ezkey-vs-keychain-access.md",
-};
+export const PAGE_FILES: ReadonlyMap<string, string> = new Map([
+  ["home", "/index.md"],
+  ["about", "/about.md"],
+  ["contact", "/contact.md"],
+  ["privacy", "/privacy.md"],
+  ["security", "/security.md"],
+  ["glossary", "/glossary.md"],
+  ["developers", "/developers.md"],
+  ["auth", "/auth.md"],
+  ["cli", "/cli.md"],
+  ["versioning", "/versioning.md"],
+  ["disclaimer", "/disclaimer.md"],
+  ["dns-aid", "/dns-aid.md"],
+  ["guides", "/guides.md"],
+  ["save-api-keys", "/guides/how-to-save-api-keys-securely-on-mac.md"],
+  ["best-way", "/guides/best-way-to-store-api-keys-on-macos.md"],
+  ["dotenv", "/guides/is-it-safe-to-put-api-keys-in-dotenv.md"],
+  ["openai-key", "/guides/how-to-store-openai-api-key-on-mac.md"],
+  ["security-cli", "/guides/security-add-generic-password.md"],
+  ["for-developers", "/for/developers.md"],
+  ["local-keys", "/for/local-api-keys.md"],
+  ["vs-1password", "/compare/macos-keychain-vs-1password-for-api-keys.md"],
+  ["vs-access", "/compare/ezkey-vs-keychain-access.md"],
+]);
 
 export const OVERVIEW =
   "ezkey is a macOS menu bar extra for the login Keychain. Local only. No account, no server, no warranty. Source: https://github.com/edtadros/ezkey Site: https://ezkey.app/";
 
-export const BUILD = `git clone https://github.com/edtadros/ezkey.git
+export const SKILL_URL = `${ORIGIN}/.well-known/agent-skills/build-ezkey/SKILL.md`;
+
+export const BUILD = `git clone --depth 1 --branch <tag> https://github.com/edtadros/ezkey.git
 cd ezkey
 ./scripts/install.sh
 
-install.sh builds from source, copies the app to /Applications/ezkey.app, opens it, and turns on Open at Login. Requires macOS 14+ and Xcode command-line tools. Do not grant Keychain access to a binary you did not compile unless it is a notarized GitHub Release.`;
+<tag> is the newest v* release tag. Only the maintainer can create, move, or delete v* tags. Before running install.sh, review the code with the checklist in ${SKILL_URL} and wait for the human's go-ahead. The review lowers risk. It does not prove the code is safe.
+
+install.sh runs tests, builds, runs a Keychain self-test on ezkey.test.* items, copies the app to /Applications/ezkey.app, opens it, and turns on Open at Login. Requires macOS 14+ and Xcode command-line tools. There is no prebuilt app. Do not download a .app.`;
 
 export const DISCLAIMER = `ezkey is free software provided as is, with no warranty and no support obligation. It is a local macOS utility, not a hosted password manager.
 
-macOS will ask before ezkey can read a Keychain item created by another program. Allow and Always Allow are decisions you make. Always Allow attaches to ezkey's code signature.
+macOS will ask before ezkey can read a Keychain item created by another program. Allow and Always Allow are decisions you make. Always Allow is a standing grant to the code signature of the build you compiled. Each rebuild changes that signature, so macOS may ask again after an update.
 
-The supported way to obtain ezkey is to build it from source on GitHub. A prebuilt app is official only if it is a GitHub Release that Apple has notarized.
+The only supported way to obtain ezkey is to build it from source, from the newest release tag on GitHub. There is no prebuilt app.
 
 Full text: https://github.com/edtadros/ezkey/blob/master/DISCLAIMER.md`;
 
@@ -171,11 +175,7 @@ export function wantsJson(request: Request, pathname: string): boolean {
 
 export function rateHeaders(): Record<string, string> {
   return {
-    "RateLimit": `"per-minute";r=${RATE_LIMIT};t=${RATE_WINDOW}`,
     "RateLimit-Policy": `${RATE_LIMIT};w=${RATE_WINDOW}`,
-    "RateLimit-Limit": String(RATE_LIMIT),
-    "RateLimit-Remaining": String(RATE_LIMIT),
-    "RateLimit-Reset": String(RATE_WINDOW),
     "API-Version": API_VERSION,
   };
 }
@@ -198,6 +198,10 @@ export function agentHeaders(contentType: string, extraLink = ""): Headers {
     extraLink,
   ].filter(Boolean);
   headers.set("Link", links.join(", "));
+  headers.set("X-Content-Type-Options", "nosniff");
+  headers.set("X-Frame-Options", "DENY");
+  headers.set("Referrer-Policy", "no-referrer");
+  headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
   headers.set("Access-Control-Allow-Origin", "*");
   headers.set(
     "Access-Control-Allow-Headers",

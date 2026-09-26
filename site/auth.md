@@ -129,7 +129,7 @@ Host: ezkey.app
 Accept: application/json
 ```
 
-MCP: `POST https://ezkey.app/mcp`. A2A: `POST https://ezkey.app/a2a`. Rate limit: 60 requests per minute per IP, advertised in `RateLimit-Policy`.
+MCP: `POST https://ezkey.app/mcp`. A2A: `POST https://ezkey.app/a2a`. Rate limit: 10 requests per 10 seconds per IP, advertised in `RateLimit-Policy`.
 
 ## Errors
 

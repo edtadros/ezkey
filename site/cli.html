@@ -4,10 +4,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>CLI — ezkey.app</title>
-  <meta name="description" content="Official ezkey CLI that prints the disclaimer and macOS build steps.">
+  <meta name="description" content="There is no ezkey CLI. Install ezkey from source with your agent.">
   <meta name="is-agentic-site-type" content="content">
   <meta property="og:title" content="CLI — ezkey.app">
-  <meta property="og:description" content="Official ezkey CLI that prints the disclaimer and macOS build steps.">
+  <meta property="og:description" content="There is no ezkey CLI. Install ezkey from source with your agent.">
   <meta property="og:type" content="website">
   <meta property="og:image" content="https://ezkey.app/og.png">
   <meta property="og:url" content="https://ezkey.app/cli/">
@@ -34,14 +34,18 @@
   </header>
   <main id="main" class="legal">
     <h1>CLI</h1>
-    <p>The official CLI is for agents and humans who need the source path. It does not save or retrieve Keychain secrets.</p>
-    <h2>Install and run</h2>
-    <pre><code>npx github:edtadros/ezkey</code></pre>
-    <p>That prints what ezkey is, the as-is disclaimer, and <code>./scripts/install.sh</code>. The install copies <code>/Applications/ezkey.app</code> and turns on Open at Login. Homebrew formula: <code>Formula/ezkey.rb</code>.</p>
+    <p>There is no ezkey CLI package. There is no npm package and no Homebrew formula. Nothing to install with <code>npx</code> or <code>brew</code>.</p>
+    <h2>Install instead</h2>
+    <p>Ask your agent to follow the <a href="/.well-known/agent-skills/build-ezkey/SKILL.md">build-ezkey skill</a>. It shows you the disclaimer, clones the newest <code>v*</code> release tag, reviews the code, and shows you the results. It runs <code>./scripts/install.sh</code> only after you say go. That copies the app to <code>/Applications/ezkey.app</code> and turns on Open at Login.</p>
+    <p>By hand:</p>
+    <pre><code>git clone --depth 1 --branch &lt;tag&gt; https://github.com/edtadros/ezkey.git
+cd ezkey
+./scripts/install.sh</code></pre>
+    <p>Replace <code>&lt;tag&gt;</code> with the newest <code>v*</code> release tag.</p>
     <h2>Public API equivalent</h2>
     <pre><code>curl -sS https://ezkey.app/api/v1/agent-brief
 curl -sS https://ezkey.app/api/v1/cli</code></pre>
-    <p>No API key. See <a href="/developers/">developers</a> and the <a href="https://github.com/edtadros/ezkey/blob/master/DISCLAIMER.md">disclaimer</a>.</p>
+    <p>No API key. <code>/api/v1/cli</code> stays for compatibility. It returns <code>"cli": null</code> and points to the skill. There is no prebuilt app. See <a href="/developers/">developers</a> and the <a href="https://github.com/edtadros/ezkey/blob/master/DISCLAIMER.md">disclaimer</a>.</p>
   </main>
   <footer>
     <nav>

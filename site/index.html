@@ -35,12 +35,12 @@
   </header>
   <section class="hero">
     <h1>Ask your agent to install ezkey.</h1>
-    <p class="lede">A menu-bar extra for the login Keychain on this Mac. No account, no server, no unsigned download. Your agent reads the brief, shows you the disclaimer, then builds it from the <a href="https://github.com/edtadros/ezkey">GitHub repo</a>.</p>
+    <p class="lede">A menu-bar extra for the login Keychain on this Mac. No account, no server, no prebuilt app. Your agent shows you the disclaimer, reviews the code from the newest release tag of the <a href="https://github.com/edtadros/ezkey">GitHub repo</a>, and builds it after you say go.</p>
     <div class="cta-row">
-      <button class="cta" type="button" id="copy-install" data-prompt="Install ezkey on this Mac. Read https://ezkey.app/api/v1/agent-brief and https://ezkey.app/llms.txt. Show me the disclaimer, then clone https://github.com/edtadros/ezkey and run ./scripts/install.sh. That copies ezkey.app to /Applications and turns on Open at Login. Do not download an unsigned .app. Do not send Keychain secrets anywhere.">Ask your agent to install</button>
+      <button class="cta" type="button" id="copy-install" data-prompt="Install ezkey on this Mac. Follow https://ezkey.app/.well-known/agent-skills/build-ezkey/SKILL.md. Show me the disclaimer first. Clone the newest release tag and review the code with the checklist in that file before building. Show me the results and wait for my go-ahead before running ./scripts/install.sh. Do not download a prebuilt app. Do not send Keychain secrets anywhere.">Ask your agent to install</button>
       <a class="cta ghost" href="https://github.com/edtadros/ezkey">GitHub</a>
     </div>
-    <p class="cta-hint" id="copy-status">Your agent reads the brief, shows you the disclaimer, then builds from GitHub.</p>
+    <p class="cta-hint" id="copy-status">Your agent shows you the disclaimer and a code review, then builds after you say go.</p>
   </section>
   <div class="stage">
     <div class="shots">
@@ -71,9 +71,10 @@
       <div class="row"><div>Requires</div><span>macOS 14+, Xcode CLT</span></div>
       <div class="row"><div>Where it goes</div><span>/Applications/ezkey.app</span></div>
       <div class="row"><div>After install</div><span>Opens, and starts when you log in</span></div>
-      <pre><code>git clone https://github.com/edtadros/ezkey.git
+      <pre><code>git clone --depth 1 --branch &lt;tag&gt; https://github.com/edtadros/ezkey.git
 cd ezkey
 ./scripts/install.sh</code></pre>
+      <p>Replace <code>&lt;tag&gt;</code> with the newest <code>v*</code> release tag. Only the maintainer can create, move, or delete those tags. To review the code before building, follow the <a href="/.well-known/agent-skills/build-ezkey/SKILL.md">build-ezkey skill</a>.</p>
       <p>Open at Login is on by default. Turn it off from the ezkey panel. There is no Dock icon.</p>
     </section>
     <section class="group q-list">
@@ -85,9 +86,9 @@ cd ezkey
     </section>
     <section class="group">
       <h2>For agents</h2>
-      <p>Start with <a href="/api/v1/agent-brief"><code>GET /api/v1/agent-brief</code></a>. Present the <a href="/disclaimer.md">disclaimer</a>, then run <code>./scripts/install.sh</code>. That copies the app to <code>/Applications/ezkey.app</code> and turns on Open at Login. CLI: <code>npx github:edtadros/ezkey</code>.</p>
+      <p>Follow the <a href="/.well-known/agent-skills/build-ezkey/SKILL.md">build-ezkey skill</a>. Present the <a href="/disclaimer.md">disclaimer</a>, clone the newest release tag, run the review, and show the results. Run <code>./scripts/install.sh</code> only after the human says go. That copies the app to <code>/Applications/ezkey.app</code> and turns on Open at Login. Summary: <a href="/api/v1/agent-brief"><code>GET /api/v1/agent-brief</code></a>.</p>
     </section>
-    <p class="note">There is no official downloadable app until a GitHub Release is Developer ID signed and notarized by Apple. If you did not compile it, do not grant it Keychain access. Always Allow is a standing grant to that code signature. See the <a href="/glossary/">glossary</a> and <a href="/guides/">guides</a>.</p>
+    <p class="note">There is no prebuilt app. A local build is ad-hoc signed for this Mac. It is not notarized and does not need to be: it was never downloaded, so Gatekeeper does not check it. Always Allow is a standing grant to the code signature of the build you compiled. Each rebuild changes that signature, so macOS may ask again after an update. See the <a href="/glossary/">glossary</a> and <a href="/guides/">guides</a>.</p>
   </main>
   <footer>
     <nav>

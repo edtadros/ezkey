@@ -6,6 +6,7 @@ import {
   OVERVIEW,
   BUILD,
   DISCLAIMER,
+  SKILL_URL,
   API_VERSION,
   wantsMarkdown,
   wantsJson,
@@ -20,8 +21,6 @@ import {
   extraMarkdownLink,
 } from "./http.ts";
 
-const CLI_HINT = "npx github:edtadros/ezkey";
-
 function agentBrief(): Record<string, unknown> {
   return {
     product: "ezkey",
@@ -29,21 +28,24 @@ function agentBrief(): Record<string, unknown> {
     repository: "https://github.com/edtadros/ezkey",
     license: "MIT",
     how_to_use_this_brief:
-      "Present the disclaimer to the human first. Then clone the repository and run the build script on their Mac. Do not download a random .app. Do not send Keychain secrets to this website.",
+      `Follow the build-ezkey skill at ${SKILL_URL}. Present the disclaimer to the human first. Clone the newest release tag, run the code review in the skill, and show the human the results. Run ./scripts/install.sh only after they say go. Do not download a prebuilt app. Do not send Keychain secrets to this website.`,
     present_to_user: [
       "ezkey is local macOS software for the login Keychain. No account, no server, no warranty.",
-      "Always Allow is a standing grant to this app's code signature. Grant it only for a build you compiled or a notarized GitHub Release.",
-      "Install: git clone https://github.com/edtadros/ezkey.git && cd ezkey && ./scripts/install.sh — this puts ezkey.app in /Applications and turns on Open at Login.",
+      "Always Allow is a standing grant to the code signature of the build you compiled. Each rebuild changes that signature, so macOS may ask again after an update.",
+      "Install: your agent clones the newest release tag, reviews the code, shows you the results, and runs ./scripts/install.sh after you say go. That puts ezkey.app in /Applications and turns on Open at Login.",
+      "The review lowers risk. It does not prove the code is safe.",
     ],
     disclaimer: DISCLAIMER,
     disclaimer_url: "https://github.com/edtadros/ezkey/blob/master/DISCLAIMER.md",
     install: {
       commands: BUILD,
       requires: "macOS 14+ and Xcode command-line tools",
-      cli: CLI_HINT,
+      skill: SKILL_URL,
+      cli: null,
     },
     do_not: [
-      "Grant Keychain access to a binary the user did not compile unless it is a notarized GitHub Release.",
+      "Download or run a prebuilt ezkey app. There is none.",
+      "Run ./scripts/install.sh before the human approves the review results.",
       "Store or retrieve secrets through ezkey.app, MCP, or A2A. Those interfaces are documentation only.",
       "Paste live API keys into GitHub issues.",
     ],
@@ -144,7 +146,7 @@ async function handleMcp(request: Request, env: Env): Promise<Response> {
               page: {
                 type: "string",
                 description: "Page id: home, about, contact, privacy, security, glossary, developers, auth, guides, save-api-keys, best-way, dotenv, openai-key, security-cli, for-developers, local-keys, vs-1password, vs-access",
-                enum: Object.keys(PAGE_FILES),
+                enum: [...PAGE_FILES.keys()],
               },
             },
             required: ["page"],
@@ -184,7 +186,7 @@ async function handleMcp(request: Request, env: Env): Promise<Response> {
     }
     if (name === "get_page") {
       const page = params.arguments?.page ?? "home";
-      const file = PAGE_FILES[page];
+      const file = PAGE_FILES.get(page);
       if (!file) {
         return jsonRpcResult(id, {
           content: [{ type: "text", text: "Unknown page. Use home, about, contact, privacy, security, glossary, developers, or auth." }],
@@ -229,7 +231,7 @@ async function handleRest(request: Request, env: Env, path: string): Promise<Res
     });
   }
   if (path === "/api/v1/build" || path === "/api/v1/build/" || path === "/api/v1/install" || path === "/api/v1/install/") {
-    return jsonBody(200, { commands: BUILD, requires: "macOS 14+ and Xcode command-line tools", cli: CLI_HINT });
+    return jsonBody(200, { commands: BUILD, requires: "macOS 14+ and Xcode command-line tools", skill: SKILL_URL, cli: null });
   }
   if (path === "/api" || path === "/api/" || path === "/api/v1" || path === "/api/v1/") {
     return jsonBody(200, {
@@ -273,9 +275,9 @@ async function handleRest(request: Request, env: Env, path: string): Promise<Res
   }
   if (path === "/api/v1/cli" || path === "/api/v1/cli/") {
     return jsonBody(200, {
-      npm: CLI_HINT,
-      homebrew_formula: "https://github.com/edtadros/ezkey/blob/master/Formula/ezkey.rb",
-      note: "The CLI prints disclaimer and build steps. It does not access the Keychain.",
+      cli: null,
+      install: `Install from source by following ${SKILL_URL}.`,
+      note: "There is no ezkey CLI package. Install from source with your agent.",
     });
   }
   if (path === "/api/v1/version" || path === "/api/v1/version/") {
@@ -289,7 +291,7 @@ async function handleRest(request: Request, env: Env, path: string): Promise<Res
   const pageMatch = path.match(/^\/api\/v1\/pages\/([^/]+)\/?$/);
   if (pageMatch) {
     const page = decodeURIComponent(pageMatch[1]);
-    const file = PAGE_FILES[page];
+    const file = PAGE_FILES.get(page);
     if (!file) {
       return problem(
         404,

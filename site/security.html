@@ -41,13 +41,10 @@
     <p>Report vulnerabilities privately via <a href="https://github.com/edtadros/ezkey/security/advisories/new">GitHub security advisories</a>. Do not open a public issue and do not attach secrets.</p>
     <h2>How access works</h2>
     <p>When ezkey reads an item another program created, macOS may ask for your login Keychain password. That prompt is the operating system. ezkey cannot suppress it.</p>
-    <p><strong>Always Allow</strong> means: trust this app’s code signature for that item. A later ezkey signed with the same Developer ID can then read it without asking again. A random unsigned download cannot honestly claim that trust, and you should not give it.</p>
+    <p><strong>Always Allow</strong> means: trust the code signature of the ezkey build you compiled for that item. A local build is ad-hoc signed for that Mac. Each rebuild changes the signature, so macOS may ask again after an update. A random downloaded <code>.app</code> cannot honestly claim that trust, and you should not give it.</p>
     <h2>What you should install</h2>
-    <ul>
-      <li>Source from <a href="https://github.com/edtadros/ezkey">github.com/edtadros/ezkey</a>, built on your Mac, or</li>
-      <li>A GitHub Release whose zip is Developer ID signed, Apple-notarized, and whose SHA-256 matches the published checksum.</li>
-    </ul>
-    <p>CI on GitHub runs tests. It does not attach an <code>.app</code>. Unsigned CI artifacts are not a release channel.</p>
+    <p>Source from the newest <code>v*</code> release tag of <a href="https://github.com/edtadros/ezkey">github.com/edtadros/ezkey</a>, reviewed and built on your Mac. That is the only supported version. The <a href="/.well-known/agent-skills/build-ezkey/SKILL.md">build-ezkey skill</a> walks an agent through the review. A review lowers risk. It does not prove the code is safe. Only the maintainer can create, move, or delete <code>v*</code> tags.</p>
+    <p>There is no prebuilt app. A local build is not notarized and does not need to be: it was never downloaded, so Gatekeeper does not check it. CI on GitHub runs tests. It does not attach an <code>.app</code>. CI artifacts are not a release channel.</p>
     <h2>Limits</h2>
     <p>ezkey is not sandboxed. Sandboxing would store items where the <code>security</code> CLI cannot see them. The source is public so you can read the Keychain calls yourself. There is still no warranty that it is free of defects. See the <a href="/glossary/">glossary</a>.</p>
   </main>

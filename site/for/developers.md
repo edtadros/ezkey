@@ -29,17 +29,17 @@ The source is https://github.com/edtadros/ezkey. Read `LoginKeychainStore.swift`
 
 ## What it will not do
 
-It will not rotate keys at OpenAI. It will not sync to a phone. It will not hide from a process running as you. It will not replace 1Password for your bank. It will not ship a notarized binary until someone runs `scripts/release.sh` with Developer ID. Those are not missing checkboxes. They are the product boundary. See [anti-cloud local keys](/for/local-api-keys/).
+It will not rotate keys at OpenAI. It will not sync to a phone. It will not hide from a process running as you. It will not replace 1Password for your bank. It will not ship a prebuilt binary. You build it from source. Those are not missing checkboxes. They are the product boundary. See [anti-cloud local keys](/for/local-api-keys/).
 
 ## Start from source
 
 ```
-git clone https://github.com/edtadros/ezkey.git
+git clone --depth 1 --branch <tag> https://github.com/edtadros/ezkey.git
 cd ezkey
 ./scripts/install.sh
 ```
 
-Requires macOS 14+ and Xcode command-line tools. Then follow [how to save API keys securely](/guides/how-to-save-api-keys-securely-on-mac/).
+Replace `<tag>` with the newest `v*` release tag. To review the code before building, follow the [build-ezkey skill](https://ezkey.app/.well-known/agent-skills/build-ezkey/SKILL.md). Requires macOS 14+ and Xcode command-line tools. Then follow [how to save API keys securely](/guides/how-to-save-api-keys-securely-on-mac/).
 
 If you already have items from `security add-generic-password`, try Retrieve with part of the service string. If the list is empty, check Account in Keychain Access. ezkey only lists the logged-in Mac user. That is annoying if you used `-a` as a project name. It is also how the extra stays small. Rename or resave if you want the menu extra to see them.
 
@@ -64,4 +64,4 @@ No. A sandbox would hide items from security(1). That is a deliberate trade.
 
 ## CI artifacts?
 
-Tests only. CI does not attach an .app. Unsigned CI zips are not a release.
+Tests only. CI does not attach an .app. CI artifacts are not a release channel.

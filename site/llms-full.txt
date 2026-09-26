@@ -8,15 +8,15 @@ ezkey is a small macOS extra for the login Keychain you already have. No account
 
 Name is Keychain Access Name and Where. Account is your Mac user and stays hidden. Retrieve: type part of a name, then pick. Secrets stay masked until Reveal. Copy clears in 30 seconds if unchanged.
 
-Install:
+Install: ask your agent to follow https://ezkey.app/.well-known/agent-skills/build-ezkey/SKILL.md. It shows the disclaimer, clones the newest release tag, reviews the code, and runs `./scripts/install.sh` only after you say go. By hand:
 
 ```
-git clone https://github.com/edtadros/ezkey.git
+git clone --depth 1 --branch <tag> https://github.com/edtadros/ezkey.git
 cd ezkey
 ./scripts/install.sh
 ```
 
-That copies the app to `/Applications/ezkey.app`, opens it, and turns on Open at Login. Requires macOS 14+ and Xcode command-line tools. There is no official downloadable app until a GitHub Release is Developer ID signed and notarized by Apple.
+Replace `<tag>` with the newest `v*` release tag. That copies the app to `/Applications/ezkey.app`, opens it, and turns on Open at Login. Requires macOS 14+ and Xcode command-line tools. There is no prebuilt app and no ezkey CLI. A local build is ad-hoc signed and not notarized. It does not need to be: it was never downloaded, so Gatekeeper does not check it.
 
 ## Privacy
 
@@ -24,7 +24,7 @@ ezkey does not include analytics, crash reporters, advertising, accounts, or net
 
 ## Security
 
-macOS still owns the Keychain. When ezkey reads an item another program created, macOS may ask for the login Keychain password. Always Allow is a standing grant to this app’s code signature.
+macOS still owns the Keychain. When ezkey reads an item another program created, macOS may ask for the login Keychain password. Always Allow is a standing grant to the code signature of the build you compiled. Each rebuild changes that signature, so macOS may ask again after an update.
 
 Report vulnerabilities privately: https://github.com/edtadros/ezkey/security/advisories/new
 
