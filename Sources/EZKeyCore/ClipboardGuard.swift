@@ -16,10 +16,17 @@ public final class SystemPasteboard: PasteboardWriting {
         self.pasteboard = pasteboard
     }
 
+    /// Keeps the secret off Universal Clipboard and tells clipboard-history
+    /// apps (nspasteboard.org markers) not to record it.
     public func write(_ string: String) {
-        pasteboard.clearContents()
+        pasteboard.prepareForNewContents(with: .currentHostOnly)
         pasteboard.setString(string, forType: .string)
+        pasteboard.setData(Data(), forType: Self.concealed)
+        pasteboard.setData(Data(), forType: Self.transient)
     }
+
+    private static let concealed = NSPasteboard.PasteboardType("org.nspasteboard.ConcealedType")
+    private static let transient = NSPasteboard.PasteboardType("org.nspasteboard.TransientType")
 
     public func read() -> String? {
         pasteboard.string(forType: .string)

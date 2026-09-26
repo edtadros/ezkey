@@ -74,9 +74,6 @@ public actor LoginKeychainStore: SecretStore {
         if !trimmedNote.isEmpty {
             query[kSecAttrComment] = trimmedNote
         }
-        if let access = makeAccess() {
-            query[kSecAttrAccess] = access
-        }
         let status = SecItemAdd(query as CFDictionary, nil)
         try check(status)
     }
@@ -251,27 +248,5 @@ public actor LoginKeychainStore: SecretStore {
             throw KeychainError.from(status: status)
         }
         return keychain
-    }
-
-    /// Trust this process and `/usr/bin/security` on newly created items so the
-    /// documented CLI commands can read them. Updates do not touch ACLs.
-    private func makeAccess() -> SecAccess? {
-        var trustedSelf: SecTrustedApplication?
-        var trustedCLI: SecTrustedApplication?
-        guard SecTrustedApplicationCreateFromPath(nil, &trustedSelf) == errSecSuccess,
-              let trustedSelf,
-              SecTrustedApplicationCreateFromPath("/usr/bin/security", &trustedCLI) == errSecSuccess,
-              let trustedCLI
-        else {
-            return nil
-        }
-        var access: SecAccess?
-        let status = SecAccessCreate(
-            "ezkey" as CFString,
-            [trustedSelf, trustedCLI] as CFArray,
-            &access
-        )
-        guard status == errSecSuccess else { return nil }
-        return access
     }
 }

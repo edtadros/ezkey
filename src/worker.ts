@@ -144,7 +144,7 @@ async function handleMcp(request: Request, env: Env): Promise<Response> {
               page: {
                 type: "string",
                 description: "Page id: home, about, contact, privacy, security, glossary, developers, auth, guides, save-api-keys, best-way, dotenv, openai-key, security-cli, for-developers, local-keys, vs-1password, vs-access",
-                enum: Object.keys(PAGE_FILES),
+                enum: [...PAGE_FILES.keys()],
               },
             },
             required: ["page"],
@@ -184,7 +184,7 @@ async function handleMcp(request: Request, env: Env): Promise<Response> {
     }
     if (name === "get_page") {
       const page = params.arguments?.page ?? "home";
-      const file = PAGE_FILES[page];
+      const file = PAGE_FILES.get(page);
       if (!file) {
         return jsonRpcResult(id, {
           content: [{ type: "text", text: "Unknown page. Use home, about, contact, privacy, security, glossary, developers, or auth." }],
@@ -289,7 +289,7 @@ async function handleRest(request: Request, env: Env, path: string): Promise<Res
   const pageMatch = path.match(/^\/api\/v1\/pages\/([^/]+)\/?$/);
   if (pageMatch) {
     const page = decodeURIComponent(pageMatch[1]);
-    const file = PAGE_FILES[page];
+    const file = PAGE_FILES.get(page);
     if (!file) {
       return problem(
         404,

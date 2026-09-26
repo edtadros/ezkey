@@ -98,30 +98,30 @@ export const PAGE_MD: Record<string, string> = {
   "/compare/ezkey-vs-keychain-access.md": "/compare/ezkey-vs-keychain-access.md",
 };
 
-export const PAGE_FILES: Record<string, string> = {
-  home: "/index.md",
-  about: "/about.md",
-  contact: "/contact.md",
-  privacy: "/privacy.md",
-  security: "/security.md",
-  glossary: "/glossary.md",
-  developers: "/developers.md",
-  auth: "/auth.md",
-  cli: "/cli.md",
-  versioning: "/versioning.md",
-  disclaimer: "/disclaimer.md",
-  "dns-aid": "/dns-aid.md",
-  guides: "/guides.md",
-  "save-api-keys": "/guides/how-to-save-api-keys-securely-on-mac.md",
-  "best-way": "/guides/best-way-to-store-api-keys-on-macos.md",
-  dotenv: "/guides/is-it-safe-to-put-api-keys-in-dotenv.md",
-  "openai-key": "/guides/how-to-store-openai-api-key-on-mac.md",
-  "security-cli": "/guides/security-add-generic-password.md",
-  "for-developers": "/for/developers.md",
-  "local-keys": "/for/local-api-keys.md",
-  "vs-1password": "/compare/macos-keychain-vs-1password-for-api-keys.md",
-  "vs-access": "/compare/ezkey-vs-keychain-access.md",
-};
+export const PAGE_FILES: ReadonlyMap<string, string> = new Map([
+  ["home", "/index.md"],
+  ["about", "/about.md"],
+  ["contact", "/contact.md"],
+  ["privacy", "/privacy.md"],
+  ["security", "/security.md"],
+  ["glossary", "/glossary.md"],
+  ["developers", "/developers.md"],
+  ["auth", "/auth.md"],
+  ["cli", "/cli.md"],
+  ["versioning", "/versioning.md"],
+  ["disclaimer", "/disclaimer.md"],
+  ["dns-aid", "/dns-aid.md"],
+  ["guides", "/guides.md"],
+  ["save-api-keys", "/guides/how-to-save-api-keys-securely-on-mac.md"],
+  ["best-way", "/guides/best-way-to-store-api-keys-on-macos.md"],
+  ["dotenv", "/guides/is-it-safe-to-put-api-keys-in-dotenv.md"],
+  ["openai-key", "/guides/how-to-store-openai-api-key-on-mac.md"],
+  ["security-cli", "/guides/security-add-generic-password.md"],
+  ["for-developers", "/for/developers.md"],
+  ["local-keys", "/for/local-api-keys.md"],
+  ["vs-1password", "/compare/macos-keychain-vs-1password-for-api-keys.md"],
+  ["vs-access", "/compare/ezkey-vs-keychain-access.md"],
+]);
 
 export const OVERVIEW =
   "ezkey is a macOS menu bar extra for the login Keychain. Local only. No account, no server, no warranty. Source: https://github.com/edtadros/ezkey Site: https://ezkey.app/";
@@ -198,6 +198,10 @@ export function agentHeaders(contentType: string, extraLink = ""): Headers {
     extraLink,
   ].filter(Boolean);
   headers.set("Link", links.join(", "));
+  headers.set("X-Content-Type-Options", "nosniff");
+  headers.set("X-Frame-Options", "DENY");
+  headers.set("Referrer-Policy", "no-referrer");
+  headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
   headers.set("Access-Control-Allow-Origin", "*");
   headers.set(
     "Access-Control-Allow-Headers",
