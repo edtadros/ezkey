@@ -11,20 +11,16 @@ It is a local macOS utility. It is not a hosted password manager, not a backup s
 
 ## Keychain access is your decision
 
-macOS will ask before ezkey can read a Keychain item created by another program. **Allow** and **Always Allow** are decisions you make.
+macOS asks for your login password when ezkey reads a secret that another app saved. **Allow** and **Always Allow** are decisions you make. macOS can ask again next time, even after you click **Always Allow**. ezkey does not suppress or work around that prompt. That is on purpose: you get the same protection as Keychain Access, which asks every time you show a password. Secrets you save with ezkey usually open without a prompt.
 
-**Always Allow** is a standing grant to the code signature of the ezkey build you compiled. Each rebuild changes that signature, so macOS may ask again after an update. Grant it only if you intend to trust this program.
+Only run ezkey you built yourself. Do not grant Keychain access to forks you have not reviewed.
 
-Do not grant Keychain access to unofficial builds, random `.app` files from the web, or forks you have not reviewed.
+## Build it yourself
 
-## No prebuilt app
-
-The only supported way to obtain ezkey is to **build it from source**, from the newest release tag on GitHub. There is no prebuilt app: no npm package, no Homebrew formula, no GitHub release binaries. Treat any downloadable `.app` or `.dmg` as unofficial.
-
-The [build-ezkey skill](https://ezkey.app/.well-known/agent-skills/build-ezkey/SKILL.md) has an agent review the code before building. A review lowers risk. It does not prove the code is safe.
+ezkey is open source. You **build it from source** on your own Mac, from the newest release tag on GitHub. If you want to check it first, ask your own agent to review the code. We encourage that. The [build-ezkey skill](https://ezkey.app/.well-known/agent-skills/build-ezkey/SKILL.md) includes a review checklist. A review lowers risk. It does not prove the code is safe.
 
 ## Limitation of liability
 
-To the maximum extent permitted by law, the author is not liable for lost secrets, unauthorized access, data loss, interrupted work, or any other damages arising from use of this software, including use of **Always Allow**, use of unofficial binaries, or use of modified copies.
+To the maximum extent permitted by law, the author is not liable for lost secrets, unauthorized access, data loss, interrupted work, or any other damages arising from use of this software, including use of **Always Allow**, use of binaries you did not build, or use of modified copies.
 
 See [LICENSE](LICENSE) (MIT).

@@ -5,7 +5,7 @@ description: Install the ezkey macOS menu bar app from source. Clone the newest 
 
 # Install ezkey from source
 
-ezkey is a macOS menu bar app that saves and retrieves secrets in the login Keychain. The only supported install is building it from source on the user's Mac. There is no prebuilt app. Do not download a `.app` from anywhere.
+ezkey is a macOS menu bar app that saves and retrieves secrets in the login Keychain. It is installed by building it from source on the user's Mac. Do not download a `.app` from anywhere.
 
 Requires macOS 14 or later and Xcode command-line tools (`xcode-select --install` if missing).
 
@@ -17,7 +17,7 @@ Requires macOS 14 or later and Xcode command-line tools (`xcode-select --install
 
 ## 1. Show the disclaimer
 
-Tell the human: ezkey is provided as-is, without warranty. No account, no server. **Always Allow** in a Keychain prompt is a standing grant to this build's code signature. Full text: https://ezkey.app/disclaimer.md
+Tell the human: ezkey is provided as-is, without warranty. No account, no server. ezkey never suppresses the macOS Keychain password prompt; macOS can ask again even after **Always Allow**, the same as Keychain Access. Full text: https://ezkey.app/disclaimer.md
 
 ## 2. Clone the newest release tag
 

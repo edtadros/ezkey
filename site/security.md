@@ -11,15 +11,15 @@ Report vulnerabilities privately via [GitHub security advisories](https://github
 
 ## How access works
 
-When ezkey reads an item another program created, macOS may ask for your login Keychain password. That prompt is the operating system. ezkey cannot suppress it.
+macOS asks for your login password when ezkey reads a secret that another app saved. That prompt is the operating system. It can ask again next time, even after you click **Always Allow**.
 
-**Always Allow** means: trust the code signature of the ezkey build you compiled for that item. A local build is ad-hoc signed for that Mac. Each rebuild changes the signature, so macOS may ask again after an update. A random downloaded `.app` cannot honestly claim that trust, and you should not give it.
+ezkey does not suppress or work around that prompt. That is on purpose: you get the same protection as Keychain Access, which asks every time you show a password. Secrets you save with ezkey usually open without a prompt.
 
 ## What you should install
 
-Source from the newest `v*` release tag of [github.com/edtadros/ezkey](https://github.com/edtadros/ezkey), reviewed and built on your Mac. That is the only supported version. The [build-ezkey skill](https://ezkey.app/.well-known/agent-skills/build-ezkey/SKILL.md) walks an agent through the review. A review lowers risk. It does not prove the code is safe. Only the maintainer can create, move, or delete `v*` tags.
+Source from the newest `v*` release tag of [github.com/edtadros/ezkey](https://github.com/edtadros/ezkey), reviewed and built on your Mac. Each release is a new tag. The [build-ezkey skill](https://ezkey.app/.well-known/agent-skills/build-ezkey/SKILL.md) walks an agent through the review. A review lowers risk. It does not prove the code is safe. Only the maintainer can create, move, or delete `v*` tags.
 
-There is no prebuilt app. A local build is not notarized and does not need to be: it was never downloaded, so Gatekeeper does not check it. CI on GitHub runs tests. It does not attach an `.app`. CI artifacts are not a release channel.
+Only run ezkey you built yourself. CI on GitHub runs the tests and the review checks on every change.
 
 ## Limits
 

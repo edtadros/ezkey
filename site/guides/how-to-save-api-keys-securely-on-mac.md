@@ -39,7 +39,7 @@ Build [ezkey](https://ezkey.app/) from source, click the key in the menu bar, ch
 
 ![ezkey Retrieve with matching names](https://ezkey.app/images/panel-matches.png)
 
-There is no prebuilt app. Clone the newest release tag of https://github.com/edtadros/ezkey and run `./scripts/install.sh`. That copies `ezkey.app` to `/Applications` and turns on Open at Login. To have your agent review the code first, use the [build-ezkey skill](https://ezkey.app/.well-known/agent-skills/build-ezkey/SKILL.md). Do not grant Keychain access to a random `.app`.
+ezkey is open source. You build it on your own Mac. Clone the newest release tag of https://github.com/edtadros/ezkey and run `./scripts/install.sh`. That copies `ezkey.app` to `/Applications` and turns on Open at Login. To have your agent review the code first, use the [build-ezkey skill](https://ezkey.app/.well-known/agent-skills/build-ezkey/SKILL.md). Only run ezkey you built yourself.
 
 ## Save from Terminal without shell history
 
@@ -65,7 +65,7 @@ That export lives in the process environment for that shell. Other processes run
 
 - Malware already running as you, after the Keychain is unlocked.
 - A secret you paste into Slack, an issue tracker, or a screenshot.
-- A binary you Always Allow that you did not compile.
+- A binary you did not build, once you let it read the Keychain.
 - Need to share the same key with a team. That is a vault product, not login.keychain-db.
 
 ezkey does not claim otherwise. It is MIT, as-is, no warranty. Read the [security](/security/) notes on Always Allow and the [glossary](/glossary/) for Name, Account, and Where.
@@ -91,4 +91,4 @@ No. There is no account and no server. Copying a Keychain to another machine is 
 
 ## Is Always Allow safe?
 
-Always Allow is a standing grant to the code signature of the build you compiled. Each rebuild changes that signature, so macOS may ask again after an update. Do not give it to a downloaded .app.
+Always Allow asks macOS to stop prompting ezkey for that item, but macOS may still ask again. ezkey does not suppress or work around that prompt. That is on purpose: you get the same protection as Keychain Access. Only run ezkey you built yourself.

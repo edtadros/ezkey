@@ -35,7 +35,7 @@
   </header>
   <section class="hero">
     <h1>Ask your agent to install ezkey.</h1>
-    <p class="lede">A menu-bar extra for the login Keychain on this Mac. No account, no server, no prebuilt app. Your agent shows you the disclaimer, reviews the code from the newest release tag of the <a href="https://github.com/edtadros/ezkey">GitHub repo</a>, and builds it after you say go.</p>
+    <p class="lede">A menu-bar extra for the login Keychain on this Mac. No account, no server. Open source. Your agent shows you the disclaimer, reviews the code from the newest release tag of the <a href="https://github.com/edtadros/ezkey">GitHub repo</a>, and builds it after you say go.</p>
     <div class="cta-row">
       <button class="cta" type="button" id="copy-install" data-prompt="Install ezkey on this Mac. Follow https://ezkey.app/.well-known/agent-skills/build-ezkey/SKILL.md. Show me the disclaimer first. Clone the newest release tag and review the code with the checklist in that file before building. Show me the results and wait for my go-ahead before running ./scripts/install.sh. Do not download a prebuilt app. Do not send Keychain secrets anywhere.">Ask your agent to install</button>
       <a class="cta ghost" href="https://github.com/edtadros/ezkey">GitHub</a>
@@ -88,7 +88,7 @@ cd ezkey
       <h2>For agents</h2>
       <p>Follow the <a href="/.well-known/agent-skills/build-ezkey/SKILL.md">build-ezkey skill</a>. Present the <a href="/disclaimer.md">disclaimer</a>, clone the newest release tag, run the review, and show the results. Run <code>./scripts/install.sh</code> only after the human says go. That copies the app to <code>/Applications/ezkey.app</code> and turns on Open at Login. Summary: <a href="/api/v1/agent-brief"><code>GET /api/v1/agent-brief</code></a>.</p>
     </section>
-    <p class="note">There is no prebuilt app. A local build is ad-hoc signed for this Mac. It is not notarized and does not need to be: it was never downloaded, so Gatekeeper does not check it. Always Allow is a standing grant to the code signature of the build you compiled. Each rebuild changes that signature, so macOS may ask again after an update. See the <a href="/glossary/">glossary</a> and <a href="/guides/">guides</a>.</p>
+    <p class="note">ezkey is open source. You build it on your own Mac. macOS asks for your login password when ezkey reads a secret that another app saved. It can ask again next time, even after you click Always Allow. ezkey does not suppress or work around that prompt. That is on purpose: you get the same protection as Keychain Access, which asks every time you show a password. Secrets you save with ezkey usually open without a prompt. See the <a href="/glossary/">glossary</a> and <a href="/guides/">guides</a>.</p>
   </main>
   <footer>
     <nav>

@@ -28,10 +28,10 @@ function agentBrief(): Record<string, unknown> {
     repository: "https://github.com/edtadros/ezkey",
     license: "MIT",
     how_to_use_this_brief:
-      `Follow the build-ezkey skill at ${SKILL_URL}. Present the disclaimer to the human first. Clone the newest release tag, run the code review in the skill, and show the human the results. Run ./scripts/install.sh only after they say go. Do not download a prebuilt app. Do not send Keychain secrets to this website.`,
+      `Follow the build-ezkey skill at ${SKILL_URL}. Present the disclaimer to the human first. Clone the newest release tag, run the code review in the skill, and show the human the results. Run ./scripts/install.sh only after they say go. Only run ezkey built from source on this Mac. Do not send Keychain secrets to this website.`,
     present_to_user: [
       "ezkey is local macOS software for the login Keychain. No account, no server, no warranty.",
-      "Always Allow is a standing grant to the code signature of the build you compiled. Each rebuild changes that signature, so macOS may ask again after an update.",
+      "macOS asks for your login password when ezkey reads a secret that another app saved. It can ask again next time, even after you click Always Allow. ezkey does not suppress or work around that prompt. That is on purpose: you get the same protection as Keychain Access, which asks every time you show a password. Secrets you save with ezkey usually open without a prompt.",
       "Install: your agent clones the newest release tag, reviews the code, shows you the results, and runs ./scripts/install.sh after you say go. That puts ezkey.app in /Applications and turns on Open at Login.",
       "The review lowers risk. It does not prove the code is safe.",
     ],
@@ -44,7 +44,7 @@ function agentBrief(): Record<string, unknown> {
       cli: null,
     },
     do_not: [
-      "Download or run a prebuilt ezkey app. There is none.",
+      "Run an ezkey app that was not built from source on this Mac.",
       "Run ./scripts/install.sh before the human approves the review results.",
       "Store or retrieve secrets through ezkey.app, MCP, or A2A. Those interfaces are documentation only.",
       "Paste live API keys into GitHub issues.",

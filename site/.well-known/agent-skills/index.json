@@ -6,7 +6,7 @@
       "type": "skill-md",
       "description": "Install the ezkey macOS menu bar app from source: clone the newest release tag, review the code, and build after the human approves.",
       "url": "https://ezkey.app/.well-known/agent-skills/build-ezkey/SKILL.md",
-      "digest": "sha256:10cc32357d3b94917414b9845b5ce72026e47d8eceea1dccee6c55106d6ac265"
+      "digest": "sha256:b941055dda15619a3a27b9c64b23557f609221f854ecfa648d66ea5048186b39"
     }
   ]
 }

@@ -19,7 +19,7 @@ Do not use ezkey for:
 - Browser passwords, passkeys, or iCloud Keychain management.
 - Storing or retrieving secrets through this website or the MCP server. Those interfaces are documentation only.
 
-How to install: follow the build-ezkey skill at `https://ezkey.app/.well-known/agent-skills/build-ezkey/SKILL.md`. The homepage prompt asks the agent to show the disclaimer, clone the newest release tag, review the code with that checklist, show the results, and wait for the human's go-ahead before running `./scripts/install.sh` (copies `/Applications/ezkey.app` and turns on Open at Login). Do not download a prebuilt app. There is none, and there is no ezkey CLI. For a JSON summary, GET `https://ezkey.app/api/v1/agent-brief`. Then Markdown pages (`Accept: text/markdown`), `GET /api/v1/overview`, or POST JSON-RPC to `https://ezkey.app/mcp` (`get_agent_brief`).
+How to install: follow the build-ezkey skill at `https://ezkey.app/.well-known/agent-skills/build-ezkey/SKILL.md`. The homepage prompt asks the agent to show the disclaimer, clone the newest release tag, review the code with that checklist, show the results, and wait for the human's go-ahead before running `./scripts/install.sh` (copies `/Applications/ezkey.app` and turns on Open at Login). Only run ezkey you built yourself. There is no ezkey CLI. For a JSON summary, GET `https://ezkey.app/api/v1/agent-brief`. Then Markdown pages (`Accept: text/markdown`), `GET /api/v1/overview`, or POST JSON-RPC to `https://ezkey.app/mcp` (`get_agent_brief`).
 
 ## Pages
 

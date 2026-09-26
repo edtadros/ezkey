@@ -16,7 +16,7 @@ cd ezkey
 ./scripts/install.sh
 ```
 
-Replace `<tag>` with the newest `v*` release tag. That copies the app to `/Applications/ezkey.app`, opens it, and turns on Open at Login. Requires macOS 14+ and Xcode command-line tools. There is no prebuilt app and no ezkey CLI. A local build is ad-hoc signed and not notarized. It does not need to be: it was never downloaded, so Gatekeeper does not check it.
+Replace `<tag>` with the newest `v*` release tag. That copies the app to `/Applications/ezkey.app`, opens it, and turns on Open at Login. Requires macOS 14+ and Xcode command-line tools. There is no ezkey CLI. ezkey is open source. You build it on your own Mac. If you want to check it first, ask your own agent to review the code. We encourage that. The install skill includes a review checklist.
 
 ## Privacy
 
@@ -24,7 +24,7 @@ ezkey does not include analytics, crash reporters, advertising, accounts, or net
 
 ## Security
 
-macOS still owns the Keychain. When ezkey reads an item another program created, macOS may ask for the login Keychain password. Always Allow is a standing grant to the code signature of the build you compiled. Each rebuild changes that signature, so macOS may ask again after an update.
+macOS still owns the Keychain. macOS asks for your login password when ezkey reads a secret that another app saved. It can ask again next time, even after you click Always Allow. ezkey does not suppress or work around that prompt. That is on purpose: you get the same protection as Keychain Access, which asks every time you show a password. Secrets you save with ezkey usually open without a prompt.
 
 Report vulnerabilities privately: https://github.com/edtadros/ezkey/security/advisories/new
 

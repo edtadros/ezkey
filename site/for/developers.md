@@ -29,7 +29,7 @@ The source is https://github.com/edtadros/ezkey. Read `LoginKeychainStore.swift`
 
 ## What it will not do
 
-It will not rotate keys at OpenAI. It will not sync to a phone. It will not hide from a process running as you. It will not replace 1Password for your bank. It will not ship a prebuilt binary. You build it from source. Those are not missing checkboxes. They are the product boundary. See [anti-cloud local keys](/for/local-api-keys/).
+It will not rotate keys at OpenAI. It will not sync to a phone. It will not hide from a process running as you. It will not replace 1Password for your bank. You build it from source. Those are not missing checkboxes. They are the product boundary. See [anti-cloud local keys](/for/local-api-keys/).
 
 ## Start from source
 
@@ -61,7 +61,3 @@ Swift 6.1, macOS 14+, Package.swift in the repo.
 ## Sandbox?
 
 No. A sandbox would hide items from security(1). That is a deliberate trade.
-
-## CI artifacts?
-
-Tests only. CI does not attach an .app. CI artifacts are not a release channel.

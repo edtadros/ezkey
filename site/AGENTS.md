@@ -19,7 +19,7 @@ Requires macOS 14 or later and Xcode command-line tools. `install.sh` runs tests
 ## Commands
 
 - `swift test` — unit tests. Disposable Keychain items use the `ezkey.test.` name prefix only.
-- `./scripts/install.sh` — install into `/Applications` and open (ad-hoc signed).
+- `./scripts/install.sh` — install into `/Applications` and open.
 - `./scripts/build-and-run.sh` — same script `install.sh` runs. `SKIP_INSTALL=1` packages `build/ezkey.app` only.
 - `npx wrangler deploy` — publish this website to Cloudflare (`ezkey.app`).
 - `node --experimental-strip-types --test tests/site/worker.test.ts` — site worker tests.
@@ -28,5 +28,5 @@ Requires macOS 14 or later and Xcode command-line tools. `install.sh` runs tests
 
 - Do not log or commit secrets.
 - Do not add network calls, analytics, or auto-update to the app.
-- The only supported install is building from source at the newest `v*` release tag. There is no prebuilt app, npm package, or Homebrew formula.
+- Install is always a build from source at the newest `v*` release tag. Do not add binary downloads, npm packages, or Homebrew formulas.
 - Site copy stays generic. Do not use personal names in examples.

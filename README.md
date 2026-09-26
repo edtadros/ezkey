@@ -14,7 +14,7 @@ security find-generic-password -a "$USER" -s "your-service-name" -w "$HOME/Libra
 
 ## How to get it
 
-**Build from source.** That is the only supported path. There is no prebuilt app.
+ezkey is open source. You build it on your own Mac. If you want to check it first, ask your own agent to review the code. We encourage that.
 
 Ask your agent:
 
@@ -35,7 +35,7 @@ cd ezkey
 
 Requires macOS 14 or later and Xcode 16+ / Swift 6.1 command-line tools.
 
-`install.sh` runs the tests, builds the app, copies it to `/Applications/ezkey.app` (the Applications folder in Finder), opens it, and turns on **Open at Login**. You can turn that off from the panel. The build is ad-hoc signed for your Mac. It was never downloaded, so Gatekeeper does not check it and it needs no notarization. **Do not give your build to other people.**
+`install.sh` runs the tests, builds the app, copies it to `/Applications/ezkey.app` (the Applications folder in Finder), opens it, and turns on **Open at Login**. You can turn that off from the panel. Only run ezkey you built yourself.
 
 Look for the shield-and-key icon in the menu bar (often near the notch, not next to Control Center). There is no Dock icon. The mark is Noun Project “VPN” (5544559).
 
@@ -45,7 +45,9 @@ Look for the shield-and-key icon in the menu bar (often near the notch, not next
 2. Choose **Save** or **Retrieve**.
 3. Enter a **Name**. That is Keychain Access **Name** and **Where** (they are stored as the same string). Account is the Mac username and is not shown. Example: `my-app-api-token`.
 4. **Save** writes a new item. Optional **Notes** are stored as Keychain Access **Comments** (`security add-generic-password -j`). If that pair already exists, you must click **Update**.
-5. **Retrieve** looks up an exact name and account when both match. If you type only part of the name (Keychain Access **Name** or **Where**, or the Comments text), ezkey lists matching entries without showing secrets. Click one to retrieve that secret and its notes. Notes are item attributes, not a second password; they show in the clear. macOS may ask for your login Keychain password the first time ezkey reads an item created by another app. After you Allow, the panel returns with the secret masked. **Reveal**, **Hide**, and **Copy** follow. **Always Allow** is a standing grant to this app’s code signature; use it only for a build you compiled. Each rebuild changes the signature, so macOS may ask again after an update.
+5. **Retrieve** looks up an exact name and account when both match. If you type only part of the name (Keychain Access **Name** or **Where**, or the Comments text), ezkey lists matching entries without showing secrets. Click one to retrieve that secret and its notes. Notes are item attributes, not a second password; they show in the clear. After you Allow a Keychain prompt, the panel returns with the secret masked. **Reveal**, **Hide**, and **Copy** follow.
+
+   macOS asks for your login password when ezkey reads a secret that another app saved. It can ask again next time, even after you click **Always Allow**. ezkey does not suppress or work around that prompt. That is on purpose: you get the same protection as Keychain Access, which asks every time you show a password. Secrets you save with ezkey usually open without a prompt.
 6. **Quit ezkey** exits. **License** opens the MIT text bundled in the app.
 
 The name may be remembered. Secret values are not. When ezkey saves, it sets Keychain Access **Name** and **Where** to that name and **Account** to the logged-in Mac user.
