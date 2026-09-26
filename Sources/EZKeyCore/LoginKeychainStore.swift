@@ -21,17 +21,29 @@ public protocol SecretStore: Sendable {
 /// protection keychain. They remain the correct API for this compatibility
 /// requirement.
 public actor LoginKeychainStore: SecretStore {
+    /// Who may read a secret ezkey saves without the macOS password prompt.
+    public enum ReadPolicy: Sendable {
+        /// Every read asks for the login password, including reads by ezkey.
+        /// macOS would otherwise let the saving app read silently.
+        case askEveryTime
+        /// macOS default: the saving app reads without a prompt.
+        case trustEzkey
+    }
+
     public let keychainPath: String
+    public let readPolicy: ReadPolicy
     /// When false, Keychain calls fail instead of showing a password dialog.
     /// Tests use this so an unexpected ACL prompt cannot hang the suite.
     public let allowsPrompt: Bool
 
     public init(
         keychainPath: String = LoginKeychainStore.defaultLoginPath,
-        allowsPrompt: Bool = true
+        allowsPrompt: Bool = true,
+        readPolicy: ReadPolicy = .askEveryTime
     ) {
         self.keychainPath = keychainPath
         self.allowsPrompt = allowsPrompt
+        self.readPolicy = readPolicy
     }
 
     public static var defaultLoginPath: String {
@@ -74,6 +86,9 @@ public actor LoginKeychainStore: SecretStore {
         if !trimmedNote.isEmpty {
             query[kSecAttrComment] = trimmedNote
         }
+        if readPolicy == .askEveryTime {
+            query[kSecAttrAccess] = try askEveryTimeAccess()
+        }
         let status = SecItemAdd(query as CFDictionary, nil)
         try check(status)
     }
@@ -89,7 +104,7 @@ public actor LoginKeychainStore: SecretStore {
             kSecValueData: Data(secret.utf8),
             kSecAttrComment: StoredSecret.normalizedNote(note)
         ]
-        let status = SecItemUpdate(query as CFDictionary, attributes as CFDictionary)
+        let status = withPromptPolicy { SecItemUpdate(query as CFDictionary, attributes as CFDictionary) }
         try check(status)
     }
 
@@ -98,7 +113,7 @@ public actor LoginKeychainStore: SecretStore {
         var query = try searchQuery(identity, returnData: true)
         query[kSecReturnAttributes] = true
         var result: CFTypeRef?
-        let status = SecItemCopyMatching(query as CFDictionary, &result)
+        let status = withPromptPolicy { SecItemCopyMatching(query as CFDictionary, &result) }
         try check(status)
         return try storedSecret(from: result)
     }
@@ -239,6 +254,36 @@ public actor LoginKeychainStore: SecretStore {
             query[kSecUseAuthenticationUI] = kSecUseAuthenticationUISkip
         }
         return query
+    }
+
+    /// kSecUseAuthenticationUI does not stop the file-based Keychain's password
+    /// dialog, so with prompts off this also turns off Keychain UI for the call.
+    private func withPromptPolicy(_ call: () -> OSStatus) -> OSStatus {
+        guard !allowsPrompt else { return call() }
+        SecKeychainSetUserInteractionAllowed(false)
+        defer { SecKeychainSetUserInteractionAllowed(true) }
+        return call()
+    }
+
+    /// Starts from the default access (this app trusted for everything), then
+    /// empties the trusted-app list on the decrypt rule. Reading the secret
+    /// prompts for every app, ezkey included; names, notes, update and delete
+    /// stay silent. The prompt-selector passphrase flag is not set: macOS
+    /// keeps 0x100 whatever is written (measured), and the login-Keychain
+    /// dialog asks for the password anyway.
+    private func askEveryTimeAccess() throws -> SecAccess {
+        var created: SecAccess?
+        try check(SecAccessCreate("ezkey" as CFString, nil, &created))
+        guard let access = created,
+              let acls = SecAccessCopyMatchingACLList(access, kSecACLAuthorizationDecrypt) as? [SecACL],
+              !acls.isEmpty
+        else {
+            throw KeychainError.failure(errSecACLNotSimple)
+        }
+        for acl in acls {
+            try check(SecACLSetContents(acl, [] as CFArray, "ezkey" as CFString, []))
+        }
+        return access
     }
 
     private func openLoginKeychain() throws -> SecKeychain {

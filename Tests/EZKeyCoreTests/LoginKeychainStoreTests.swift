@@ -6,7 +6,10 @@ final class LoginKeychainStoreTests: XCTestCase {
     /// Unsigned xctest cannot cross the security(1) ACL without a login-keychain
     /// password prompt, so these tests stay same-process. CLI interop is covered
     /// by scripts/verify-roundtrip.swift after the app is signed.
-    private let store = LoginKeychainStore(allowsPrompt: false)
+    /// Round-trip tests save with `.trustEzkey` so they can read back without a
+    /// prompt; the app uses `.askEveryTime`, covered by the tests at the end.
+    private let store = LoginKeychainStore(allowsPrompt: false, readPolicy: .trustEzkey)
+    private let askEveryTime = LoginKeychainStore(allowsPrompt: false)
     private var created: [SecretIdentity] = []
 
     override func tearDown() async throws {
@@ -142,6 +145,64 @@ final class LoginKeychainStoreTests: XCTestCase {
         created.append(contentsOf: [named, noted])
         let matches = try await store.list(matching: token)
         XCTAssertEqual(Set(matches.map(\.service)), [named.service, noted.service])
+    }
+
+    func testAskEveryTimeRefusesASilentReadEvenByEzkey() async throws {
+        let identity = uniqueIdentity()
+        try await askEveryTime.add(identity, secret: "needs-a-password")
+        created.append(identity)
+        do {
+            _ = try await askEveryTime.retrieve(identity)
+            XCTFail("read the secret without the password prompt")
+        } catch let error as KeychainError {
+            XCTAssertEqual(error, .accessDenied)
+        }
+    }
+
+    func testAskEveryTimeItemTrustsNoAppToRead() async throws {
+        let identity = uniqueIdentity()
+        try await askEveryTime.add(identity, secret: "needs-a-password")
+        created.append(identity)
+        let query: [CFString: Any] = [
+            kSecClass: kSecClassGenericPassword,
+            kSecAttrService: identity.service,
+            kSecAttrAccount: identity.account,
+            kSecReturnRef: true,
+            kSecMatchLimit: kSecMatchLimitOne,
+            kSecUseDataProtectionKeychain: false,
+        ]
+        var ref: CFTypeRef?
+        XCTAssertEqual(SecItemCopyMatching(query as CFDictionary, &ref), errSecSuccess)
+        var access: SecAccess?
+        XCTAssertEqual(SecKeychainItemCopyAccess(ref as! SecKeychainItem, &access), errSecSuccess)
+        let decrypt = SecAccessCopyMatchingACLList(access!, kSecACLAuthorizationDecrypt) as! [SecACL]
+        XCTAssertFalse(decrypt.isEmpty)
+        for acl in decrypt {
+            var apps: CFArray?
+            var description: CFString?
+            var selector = SecKeychainPromptSelector()
+            XCTAssertEqual(SecACLCopyContents(acl, &apps, &description, &selector), errSecSuccess)
+            XCTAssertEqual((apps as? [Any])?.count, 0, "an app can read without the prompt")
+        }
+    }
+
+    func testAskEveryTimeKeepsNamesNotesUpdateAndDeleteSilent() async throws {
+        let token = UUID().uuidString
+        let identity = SecretIdentity(service: DisposableEntry.servicePrefix + token, account: NSUserName())
+        try await askEveryTime.add(identity, secret: "first", note: "note \(token)")
+        created.append(identity)
+        let exists = try await askEveryTime.contains(identity)
+        XCTAssertTrue(exists)
+        let comment = try await askEveryTime.comment(for: identity)
+        XCTAssertEqual(comment, "note \(token)")
+        let matches = try await askEveryTime.list(matching: token)
+        XCTAssertEqual(matches, [identity])
+        try await askEveryTime.update(identity, secret: "second", note: "rotated")
+        let rotated = try await askEveryTime.comment(for: identity)
+        XCTAssertEqual(rotated, "rotated")
+        try await askEveryTime.delete(identity)
+        let gone = try await askEveryTime.contains(identity)
+        XCTAssertFalse(gone)
     }
 
     func testRefusesToTreatProductionServiceAsDisposable() {

@@ -51,11 +51,21 @@ test("review commands produce what the skill says they produce", () => {
   }
 });
 
-test("check 3 has exactly one hit and check 5 uses only the five listed calls", () => {
+test("check 3 has exactly one hit and check 5 uses only the listed calls", () => {
   const commands = reviewCommands();
   assert.equal(run(commands.get(3)!).length, 1);
   const calls = new Set(run(commands.get(5)!).map((line) => line.split(":").pop()));
-  assert.deepEqual([...calls].sort(), ["SecItemAdd(", "SecItemCopyMatching(", "SecItemDelete(", "SecItemUpdate(", "SecKeychainOpen("]);
+  assert.deepEqual([...calls].sort(), [
+    "SecACLSetContents(",
+    "SecAccessCopyMatchingACLList(",
+    "SecAccessCreate(",
+    "SecItemAdd(",
+    "SecItemCopyMatching(",
+    "SecItemDelete(",
+    "SecItemUpdate(",
+    "SecKeychainOpen(",
+    "SecKeychainSetUserInteractionAllowed(",
+  ]);
 });
 
 test("agent-skills index digest matches SKILL.md, and the flat copy is identical", async () => {
