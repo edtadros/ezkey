@@ -33,7 +33,7 @@ That is not the Data Protection keychain, and it is not iCloud Passwords. Those 
 
 ## Save from the menu bar
 
-Build [ezkey](https://ezkey.app/) from source, click the key in the menu bar, choose Save, type a Name such as `my-app-api-token`, paste the secret, save. Account is the logged-in Mac user and stays hidden. Retrieve can take a substring of the name and list matches without showing secrets until you pick one. Copy clears in 30 seconds if the pasteboard still holds what ezkey put there.
+Build [ezkey](https://ezkey.app/) from source, click the key in the menu bar, choose Save, type a Name such as `my-app-api-token`, paste the secret, save. Account is the logged-in Mac user and stays hidden. Retrieve can take a substring of the name and list matches without showing secrets until you pick one. Picking one asks for your login password, every time, on purpose. Copy clears in 30 seconds if the pasteboard still holds what ezkey put there.
 
 ![ezkey Save panel](https://ezkey.app/images/panel-save.png)
 
@@ -68,7 +68,7 @@ That export lives in the process environment for that shell. Other processes run
 - A binary you did not build, once you let it read the Keychain.
 - Need to share the same key with a team. That is a vault product, not login.keychain-db.
 
-ezkey does not claim otherwise. It is MIT, as-is, no warranty. Read the [security](/security/) notes on Always Allow and the [glossary](/glossary/) for Name, Account, and Where.
+ezkey does not claim otherwise. It is MIT, as-is, no warranty. Read the [security](/security/) page for why ezkey asks for your password every time, and the [glossary](/glossary/) for Name, Account, and Where.
 
 ## Related answers
 
@@ -89,6 +89,10 @@ No. Export it for the session you need: export MY_KEY="$(security find-generic-p
 
 No. There is no account and no server. Copying a Keychain to another machine is a macOS problem, not an ezkey feature.
 
+## Why does ezkey ask for my password every time?
+
+ezkey asks for your login password every time it shows a secret, including secrets ezkey saved itself. That is on purpose. By default, macOS lets the app that saved a Keychain item read it again without asking. ezkey turns that off for everything it saves, because ezkey has no login of its own: without the prompt, anyone using your unlocked Mac could open ezkey and read your keys. It is the same protection Keychain Access gives when you show a password. Names and notes stay readable without the password so you can search; only the secret is protected.
+
 ## Is Always Allow safe?
 
-Always Allow asks macOS to stop prompting ezkey for that item, but macOS may still ask again. ezkey does not suppress or work around that prompt. That is on purpose: you get the same protection as Keychain Access. Only run ezkey you built yourself.
+Always Allow asks macOS to stop prompting this app for that item. ezkey saves every secret so the prompt still appears every time. Clicking Always Allow changes nothing. ezkey never suppresses or bypasses the prompt. Only run ezkey you built yourself.

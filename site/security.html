@@ -40,8 +40,10 @@
     <p>macOS still owns the Keychain. ezkey is a front door, not a vault.</p>
     <p>Report vulnerabilities privately via <a href="https://github.com/edtadros/ezkey/security/advisories/new">GitHub security advisories</a>. Do not open a public issue and do not attach secrets.</p>
     <h2>How access works</h2>
-    <p>macOS asks for your login password when ezkey reads a secret that another app saved. That prompt is the operating system. It can ask again next time, even after you click <strong>Always Allow</strong>.</p>
-    <p>ezkey does not suppress or work around that prompt. That is on purpose: you get the same protection as Keychain Access, which asks every time you show a password. Secrets you save with ezkey usually open without a prompt.</p>
+    <p>ezkey asks for your login password every time it shows a secret, including secrets ezkey saved itself. That is on purpose.</p>
+    <p>By default, macOS lets the app that saved a Keychain item read it again without asking. ezkey turns that off for everything it saves. Each secret it saves trusts no app to read it, ezkey included. ezkey has no login of its own: without the prompt, anyone using your unlocked Mac could open ezkey and read your keys.</p>
+    <p>The prompt comes from macOS. ezkey never suppresses or bypasses it. Clicking <strong>Always Allow</strong> does not change this. It is the same protection Keychain Access gives when you show a password.</p>
+    <p>Names and notes stay readable without the password so you can search. Saving, searching by name or notes, Update, and Delete work without it. Notes show in the clear, so keep secrets out of them. Only the secret is protected.</p>
     <h2>What you should install</h2>
     <p>Source from the newest <code>v*</code> release tag of <a href="https://github.com/edtadros/ezkey">github.com/edtadros/ezkey</a>, reviewed and built on your Mac. Each release is a new tag. The <a href="/.well-known/agent-skills/build-ezkey/SKILL.md">build-ezkey skill</a> walks an agent through the review. A review lowers risk. It does not prove the code is safe. Only the maintainer can create, move, or delete <code>v*</code> tags.</p>
     <p>Only run ezkey you built yourself. CI on GitHub runs the tests and the review checks on every change.</p>

@@ -46,17 +46,17 @@
     <h2 id="add">Add or update</h2>
     <pre><code>security add-generic-password -U -a &quot;$USER&quot; -s &quot;my-app-api-token&quot; -w \
   &quot;$HOME/Library/Keychains/login.keychain-db&quot;</code></pre>
-    <p>ss64 and <code>man security</code> document the rest. Creator codes and <code>-T</code> trusted apps are how Access Control lists get weird. Default trust includes the creating app. Always Allow asks macOS to add ezkey to that list, but macOS may still ask again.</p>
+    <p>ss64 and <code>man security</code> document the rest. Creator codes and <code>-T</code> trusted apps are how Access Control lists get weird. By default the app that saved an item is trusted and reads it without asking. ezkey saves items with an empty trusted-app list, so every read asks for the login password, ezkey included. That is on purpose: ezkey has no login of its own. Clicking Always Allow does not change this.</p>
     <p>A common copy-paste sets <code>-a</code> to the service name and <code>-s</code> to the key name, or the reverse. Then Keychain Access looks empty when you search the string you remember. Pick a convention and keep it. ezkey’s convention is: the Name you type is both label and service; account is the Mac user. If you already have CLI items with a different account string, Retrieve will not see them until you save under the Mac user or search from Access.</p>
     <h2 id="find">Find and print</h2>
     <pre><code>security find-generic-password -a &quot;$USER&quot; -s &quot;my-app-api-token&quot; -w \
   &quot;$HOME/Library/Keychains/login.keychain-db&quot;</code></pre>
-    <p><code>-w</code> on find prints only the password. Without it you get attributes. macOS may show a dialog the first time a different app reads the item.</p>
+    <p><code>-w</code> on find prints only the password. Without it you get attributes. macOS may show a dialog the first time a different app reads the item. For items ezkey saved, it asks every time.</p>
     <p>Printing to stdout is a feature and a footgun. Anything that logs the command output now has the secret. Prefer assigning to a variable, passing to the child, and unsetting. <code>echo $SECRET</code> in a shared screen session is how keys travel. ezkey’s copy button is the same class of risk for thirty seconds. That is documented, not hidden.</p>
     <h2 id="ezkey">How this maps to ezkey</h2>
     <p>If you save <code>my-app-api-token</code> in ezkey, Keychain Access shows that string as Name and Where. <code>security find-generic-password -s my-app-api-token -a &quot;$USER&quot; -w</code> should print the same secret after you allow access. That round-trip is the point. See <a href="/compare/ezkey-vs-keychain-access/">ezkey vs Keychain Access</a>.</p>
     <h2 id="related">Related answers</h2>
-    <div class="related"><a href="/guides/how-to-save-api-keys-securely-on-mac/">How to save API keys securely on a Mac<small>Why the CLI should prompt for -w.</small></a><a href="/glossary/">Glossary<small>Name, Where, Account.</small></a><a href="/compare/ezkey-vs-keychain-access/">ezkey vs Keychain Access<small>Same file, different UI.</small></a><a href="/security/">Security<small>Always Allow and prompts.</small></a></div>
+    <div class="related"><a href="/guides/how-to-save-api-keys-securely-on-mac/">How to save API keys securely on a Mac<small>Why the CLI should prompt for -w.</small></a><a href="/glossary/">Glossary<small>Name, Where, Account.</small></a><a href="/compare/ezkey-vs-keychain-access/">ezkey vs Keychain Access<small>Same file, different UI.</small></a><a href="/security/">Security<small>Why ezkey asks for your password every time.</small></a></div>
     <h2 id="faq-1">What is the difference between -s and -l?</h2>
     <p>-s is service (Where). -l is label (Name). If you omit -l, label defaults to the service. ezkey sets both to the Name you type.</p><h2 id="faq-2">Why does find fail after I saved in ezkey?</h2>
     <p>Account must match. ezkey always uses the logged-in username. Pass -a &quot;$USER&quot;.</p><h2 id="faq-3">Can I use -A?</h2>

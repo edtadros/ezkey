@@ -25,6 +25,8 @@ ezkey opens `~/Library/Keychains/login.keychain-db` through Security.framework. 
 
 | Clipboard timer | No | 30 seconds if unchanged |
 
+| Password to show a secret | Every time | Every time, even items it saved |
+
 | ACL editor | Yes | No |
 
 | Source | Closed, from Apple | MIT, github.com/edtadros/ezkey |
@@ -33,7 +35,7 @@ ezkey opens `~/Library/Keychains/login.keychain-db` through Security.framework. 
 
 Certificates, code signing identities, looking at Access Control, inspecting iCloud items. ezkey will not grow into that. If you need those tools, open Access. That is not a failure of ezkey. It is the division of labor.
 
-Access is also the right place when an item will not delete, when two items share a confusing Where, or when you need to see which apps are trusted. ezkey will not show ACL entries. If Retrieve fails with a prompt you do not understand, open Access, find the item, and read Access Control. Then decide whether to allow it. macOS may ask again even after Always Allow.
+Access is also the right place when an item will not delete, when two items share a confusing Where, or when you need to see which apps are trusted. ezkey will not show ACL entries. If Retrieve fails with a prompt you do not understand, open Access, find the item, and read Access Control. Then decide whether to allow it. Items ezkey saved list no trusted apps, so ezkey asks for your login password every time, even after Always Allow. That is on purpose. ezkey has no login of its own: without the prompt, anyone using your unlocked Mac could open ezkey and read your keys. Access asks the same way when you show a password.
 
 ## When ezkey is better
 
@@ -46,7 +48,7 @@ ezkey will not import a CSV of passwords. It will not show your Safari logins. I
 - [security add-generic-password](https://ezkey.app/guides/security-add-generic-password/): The CLI both of you sit on.
 - [Save API keys securely](https://ezkey.app/guides/how-to-save-api-keys-securely-on-mac/): The actual procedure.
 - [Keychain vs 1Password](https://ezkey.app/compare/macos-keychain-vs-1password-for-api-keys/): Different layer.
-- [Security](https://ezkey.app/security/): Prompts and Always Allow.
+- [Security](https://ezkey.app/security/): Why ezkey asks for your password every time.
 
 ## Will an item I create in Access show up in ezkey?
 

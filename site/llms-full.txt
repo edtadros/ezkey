@@ -24,7 +24,7 @@ ezkey does not include analytics, crash reporters, advertising, accounts, or net
 
 ## Security
 
-macOS still owns the Keychain. macOS asks for your login password when ezkey reads a secret that another app saved. It can ask again next time, even after you click Always Allow. ezkey does not suppress or work around that prompt. That is on purpose: you get the same protection as Keychain Access, which asks every time you show a password. Secrets you save with ezkey usually open without a prompt.
+macOS still owns the Keychain. ezkey asks for your login password every time it shows a secret, including secrets ezkey saved itself. That is on purpose. By default, macOS lets the app that saved a Keychain item read it again without asking. ezkey turns that off for everything it saves, because ezkey has no login of its own: without the prompt, anyone using your unlocked Mac could open ezkey and read your keys. Clicking Always Allow does not change this. It is the same protection Keychain Access gives when you show a password. Names and notes stay readable without the password so you can search; only the secret is protected. ezkey never suppresses or bypasses the prompt.
 
 Report vulnerabilities privately: https://github.com/edtadros/ezkey/security/advisories/new
 
@@ -46,3 +46,4 @@ Public REST at https://ezkey.app/api/v1 (health, overview, build, pages). MCP at
 - Account: Keychain account attribute. ezkey always uses the logged-in Mac username.
 - Where: Keychain Access field for the generic-password service (`security -s`).
 - login Keychain: `~/Library/Keychains/login.keychain-db`
+- Always Allow: a button in the macOS Keychain password prompt. It asks macOS to stop prompting this app for that item. ezkey saves every secret so the prompt still appears every time, and it never suppresses or bypasses the prompt.

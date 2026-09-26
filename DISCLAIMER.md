@@ -8,7 +8,7 @@ It is a local macOS utility. It is not a hosted password manager, not a backup s
 
 macOS will ask before ezkey can read a Keychain item created by another program. **Allow** and **Always Allow** are decisions you make.
 
-ezkey never suppresses or bypasses these prompts. macOS can ask again even after **Always Allow**, the same as Keychain Access.
+ezkey never suppresses or bypasses these prompts. It also saves every secret so that reading it asks for your login password every time, even for ezkey and even after **Always Allow**, the same as showing a password in Keychain Access.
 
 Only grant Keychain access to ezkey you built yourself, from source you or your agent reviewed.
 

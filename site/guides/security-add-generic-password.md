@@ -32,7 +32,7 @@ security add-generic-password -U -a "$USER" -s "my-app-api-token" -w \
   "$HOME/Library/Keychains/login.keychain-db"
 ```
 
-ss64 and `man security` document the rest. Creator codes and `-T` trusted apps are how Access Control lists get weird. Default trust includes the creating app. Always Allow asks macOS to add ezkey to that list, but macOS may still ask again.
+ss64 and `man security` document the rest. Creator codes and `-T` trusted apps are how Access Control lists get weird. By default the app that saved an item is trusted and reads it without asking. ezkey saves items with an empty trusted-app list, so every read asks for the login password, ezkey included. That is on purpose: ezkey has no login of its own. Clicking Always Allow does not change this.
 
 A common copy-paste sets `-a` to the service name and `-s` to the key name, or the reverse. Then Keychain Access looks empty when you search the string you remember. Pick a convention and keep it. ezkey’s convention is: the Name you type is both label and service; account is the Mac user. If you already have CLI items with a different account string, Retrieve will not see them until you save under the Mac user or search from Access.
 
@@ -43,7 +43,7 @@ security find-generic-password -a "$USER" -s "my-app-api-token" -w \
   "$HOME/Library/Keychains/login.keychain-db"
 ```
 
-`-w` on find prints only the password. Without it you get attributes. macOS may show a dialog the first time a different app reads the item.
+`-w` on find prints only the password. Without it you get attributes. macOS may show a dialog the first time a different app reads the item. For items ezkey saved, it asks every time.
 
 Printing to stdout is a feature and a footgun. Anything that logs the command output now has the secret. Prefer assigning to a variable, passing to the child, and unsetting. `echo $SECRET` in a shared screen session is how keys travel. ezkey’s copy button is the same class of risk for thirty seconds. That is documented, not hidden.
 
@@ -56,7 +56,7 @@ If you save `my-app-api-token` in ezkey, Keychain Access shows that string as Na
 - [How to save API keys securely on a Mac](https://ezkey.app/guides/how-to-save-api-keys-securely-on-mac/): Why the CLI should prompt for -w.
 - [Glossary](https://ezkey.app/glossary/): Name, Where, Account.
 - [ezkey vs Keychain Access](https://ezkey.app/compare/ezkey-vs-keychain-access/): Same file, different UI.
-- [Security](https://ezkey.app/security/): Always Allow and prompts.
+- [Security](https://ezkey.app/security/): Why ezkey asks for your password every time.
 
 ## What is the difference between -s and -l?
 
