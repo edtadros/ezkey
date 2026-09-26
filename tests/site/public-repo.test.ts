@@ -71,12 +71,12 @@ test("classifier flags a second address and an OpenAI token outside the tree", (
   assert.equal(out.includes(token), true);
 });
 
-test("user-facing copy never mentions Developer ID, notarization, or Gatekeeper", () => {
+test("no tracked file mentions Developer ID, notarization, or Gatekeeper outside the rule itself", () => {
   let out = "";
   try {
     out = execFileSync(
       "git",
-      ["grep", "-n", "-i", "-E", "developer id|notariz|gatekeeper", "--", "site", "src", "README.md", "SECURITY.md", "DISCLAIMER.md", "CONTRIBUTING.md", "RELEASING.md", "scripts/render_guides.py"],
+      ["grep", "-n", "-i", "-E", "developer id|notariz|gatekeeper", "--", ".", ":!AGENTS.md", ":!tests/site/public-repo.test.ts"],
       { cwd: root, encoding: "utf8" },
     );
   } catch (error) {

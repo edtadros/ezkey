@@ -9,7 +9,7 @@ APP_DIR="$BUILD_ROOT/${APP_NAME}.app"
 EXECUTABLE_PATH="$ROOT_DIR/.build/release/${APP_NAME}"
 INFO_PLIST="$ROOT_DIR/Resources/Info.plist"
 LICENSE_FILE="$ROOT_DIR/LICENSE"
-# Local/dev only. Public binaries must go through scripts/release.sh (Developer ID + notary).
+# Optional: sign with a local identity instead of ad-hoc.
 SIGN_IDENTITY="${EZKEY_SIGN_IDENTITY:-}"
 
 cd "$ROOT_DIR"
