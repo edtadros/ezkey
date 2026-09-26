@@ -25,6 +25,7 @@ Requires macOS 14 or later and Xcode command-line tools. `install.sh` runs tests
 - Do not log or commit secrets.
 - Do not add network calls, analytics, or auto-update to the app.
 - Install is source-only, from a `v*` tag.
+- Turn off a GitHub or Cloudflare feature before deleting the files it reads (Pages before `docs/`, a workflow before its secrets). Otherwise the merge triggers one last failing run and an alert. GitHub Pages is off on purpose; do not re-add `docs/`.
 - Do not mention Developer ID, notarization, or Gatekeeper in user-facing copy. ezkey will never have a Developer ID.
 - Keep the site in step with the app. Any change to behavior, the panel, install, the agent prompt, or docs updates in the same PR: the `site/*.md` and `.html` pairs, guides (`python3 scripts/render_guides.py`), `site/llms*.txt`, the agent brief in `src/`, the install skill (and its digest), and screenshots (`./scripts/render-marketing.sh`).
 - Site copy stays generic. Do not use personal names in examples.
