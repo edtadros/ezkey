@@ -17,7 +17,7 @@ By default, macOS lets the app that saved a Keychain item read it again without 
 
 The prompt comes from macOS. ezkey never suppresses or bypasses it. Clicking **Always Allow** does not change this. It is the same protection Keychain Access gives when you show a password.
 
-Names and notes stay readable without the password so you can search. Saving, searching by name or notes, Update, and Delete work without it. Notes show in the clear, so keep secrets out of them. Only the secret is protected.
+Names and notes stay readable without the password so you can search. Saving and searching by name or notes work without it. Notes show in the clear, so keep secrets out of them. Only the secret is protected.
 
 ## What you should install
 
