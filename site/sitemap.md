@@ -15,7 +15,7 @@
 - [Contact](https://ezkey.app/contact/): Issues and security reports
 - [Developers](https://ezkey.app/developers/): REST, MCP, A2A, rate limits
 - [Privacy](https://ezkey.app/privacy/): What the app and site collect (nothing)
-- [Security](https://ezkey.app/security/): Keychain prompts, Always Allow, how to report issues
+- [Security](https://ezkey.app/security/): Why ezkey asks for your password every time, how to report issues
 - [Glossary](https://ezkey.app/glossary/): Names for Keychain fields and related terms
 - [auth.md](https://ezkey.app/auth.md): Authentication policy for agents
 - [llms.txt](https://ezkey.app/llms.txt): Agent index

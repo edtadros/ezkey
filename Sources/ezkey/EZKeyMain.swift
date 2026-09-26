@@ -5,7 +5,10 @@ import EZKeyCore
 /// Mutates only `ezkey.test.*` items. Never prints secret values.
 enum SelfTest {
     static func run() async -> Int32 {
-        let store = LoginKeychainStore(allowsPrompt: false)
+        // Round trips save with .trustEzkey so they can read back headless.
+        // The app's own policy (.askEveryTime) is checked at the end.
+        let store = LoginKeychainStore(allowsPrompt: false, readPolicy: .trustEzkey)
+        let appPolicy = LoginKeychainStore(allowsPrompt: false)
         let loginPath = LoginKeychainStore.defaultLoginPath
         let account = NSUserName()
         var failures = 0
@@ -117,6 +120,21 @@ enum SelfTest {
                 pass("missing-entry")
             } catch {
                 fail("missing-entry", "wrong error")
+            }
+
+            let guarded = SecretIdentity(
+                service: DisposableEntry.servicePrefix + "self.guarded.\(UUID().uuidString)",
+                account: account
+            )
+            try await appPolicy.add(guarded, secret: "guarded-secret")
+            created.append(guarded)
+            do {
+                _ = try await appPolicy.retrieve(guarded)
+                fail("saved-secret-needs-password", "read without a prompt")
+            } catch KeychainError.accessDenied {
+                pass("saved-secret-needs-password")
+            } catch {
+                fail("saved-secret-needs-password", "wrong error")
             }
         } catch {
             fail("self-test", "threw")

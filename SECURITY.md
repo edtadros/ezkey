@@ -17,8 +17,9 @@ ezkey is a local UI for generic passwords in the current user's macOS **login Ke
 - Secrets are stored by macOS, not by ezkey.
 - Retrieve happens only after an explicit click.
 - macOS Keychain access-control lists still apply. Items created by other programs typically prompt.
-- ezkey never suppresses or bypasses the macOS Keychain password prompt. Reading an item another app saved asks for your login password, and can ask again even after **Always Allow**. That matches Keychain Access, which asks every time you show a password.
-- Items ezkey creates trust only ezkey. Other programs, including `/usr/bin/security`, get the macOS password prompt when they read the secret. Updates do not rewrite existing access-control lists.
+- ezkey never suppresses or bypasses the macOS Keychain password prompt.
+- Items ezkey saves trust no app to read the secret, ezkey included. Every read, by ezkey, `/usr/bin/security`, or anything else, asks for your login password, even after **Always Allow**. This is deliberate. macOS would otherwise let ezkey read what it saved without asking, and ezkey has no login of its own, so anyone using your unlocked Mac could read your keys. Names and notes stay readable so search works; only the secret is protected.
+- Updates do not rewrite existing access-control lists. Items saved by ezkey 1.0.0 keep the macOS default, which lets ezkey read them without a prompt. To protect one, delete it in Keychain Access and save it again in ezkey.
 - The app is **not sandboxed**. A sandbox would place items in an application Keychain that `security` cannot see.
 
 ## What to report

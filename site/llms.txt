@@ -19,7 +19,7 @@ Do not use ezkey for:
 - Browser passwords, passkeys, or iCloud Keychain management.
 - Storing or retrieving secrets through this website or the MCP server. Those interfaces are documentation only.
 
-How to install: follow the build-ezkey skill at `https://ezkey.app/.well-known/agent-skills/build-ezkey/SKILL.md`. The homepage prompt asks the agent to show the disclaimer, clone the newest release tag, review the code with that checklist, show the results, and wait for the human's go-ahead before running `./scripts/install.sh` (copies `/Applications/ezkey.app` and turns on Open at Login). Only run ezkey you built yourself. There is no ezkey CLI. For a JSON summary, GET `https://ezkey.app/api/v1/agent-brief`. Then Markdown pages (`Accept: text/markdown`), `GET /api/v1/overview`, or POST JSON-RPC to `https://ezkey.app/mcp` (`get_agent_brief`).
+How to install: follow the build-ezkey skill at `https://ezkey.app/.well-known/agent-skills/build-ezkey/SKILL.md`. The homepage prompt asks the agent to show the disclaimer, clone the newest release tag, review the code with that checklist, show the results, and wait for the human's go-ahead before running `./scripts/install.sh` (copies `/Applications/ezkey.app` and turns on Open at Login). Only run ezkey you built yourself. ezkey asks for the login password every time it shows a secret, even ones it saved. That is on purpose: ezkey has no login of its own. There is no ezkey CLI. For a JSON summary, GET `https://ezkey.app/api/v1/agent-brief`. Then Markdown pages (`Accept: text/markdown`), `GET /api/v1/overview`, or POST JSON-RPC to `https://ezkey.app/mcp` (`get_agent_brief`).
 
 ## Pages
 
@@ -42,7 +42,7 @@ How to install: follow the build-ezkey skill at `https://ezkey.app/.well-known/a
 - [Versioning](https://ezkey.app/versioning.md): API deprecation policy
 - [Disclaimer](https://ezkey.app/disclaimer.md): As-is terms to present before build
 - [Privacy](https://ezkey.app/privacy.md): The app and site collect no personal data
-- [Security](https://ezkey.app/security.md): Keychain access prompts and vulnerability reporting
+- [Security](https://ezkey.app/security.md): Why ezkey asks for the login password every time it shows a secret, and vulnerability reporting
 - [Glossary](https://ezkey.app/glossary.md): Name, Account, Where, Comments/Notes, and related Keychain terms
 - [auth.md](https://ezkey.app/auth.md): No accounts; public site
 - [Pricing](https://ezkey.app/pricing.md): Free MIT source; no paid plan

@@ -13,4 +13,4 @@ The software is provided as-is, without warranty or a support contract. The sour
 
 ezkey is not a hosted password manager, not a browser extension, and not a sync service. It does not replace 1Password, iCloud Keychain, or the security CLI. It is a local extra for generic-password items you already keep in login.keychain-db.
 
-See the [glossary](https://ezkey.app/glossary.md) for field names, [security](https://ezkey.app/security.md) for Always Allow, [guides](https://ezkey.app/guides.md) for how to save API keys on a Mac, and [contact](https://ezkey.app/contact.md) for how to report issues.
+See the [glossary](https://ezkey.app/glossary.md) for field names, [security](https://ezkey.app/security.md) for why ezkey asks for your password every time, [guides](https://ezkey.app/guides.md) for how to save API keys on a Mac, and [contact](https://ezkey.app/contact.md) for how to report issues.

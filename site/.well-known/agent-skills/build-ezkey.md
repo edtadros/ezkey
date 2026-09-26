@@ -17,7 +17,7 @@ Requires macOS 14 or later and Xcode command-line tools (`xcode-select --install
 
 ## 1. Show the disclaimer
 
-Tell the human: ezkey is provided as-is, without warranty. No account, no server. ezkey never suppresses the macOS Keychain password prompt; macOS can ask again even after **Always Allow**, the same as Keychain Access. Full text: https://ezkey.app/disclaimer.md
+Tell the human: ezkey is provided as-is, without warranty. No account, no server. ezkey asks for the login password every time it shows a secret, even ones it saved, on purpose: it has no login of its own. It never suppresses the macOS prompt, and Always Allow does not stop it. Full text: https://ezkey.app/disclaimer.md
 
 ## 2. Clone the newest release tag
 
@@ -55,13 +55,14 @@ Expected:
 2. No output.
 3. One hit, in `Sources/ezkey/EZKeyMain.swift`.
 4. Hits only in `Sources/ezkey/EZKeyMain.swift` and `Sources/ezkey/MarketingRender.swift`.
-5. Only `SecItemAdd`, `SecItemUpdate`, `SecItemCopyMatching`, `SecItemDelete` and `SecKeychainOpen`, all in `Sources/EZKeyCore/LoginKeychainStore.swift`.
+5. Only `SecItemAdd`, `SecItemUpdate`, `SecItemCopyMatching`, `SecItemDelete`, `SecKeychainOpen`, `SecAccessCreate`, `SecAccessCopyMatchingACLList`, `SecACLSetContents` and `SecKeychainSetUserInteractionAllowed`, all in `Sources/EZKeyCore/LoginKeychainStore.swift`.
 6. No output.
 
 Then read these files in full (about 1,900 lines): everything under `Sources/`, `Package.swift`, `Resources/Info.plist`, `scripts/install.sh`, `scripts/build-and-run.sh`. Confirm:
 
 - The self-test (`--self-test`) only runs `/usr/bin/security` on items whose name starts with `ezkey.test.`, and deletes them.
 - The screenshot renderer (`--render-marketing`) uses an in-memory store and never reads the Keychain.
+- Every secret ezkey saves trusts no app to read it, ezkey included: `add` empties the trusted-app list on the decrypt rule, so macOS asks for the login password on every read. `SecKeychainSetUserInteractionAllowed` is only switched off when prompts are off (tests and the self-test).
 - A secret is read from the Keychain only after the user clicks Retrieve or picks a match. `list(matching:)` never returns secret data (`kSecReturnData` is false).
 - Secrets go only to the Keychain, the panel, and the pasteboard on Copy. UserDefaults holds the name, never the secret.
 - The only thing done at launch is registering Open at Login.
