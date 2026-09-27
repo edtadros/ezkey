@@ -44,7 +44,7 @@ Look for the shield-and-key icon in the menu bar (often near the notch, not next
 1. Click the key icon.
 2. Choose **Save** or **Retrieve**.
 3. Enter a **Name**. That is Keychain Access **Name** and **Where** (they are stored as the same string). Account is the Mac username and is not shown. Example: `my-app-api-token`.
-4. **Save** writes a new item. Optional **Notes** are stored as Keychain Access **Comments** (`security add-generic-password -j`). If that pair already exists, you must click **Update**.
+4. **Save** writes a new item. Optional **Notes** are stored as Keychain Access **Comments** (`security add-generic-password -j`). If that name already exists, ezkey says so. Click **Update** to replace it; Return does not. macOS asks for your login password before the secret is replaced.
 5. **Retrieve** looks up an exact name and account when both match. If you type only part of the name (Keychain Access **Name** or **Where**, or the Comments text), ezkey lists matching entries without showing secrets. Click one to retrieve that secret and its notes. Notes are item attributes, not a second password; they show in the clear. After you Allow a Keychain prompt, the panel returns with the secret masked. **Reveal**, **Hide**, and **Copy** follow.
 
    ezkey asks for your login password every time it shows a secret it saved. Secrets other apps saved follow the rules those apps set, which usually means a prompt too. That is on purpose. By default, macOS lets the app that saved a Keychain item read it again without asking. ezkey turns that off for everything it saves, because ezkey has no login of its own: without the prompt, anyone using your unlocked Mac could open ezkey and read your keys. Clicking **Always Allow** does not change this. It is the same protection Keychain Access gives when you show a password. Names and notes stay readable without the password so you can search; only the secret is protected.
@@ -56,6 +56,7 @@ The name may be remembered. Secret values are not. When ezkey saves, it sets Key
 
 - It does not send secrets, or anything else, off the Mac.
 - It does not bypass Keychain prompts.
+- It does not delete keys. Delete them in Keychain Access.
 - It is not sandboxed. A sandbox would store items where `security` cannot see them.
 - It does not offer support, backups, or recovery.
 

@@ -107,7 +107,7 @@ struct PanelView: View {
                     .disabled(model.isWorking)
                     .accessibilityLabel("Secret")
                     .onSubmit {
-                        Task { await primarySaveAction() }
+                        Task { await model.submit() }
                     }
             }
 
@@ -129,7 +129,6 @@ struct PanelView: View {
                     Button("Update") {
                         Task { await model.update() }
                     }
-                    .keyboardShortcut(.defaultAction)
                     .disabled(model.isWorking)
                     .accessibilityHint("Replace the existing Keychain entry")
                 } else {
@@ -298,7 +297,7 @@ struct PanelView: View {
                 .disabled(model.isWorking)
                 .accessibilityLabel(title)
                 .onSubmit {
-                    Task { await primarySaveAction() }
+                    Task { await model.submit() }
                 }
         }
     }
@@ -309,17 +308,6 @@ struct PanelView: View {
         }
     }
 
-    private func primarySaveAction() async {
-        if model.mode == .save {
-            if model.status == .needsUpdate {
-                await model.update()
-            } else {
-                await model.save()
-            }
-        } else {
-            await model.retrieve()
-        }
-    }
 }
 
 struct PanelVisibilityObserver: NSViewRepresentable {

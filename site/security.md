@@ -19,6 +19,8 @@ The prompt comes from macOS. ezkey never suppresses or bypasses it. Clicking **A
 
 Names and notes stay readable without the password so you can search. Saving and searching by name or notes work without it. Notes show in the clear, so keep secrets out of them. Only the secret is protected.
 
+Replacing a secret asks for your login password too: ezkey reads the secret before Update overwrites it. Only a click on Update replaces a secret; the Return key never does. ezkey never deletes keys. To delete one, use Keychain Access.
+
 ## What you should install
 
 Source from the newest `v*` release tag of [github.com/edtadros/ezkey](https://github.com/edtadros/ezkey), reviewed and built on your Mac. Each release is a new tag. The [build-ezkey skill](https://ezkey.app/.well-known/agent-skills/build-ezkey/SKILL.md) walks an agent through the review. A review lowers risk. It does not prove the code is safe. Only the maintainer can create, move, or delete `v*` tags.

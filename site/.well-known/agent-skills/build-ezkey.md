@@ -69,6 +69,8 @@ Then read these files in full (about 2,700 lines): everything under `Sources/` a
 - The self-test (`--self-test`) only runs `/usr/bin/security` on items whose name starts with `ezkey.test.`, and deletes them.
 - The screenshot renderer (`--render-marketing`) uses an in-memory store and never reads the Keychain.
 - Every secret ezkey saves trusts no app to read it, ezkey included: `add` empties the trusted-app list on the decrypt rule, so macOS asks for the login password on every read. `SecKeychainSetUserInteractionAllowed` is only switched off when prompts are off (tests and the self-test).
+- Update reads the secret before replacing it, so it asks for the password too, and only the Update button calls it: the Return key goes through `PanelModel.submit`, which never updates.
+- The app has no delete. `LoginKeychainStore.delete` is used only by tests and the self-test to remove `ezkey.test.` items.
 - A secret is read from the Keychain only after the user clicks Retrieve or picks a match. `list(matching:)` never returns secret data (`kSecReturnData` is false).
 - Secrets go only to the Keychain, the panel, and the pasteboard on Copy. UserDefaults holds the name, never the secret.
 - The only thing done at launch is registering Open at Login.

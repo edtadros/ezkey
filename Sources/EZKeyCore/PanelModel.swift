@@ -110,6 +110,16 @@ public final class PanelModel {
         identityAtNeedsUpdate = nil
     }
 
+    /// The Return key. Replacing an existing secret takes a click on Update,
+    /// so Return never calls update().
+    public func submit() async {
+        if mode == .save {
+            await save()
+        } else {
+            await retrieve()
+        }
+    }
+
     public func save() async {
         persistLabels()
         account = currentUser

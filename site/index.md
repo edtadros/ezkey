@@ -26,6 +26,8 @@ Install ezkey on this Mac. Follow https://ezkey.app/.well-known/agent-skills/bui
 - **Reveal** — masked until you ask
 - **Copy** — clears in 30 seconds if unchanged
 - **Password every time** — ezkey asks for your login password each time it shows a secret it saved. On purpose.
+- **Update** — a click, never the Return key; asks for your password first
+- **Delete** — in Keychain Access; ezkey never deletes keys
 
 ## Install
 

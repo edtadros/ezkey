@@ -154,6 +154,30 @@ final class PanelModelTests: XCTestCase {
         XCTAssertEqual(model.secretToSave, "new")
     }
 
+    func testReturnKeyNeverReplacesAnExistingSecret() async {
+        let identity = SecretIdentity(service: "ezkey.test.enter", account: "testuser")
+        await store.seed(identity, secret: "original")
+        model.mode = .save
+        model.service = identity.service
+        model.secretToSave = "typed-by-mistake"
+        await model.submit()
+        XCTAssertEqual(model.status, .needsUpdate)
+        await model.submit()
+        await model.submit()
+        let kept = await store.secret(for: identity)
+        XCTAssertEqual(kept, "original")
+        XCTAssertEqual(model.status, .needsUpdate)
+    }
+
+    func testReturnKeyRetrievesInRetrieveMode() async {
+        let identity = SecretIdentity(service: "ezkey.test.enter-retrieve", account: "testuser")
+        await store.seed(identity, secret: "value")
+        model.mode = .retrieve
+        model.service = identity.service
+        await model.submit()
+        XCTAssertEqual(model.retrievedSecret, "value")
+    }
+
     func testUpdateReplacesExistingValue() async {
         let identity = SecretIdentity(service: "ezkey.test.upd", account: "testuser")
         await store.seed(identity, secret: "old")

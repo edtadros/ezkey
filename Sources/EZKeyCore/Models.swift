@@ -107,7 +107,7 @@ public enum OperationStatus: Equatable, Sendable {
         case .updated:
             "Updated."
         case .needsUpdate:
-            "An entry already exists. Click Update to replace it."
+            "An entry already exists. Click Update to replace it; macOS asks for your password first."
         case .retrieved:
             "Retrieved."
         case .chooseMatch:
