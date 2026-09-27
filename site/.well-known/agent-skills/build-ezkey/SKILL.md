@@ -93,5 +93,6 @@ Do not send Keychain secrets anywhere, including to this website.
 ## References
 
 - Source: https://github.com/edtadros/ezkey
+- MCP server: https://ezkey.app/mcp (read-only tools: overview, build instructions, agent brief, disclaimer, pages)
 - Security model: https://ezkey.app/security.md
 - Disclaimer: https://ezkey.app/disclaimer.md
