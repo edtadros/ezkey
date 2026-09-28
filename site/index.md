@@ -17,6 +17,8 @@ Install ezkey on this Mac. Follow https://ezkey.app/.well-known/agent-skills/bui
 
 ![ezkey Retrieve panel with matching names](https://ezkey.app/images/panel-matches.png)
 
+![ezkey Update section under a retrieved secret](https://ezkey.app/images/panel-update.png)
+
 ## How it works
 
 - **Name** — Keychain Access Name and Where
@@ -26,7 +28,7 @@ Install ezkey on this Mac. Follow https://ezkey.app/.well-known/agent-skills/bui
 - **Reveal** — masked until you ask
 - **Copy** — clears in 30 seconds if unchanged
 - **Password every time** — ezkey asks for your login password each time it shows a secret it saved. On purpose.
-- **Update** — a click, never the Return key; asks for your password first
+- **Update** — from a retrieved secret: see what changes, then Replace; asks for your password; permanent
 - **Delete** — in Keychain Access; ezkey never deletes keys
 
 ## Install

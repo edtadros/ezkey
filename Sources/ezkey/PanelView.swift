@@ -124,22 +124,12 @@ struct PanelView: View {
                     .help("Stored as Keychain Access Comments")
             }
 
-            HStack {
-                if model.status == .needsUpdate {
-                    Button("Update") {
-                        Task { await model.update() }
-                    }
-                    .disabled(model.isWorking)
-                    .accessibilityHint("Replace the existing Keychain entry")
-                } else {
-                    Button("Save") {
-                        Task { await model.save() }
-                    }
-                    .keyboardShortcut(.defaultAction)
-                    .disabled(model.isWorking)
-                    .accessibilityHint("Save a new Keychain entry")
-                }
+            Button("Save") {
+                Task { await model.save() }
             }
+            .keyboardShortcut(.defaultAction)
+            .disabled(model.isWorking)
+            .accessibilityHint("Save a new Keychain entry")
         }
     }
 
@@ -149,7 +139,7 @@ struct PanelView: View {
                 Task { await model.retrieve() }
             }
             .keyboardShortcut(.defaultAction)
-            .disabled(model.isWorking)
+            .disabled(model.isWorking || model.pendingUpdate != nil)
             .accessibilityHint("Search by part of the Keychain name, or look up an exact pair")
 
             if !model.matches.isEmpty {
@@ -192,6 +182,15 @@ struct PanelView: View {
                         model.copyRetrieved()
                     }
                     .accessibilityHint("Copy the secret, then clear the clipboard after 30 seconds if unchanged")
+
+                    if model.pendingUpdate == nil {
+                        Spacer()
+                        Button("Update…") {
+                            model.beginUpdate()
+                        }
+                        .disabled(model.isWorking)
+                        .accessibilityHint("Replace this secret or its notes")
+                    }
                 }
 
                 if let note = model.retrievedNote, StoredSecret.normalizedNote(note).isEmpty == false {
@@ -210,6 +209,10 @@ struct PanelView: View {
                     .accessibilityElement(children: .combine)
                     .accessibilityLabel("Notes")
                     .accessibilityValue(note)
+                }
+
+                if let summary = model.updateSummary {
+                    updateSection(summary)
                 }
             }
         }
@@ -300,6 +303,78 @@ struct PanelView: View {
                     Task { await model.submit() }
                 }
         }
+    }
+
+    private func updateSection(_ summary: UpdateSummary) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Divider()
+            Text("Update")
+                .font(.headline)
+            VStack(alignment: .leading, spacing: 4) {
+                Text("New secret")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                SecureField("Leave empty to keep the current secret", text: Binding(
+                    get: { model.pendingUpdate?.secret ?? "" },
+                    set: { model.pendingUpdate?.secret = $0 }
+                ))
+                .textFieldStyle(.roundedBorder)
+                .disabled(model.isWorking)
+                .accessibilityLabel("New secret")
+            }
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Notes")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                TextField("optional", text: Binding(
+                    get: { model.pendingUpdate?.note ?? "" },
+                    set: { model.pendingUpdate?.note = $0 }
+                ), axis: .vertical)
+                .textFieldStyle(.roundedBorder)
+                .lineLimit(2...4)
+                .disabled(model.isWorking)
+                .accessibilityLabel("New notes")
+            }
+            VStack(alignment: .leading, spacing: 2) {
+                Text("What changes")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                Text(Self.secretChangeText(summary.secret))
+                Text(summary.noteChanged
+                    ? "Notes: \(Self.quoted(summary.currentNote)) → \(Self.quoted(summary.newNote))"
+                    : "Notes: unchanged")
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .font(.callout)
+            Text("Replacing is permanent. The old secret cannot be recovered. macOS asks for your login password to allow it.")
+                .font(.caption)
+                .foregroundStyle(.orange)
+                .fixedSize(horizontal: false, vertical: true)
+            HStack {
+                Button("Cancel") {
+                    model.cancelUpdate()
+                }
+                .disabled(model.isWorking)
+                Spacer()
+                Button("Replace", role: .destructive) {
+                    Task { await model.replaceRetrieved() }
+                }
+                .disabled(!summary.hasChanges || model.isWorking)
+                .accessibilityHint("Permanently replace this entry after the macOS password prompt")
+            }
+        }
+    }
+
+    private static func secretChangeText(_ change: UpdateSummary.SecretChange) -> String {
+        switch change {
+        case .kept: "Secret: kept"
+        case .replaced: "Secret: replaced"
+        case .sameAsCurrent: "Secret: same as the current one"
+        }
+    }
+
+    private static func quoted(_ note: String) -> String {
+        note.isEmpty ? "(none)" : "“\(note)”"
     }
 
     private func openLicense() {

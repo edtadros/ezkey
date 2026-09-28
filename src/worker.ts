@@ -34,7 +34,7 @@ function agentBrief(): Record<string, unknown> {
       "ezkey asks for your login password every time it shows a secret it saved. Secrets other apps saved follow the rules those apps set, which usually means a prompt too. That is on purpose. By default, macOS lets the app that saved a Keychain item read it again without asking. ezkey turns that off for everything it saves, because ezkey has no login of its own: without the prompt, anyone using your unlocked Mac could open ezkey and read your keys. Clicking Always Allow does not change this. It is the same protection Keychain Access gives when you show a password. Names and notes stay readable without the password so you can search; only the secret is protected.",
       "Install: your agent clones the newest release tag, reviews the code, shows you the results, and runs ./scripts/install.sh after you say go. That puts ezkey.app in /Applications and turns on Open at Login.",
       "The review lowers risk. It does not prove the code is safe.",
-      "ezkey never deletes keys. Delete them in Keychain Access. Replacing a secret takes a click on Update and asks for the login password.",
+      "ezkey never deletes keys. Delete them in Keychain Access. Replacing a secret happens from Retrieve (Update…, then Replace), asks for the login password, and is permanent.",
     ],
     disclaimer: DISCLAIMER,
     disclaimer_url: "https://github.com/edtadros/ezkey/blob/master/DISCLAIMER.md",

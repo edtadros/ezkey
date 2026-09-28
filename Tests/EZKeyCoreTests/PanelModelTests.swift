@@ -14,7 +14,14 @@ actor MockStore: SecretStore {
         items[identity] = StoredSecret(secret: secret, note: note)
     }
 
+    var updateError: KeychainError?
+
+    func setUpdateError(_ error: KeychainError?) {
+        updateError = error
+    }
+
     func update(_ identity: SecretIdentity, secret: String, note: String) async throws {
+        if let updateError { throw updateError }
         guard items[identity] != nil else { throw KeychainError.missingEntry }
         items[identity] = StoredSecret(secret: secret, note: note)
     }
@@ -141,14 +148,14 @@ final class PanelModelTests: XCTestCase {
         XCTAssertEqual(stored, "s3cret")
     }
 
-    func testSaveRequiresExplicitUpdateWhenEntryExists() async {
+    func testSaveOnAnExistingNameSaysSoAndKeepsTheStoredSecret() async {
         let identity = SecretIdentity(service: "ezkey.test.dup", account: "testuser")
         await store.seed(identity, secret: "old")
         model.service = identity.service
         model.account = identity.account
         model.secretToSave = "new"
         await model.save()
-        XCTAssertEqual(model.status, .needsUpdate)
+        XCTAssertEqual(model.status, .alreadyExists)
         let stored = await store.secret(for: identity)
         XCTAssertEqual(stored, "old")
         XCTAssertEqual(model.secretToSave, "new")
@@ -161,12 +168,12 @@ final class PanelModelTests: XCTestCase {
         model.service = identity.service
         model.secretToSave = "typed-by-mistake"
         await model.submit()
-        XCTAssertEqual(model.status, .needsUpdate)
+        XCTAssertEqual(model.status, .alreadyExists)
         await model.submit()
         await model.submit()
         let kept = await store.secret(for: identity)
         XCTAssertEqual(kept, "original")
-        XCTAssertEqual(model.status, .needsUpdate)
+        XCTAssertEqual(model.status, .alreadyExists)
     }
 
     func testReturnKeyRetrievesInRetrieveMode() async {
@@ -178,29 +185,14 @@ final class PanelModelTests: XCTestCase {
         XCTAssertEqual(model.retrievedSecret, "value")
     }
 
-    func testUpdateReplacesExistingValue() async {
-        let identity = SecretIdentity(service: "ezkey.test.upd", account: "testuser")
-        await store.seed(identity, secret: "old")
-        model.service = identity.service
-        model.account = identity.account
-        model.secretToSave = "new"
-        await model.save()
-        XCTAssertEqual(model.status, .needsUpdate)
-        await model.update()
-        XCTAssertEqual(model.status, .updated)
-        let stored = await store.secret(for: identity)
-        XCTAssertEqual(stored, "new")
-        XCTAssertEqual(model.secretToSave, "")
-    }
-
-    func testChangingIdentityClearsNeedsUpdate() async {
+    func testChangingNameClearsAlreadyExists() async {
         let identity = SecretIdentity(service: "ezkey.test.need", account: "testuser")
         await store.seed(identity, secret: "old")
         model.service = identity.service
         model.account = identity.account
         model.secretToSave = "new"
         await model.save()
-        XCTAssertEqual(model.status, .needsUpdate)
+        XCTAssertEqual(model.status, .alreadyExists)
         model.service = "ezkey.test.other"
         XCTAssertEqual(model.status, .idle)
     }
@@ -417,41 +409,6 @@ final class PanelModelTests: XCTestCase {
         XCTAssertEqual(model.retrievedNote, "staging cluster")
     }
 
-    func testSaveExistingPrefillsNoteForUpdate() async {
-        let identity = SecretIdentity(service: "ezkey.test.note-prefill", account: "testuser")
-        await store.seed(identity, secret: "old", note: "keep this")
-        model.service = identity.service
-        model.secretToSave = "new"
-        await model.save()
-        XCTAssertEqual(model.status, .needsUpdate)
-        XCTAssertEqual(model.noteToSave, "keep this")
-    }
-
-    func testSaveExistingDoesNotOverwriteTypedNote() async {
-        let identity = SecretIdentity(service: "ezkey.test.note-typed", account: "testuser")
-        await store.seed(identity, secret: "old", note: "old-note")
-        model.service = identity.service
-        model.secretToSave = "new"
-        model.noteToSave = "new-note"
-        await model.save()
-        XCTAssertEqual(model.status, .needsUpdate)
-        XCTAssertEqual(model.noteToSave, "new-note")
-    }
-
-    func testUpdateWritesNote() async throws {
-        let identity = SecretIdentity(service: "ezkey.test.note-update", account: "testuser")
-        await store.seed(identity, secret: "old", note: "old-note")
-        model.service = identity.service
-        model.secretToSave = "new"
-        model.noteToSave = "rotated 2026-09"
-        await model.update()
-        XCTAssertEqual(model.status, .updated)
-        XCTAssertEqual(model.noteToSave, "")
-        let stored = try await store.retrieve(identity)
-        XCTAssertEqual(stored.secret, "new")
-        XCTAssertEqual(stored.note, "rotated 2026-09")
-    }
-
     func testPanelCloseClearsNotes() async {
         model.service = "ezkey.test.close-note"
         model.noteToSave = "draft-note"
@@ -461,14 +418,109 @@ final class PanelModelTests: XCTestCase {
         XCTAssertNil(model.retrievedNote)
     }
 
-    func testModeSwitchCopiesNoteIntoSaveField() async {
-        let identity = SecretIdentity(service: "ezkey.test.note-copy", account: "testuser")
-        await store.seed(identity, secret: "value", note: "from retrieve")
-        model.service = identity.service
+    private func retrieve(_ identity: SecretIdentity) async {
         model.mode = .retrieve
+        model.service = identity.service
         await model.retrieve()
+    }
+
+    func testUpdateFromRetrieveReplacesSecretAndNote() async throws {
+        let identity = SecretIdentity(service: "ezkey.test.upd", account: "testuser")
+        await store.seed(identity, secret: "old", note: "old-note")
+        await retrieve(identity)
+        model.beginUpdate()
+        XCTAssertEqual(model.pendingUpdate, PendingUpdate(secret: "", note: "old-note"))
+        model.pendingUpdate?.secret = "new"
+        model.pendingUpdate?.note = "rotated 2026-09"
+        XCTAssertEqual(model.updateSummary?.secret, .replaced)
+        XCTAssertEqual(model.updateSummary?.noteChanged, true)
+        await model.replaceRetrieved()
+        XCTAssertEqual(model.status, .updated)
+        XCTAssertNil(model.pendingUpdate)
+        XCTAssertEqual(model.retrievedSecret, "new")
+        let stored = try await store.retrieve(identity)
+        XCTAssertEqual(stored, StoredSecret(secret: "new", note: "rotated 2026-09"))
+    }
+
+    func testEmptyNewSecretKeepsTheSecretAndChangesOnlyNotes() async throws {
+        let identity = SecretIdentity(service: "ezkey.test.notes-only", account: "testuser")
+        await store.seed(identity, secret: "keep-me", note: "before")
+        await retrieve(identity)
+        model.beginUpdate()
+        model.pendingUpdate?.note = "after"
+        XCTAssertEqual(model.updateSummary?.secret, .kept)
+        await model.replaceRetrieved()
+        let stored = try await store.retrieve(identity)
+        XCTAssertEqual(stored, StoredSecret(secret: "keep-me", note: "after"))
+    }
+
+    func testReplaceDoesNothingWithoutAChange() async {
+        let identity = SecretIdentity(service: "ezkey.test.no-change", account: "testuser")
+        await store.seed(identity, secret: "same", note: "note")
+        await retrieve(identity)
+        model.beginUpdate()
+        model.pendingUpdate?.secret = "same"
+        XCTAssertEqual(model.updateSummary?.secret, .sameAsCurrent)
+        XCTAssertEqual(model.updateSummary?.hasChanges, false)
+        await model.replaceRetrieved()
+        XCTAssertEqual(model.status, .retrieved)
+        XCTAssertNotNil(model.pendingUpdate)
+    }
+
+    func testUpdateTargetsTheRetrievedEntryNotTheTypedName() async {
+        let retrieved = SecretIdentity(service: "ezkey.test.target", account: "testuser")
+        let other = SecretIdentity(service: "ezkey.test.typed", account: "testuser")
+        await store.seed(retrieved, secret: "a")
+        await store.seed(other, secret: "b")
+        await retrieve(retrieved)
+        model.beginUpdate()
+        model.pendingUpdate?.secret = "a2"
+        model.service = other.service
+        await model.replaceRetrieved()
+        let first = await store.secret(for: retrieved)
+        let second = await store.secret(for: other)
+        XCTAssertEqual(first, "a2")
+        XCTAssertEqual(second, "b")
+    }
+
+    func testReturnDoesNothingWhileUpdateIsOpen() async {
+        let identity = SecretIdentity(service: "ezkey.test.return-update", account: "testuser")
+        await store.seed(identity, secret: "original")
+        await retrieve(identity)
+        model.beginUpdate()
+        model.pendingUpdate?.secret = "typed"
+        await model.submit()
+        XCTAssertEqual(model.pendingUpdate?.secret, "typed")
+        let stored = await store.secret(for: identity)
+        XCTAssertEqual(stored, "original")
+    }
+
+    func testRefusedReplaceKeepsTheEditsAndTheSecret() async {
+        let identity = SecretIdentity(service: "ezkey.test.refused", account: "testuser")
+        await store.seed(identity, secret: "original")
+        await retrieve(identity)
+        model.beginUpdate()
+        model.pendingUpdate?.secret = "new"
+        await store.setUpdateError(.accessDenied)
+        await model.replaceRetrieved()
+        XCTAssertEqual(model.status, .accessDenied)
+        XCTAssertEqual(model.pendingUpdate?.secret, "new")
+        let stored = await store.secret(for: identity)
+        XCTAssertEqual(stored, "original")
+    }
+
+    func testCancelAndModeSwitchCloseTheUpdate() async {
+        let identity = SecretIdentity(service: "ezkey.test.cancel", account: "testuser")
+        await store.seed(identity, secret: "value", note: "n")
+        await retrieve(identity)
+        model.beginUpdate()
+        model.cancelUpdate()
+        XCTAssertNil(model.pendingUpdate)
+        XCTAssertEqual(model.retrievedSecret, "value")
+        model.beginUpdate()
         model.mode = .save
-        XCTAssertNil(model.retrievedNote)
-        XCTAssertEqual(model.noteToSave, "from retrieve")
+        XCTAssertNil(model.pendingUpdate)
+        XCTAssertNil(model.retrievedIdentity)
+        XCTAssertEqual(model.noteToSave, "")
     }
 }

@@ -19,7 +19,7 @@ The prompt comes from macOS. ezkey never suppresses or bypasses it. Clicking **A
 
 Names and notes stay readable without the password so you can search. Saving and searching by name or notes work without it. Notes show in the clear, so keep secrets out of them. Only the secret is protected.
 
-Replacing a secret asks for your login password too: ezkey reads the secret before Update overwrites it. Only a click on Update replaces a secret; the Return key never does. ezkey never deletes keys. To delete one, use Keychain Access.
+You change a secret from Retrieve: click Update…, enter the new secret or notes, check what changes, then click Replace. Replacing is permanent, asks for your login password, and never happens from the Return key. ezkey never deletes keys. To delete one, use Keychain Access.
 
 ## What you should install
 

@@ -69,9 +69,12 @@ def blocks_to_html(blocks: list) -> str:
         elif kind == "img":
             src, alt = b[1], b[2]
             dark = src.replace(".png", "-dark.png")
+            png = (SITE / src.lstrip("/")).read_bytes()
+            width = int.from_bytes(png[16:20], "big") // 2
+            height = int.from_bytes(png[20:24], "big") // 2
             out.append(
                 f'<figure><picture><source srcset="{html.escape(dark, quote=True)}" media="(prefers-color-scheme: dark)">'
-                f'<img src="{html.escape(src, quote=True)}" width="340" alt="{html.escape(alt, quote=True)}"></picture>'
+                f'<img src="{html.escape(src, quote=True)}" width="{width}" height="{height}" alt="{html.escape(alt, quote=True)}"></picture>'
                 f"<figcaption>{inline_md(alt)}</figcaption></figure>"
             )
         elif kind == "related":

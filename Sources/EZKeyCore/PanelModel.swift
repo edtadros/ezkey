@@ -7,17 +7,9 @@ public final class PanelModel {
     public var mode: PanelMode = .save {
         didSet {
             guard oldValue != mode else { return }
-            if mode == .save,
-               StoredSecret.normalizedNote(noteToSave).isEmpty,
-               let retrievedNote,
-               StoredSecret.normalizedNote(retrievedNote).isEmpty == false {
-                noteToSave = retrievedNote
-            }
-            retrievedSecret = nil
-            retrievedNote = nil
-            isRevealed = false
+            clearRetrieved()
             matches = []
-            if status == .retrieved || status == .copied || status == .needsUpdate || status == .chooseMatch {
+            if status == .retrieved || status == .copied || status == .updated || status == .alreadyExists || status == .chooseMatch {
                 status = .idle
             }
         }
@@ -26,7 +18,7 @@ public final class PanelModel {
     public var service: String {
         didSet {
             guard oldValue != service else { return }
-            resetNeedsUpdateIfIdentityChanged()
+            if status == .alreadyExists { status = .idle }
             resetMatchesIfSearchChanged()
         }
     }
@@ -34,7 +26,6 @@ public final class PanelModel {
     public var account: String {
         didSet {
             guard oldValue != account else { return }
-            resetNeedsUpdateIfIdentityChanged()
             resetMatchesIfSearchChanged()
         }
     }
@@ -43,6 +34,11 @@ public final class PanelModel {
     public var noteToSave: String = ""
     public var retrievedSecret: String?
     public var retrievedNote: String?
+    /// The entry whose secret is on screen. Update always targets this, never
+    /// whatever is typed in Name afterwards.
+    public var retrievedIdentity: SecretIdentity?
+    /// Present while the Update section is open.
+    public var pendingUpdate: PendingUpdate?
     public var matches: [SecretIdentity] = []
     public var isRevealed: Bool = false
     public var status: OperationStatus = .idle
@@ -57,8 +53,6 @@ public final class PanelModel {
     public let currentUser: String
     @ObservationIgnored
     private var retrieveGeneration = 0
-    @ObservationIgnored
-    private var identityAtNeedsUpdate: SecretIdentity?
     /// Invoked when a Keychain operation finishes after the menu-bar panel
     /// was dismissed (typical when the system password dialog steals focus).
     @ObservationIgnored
@@ -102,17 +96,15 @@ public final class PanelModel {
         retrieveGeneration += 1
         secretToSave = ""
         noteToSave = ""
-        retrievedSecret = nil
-        retrievedNote = nil
+        clearRetrieved()
         matches = []
-        isRevealed = false
         status = .idle
-        identityAtNeedsUpdate = nil
     }
 
-    /// The Return key. Replacing an existing secret takes a click on Update,
-    /// so Return never calls update().
+    /// The Return key. Replacing a secret takes a click on Replace, so Return
+    /// never replaces anything, and does nothing while Update is open.
     public func submit() async {
+        guard pendingUpdate == nil else { return }
         if mode == .save {
             await save()
         } else {
@@ -135,18 +127,13 @@ public final class PanelModel {
         status = .working
         do {
             if try await store.contains(identity) {
-                identityAtNeedsUpdate = identity
-                if StoredSecret.normalizedNote(noteToSave).isEmpty {
-                    noteToSave = (try? await store.comment(for: identity)) ?? ""
-                }
-                status = .needsUpdate
+                status = .alreadyExists
                 noteFinishedWhileClosed()
                 return
             }
             try await store.add(identity, secret: secretToSave, note: StoredSecret.normalizedNote(noteToSave))
             secretToSave = ""
             noteToSave = ""
-            identityAtNeedsUpdate = nil
             status = .saved
             noteFinishedWhileClosed()
         } catch let error as KeychainError {
@@ -158,40 +145,53 @@ public final class PanelModel {
         }
     }
 
-    public func update() async {
-        persistLabels()
-        account = currentUser
-        let identity = identity
-        guard identity.isValid else {
-            status = .validation("Name is required.")
-            return
-        }
-        guard !secretToSave.isEmpty else {
-            status = .validation("Enter a secret to save.")
-            return
-        }
+    /// What Replace would change, for the Update section. Secrets are compared,
+    /// never shown.
+    public var updateSummary: UpdateSummary? {
+        guard let pendingUpdate, let retrievedSecret else { return nil }
+        return UpdateSummary(
+            currentSecret: retrievedSecret,
+            currentNote: retrievedNote ?? "",
+            pending: pendingUpdate
+        )
+    }
+
+    public func beginUpdate() {
+        guard retrievedSecret != nil, retrievedIdentity != nil else { return }
+        pendingUpdate = PendingUpdate(secret: "", note: retrievedNote ?? "")
+        isRevealed = false
+    }
+
+    public func cancelUpdate() {
+        pendingUpdate = nil
+    }
+
+    /// Replaces the retrieved entry. The store asks for the login password
+    /// first; the old secret cannot be recovered afterwards.
+    public func replaceRetrieved() async {
+        guard let identity = retrievedIdentity,
+              let summary = updateSummary,
+              summary.hasChanges
+        else { return }
         status = .working
         do {
-            try await store.update(identity, secret: secretToSave, note: StoredSecret.normalizedNote(noteToSave))
-            secretToSave = ""
-            noteToSave = ""
-            identityAtNeedsUpdate = nil
+            try await store.update(identity, secret: summary.newSecret, note: summary.newNote)
+            retrievedSecret = summary.newSecret
+            retrievedNote = summary.newNote
+            pendingUpdate = nil
+            isRevealed = false
             status = .updated
-            noteFinishedWhileClosed()
         } catch let error as KeychainError {
             status = .from(error: error)
-            noteFinishedWhileClosed()
         } catch {
             status = .failure
-            noteFinishedWhileClosed()
         }
+        noteFinishedWhileClosed()
     }
 
     public func retrieve() async {
         persistLabels()
-        retrievedSecret = nil
-        retrievedNote = nil
-        isRevealed = false
+        clearRetrieved()
         matches = []
         let query = service.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !query.isEmpty else {
@@ -218,12 +218,10 @@ public final class PanelModel {
             status = .chooseMatch
             noteFinishedWhileClosed()
         } catch let error as KeychainError {
-            applyRetrieveResult(.failure(error), generation: generation)
+            applyRetrieveResult(.failure(error), identity: nil, generation: generation)
         } catch {
             guard generation == retrieveGeneration else { return }
-            retrievedSecret = nil
-            retrievedNote = nil
-            isRevealed = false
+            clearRetrieved()
             status = .failure
             noteFinishedWhileClosed()
         }
@@ -234,9 +232,7 @@ public final class PanelModel {
         service = identity.service
         account = identity.account
         persistLabels()
-        retrievedSecret = nil
-        retrievedNote = nil
-        isRevealed = false
+        clearRetrieved()
         status = .working
         retrieveGeneration += 1
         await fetchSecret(identity, generation: retrieveGeneration)
@@ -245,14 +241,12 @@ public final class PanelModel {
     private func fetchSecret(_ identity: SecretIdentity, generation: Int) async {
         do {
             let stored = try await store.retrieve(identity)
-            applyRetrieveResult(.success(stored), generation: generation)
+            applyRetrieveResult(.success(stored), identity: identity, generation: generation)
         } catch let error as KeychainError {
-            applyRetrieveResult(.failure(error), generation: generation)
+            applyRetrieveResult(.failure(error), identity: identity, generation: generation)
         } catch {
             guard generation == retrieveGeneration else { return }
-            retrievedSecret = nil
-            retrievedNote = nil
-            isRevealed = false
+            clearRetrieved()
             status = .failure
             noteFinishedWhileClosed()
         }
@@ -269,18 +263,20 @@ public final class PanelModel {
         status = .copied
     }
 
-    private func applyRetrieveResult(_ result: Result<StoredSecret, KeychainError>, generation: Int) {
+    private func applyRetrieveResult(
+        _ result: Result<StoredSecret, KeychainError>,
+        identity: SecretIdentity?,
+        generation: Int
+    ) {
         guard generation == retrieveGeneration else { return }
+        clearRetrieved()
         switch result {
         case .success(let stored):
             retrievedSecret = stored.secret
             retrievedNote = stored.note
-            isRevealed = false
+            retrievedIdentity = identity
             status = .retrieved
         case .failure(let error):
-            retrievedSecret = nil
-            retrievedNote = nil
-            isRevealed = false
             status = .from(error: error)
         }
         noteFinishedWhileClosed()
@@ -296,13 +292,12 @@ public final class PanelModel {
         defaults.set(currentUser, forKey: Self.accountDefaultsKey)
     }
 
-    private func resetNeedsUpdateIfIdentityChanged() {
-        guard status == .needsUpdate else { return }
-        let current = SecretIdentity(service: service, account: account)
-        if current != identityAtNeedsUpdate {
-            status = .idle
-            identityAtNeedsUpdate = nil
-        }
+    private func clearRetrieved() {
+        retrievedSecret = nil
+        retrievedNote = nil
+        retrievedIdentity = nil
+        pendingUpdate = nil
+        isRevealed = false
     }
 
     private func resetMatchesIfSearchChanged() {
