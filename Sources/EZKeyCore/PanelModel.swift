@@ -169,7 +169,6 @@ public final class PanelModel {
     public func beginUpdate() {
         guard retrievedSecret != nil, retrievedIdentity != nil else { return }
         pendingUpdate = PendingUpdate(secret: "", note: retrievedNote ?? "")
-        isRevealed = false
         if status.isUpdateHint { status = .retrieved }
     }
 

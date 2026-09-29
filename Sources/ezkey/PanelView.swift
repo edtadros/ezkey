@@ -178,6 +178,7 @@ struct PanelView: View {
                         model.toggleReveal()
                     }
                     .accessibilityLabel(model.isRevealed ? "Hide secret" : "Reveal secret")
+                    .accessibilityHint("Shows or hides the current secret and, while Update is open, the new one")
 
                     Button("Copy") {
                         model.copyRetrieved()
@@ -317,10 +318,14 @@ struct PanelView: View {
                 Text("New secret")
                     .font(.caption)
                     .foregroundStyle(.secondary)
-                SecureField("Leave empty to keep the current secret", text: Binding(
-                    get: { model.pendingUpdate?.secret ?? "" },
-                    set: { model.pendingUpdate?.secret = $0 }
-                ))
+                Group {
+                    if model.isRevealed {
+                        TextField("Leave empty to keep the current secret", text: newSecret)
+                            .font(.body.monospaced())
+                    } else {
+                        SecureField("Leave empty to keep the current secret", text: newSecret)
+                    }
+                }
                 .textFieldStyle(.roundedBorder)
                 .disabled(model.isWorking)
                 .accessibilityLabel("New secret")
@@ -369,6 +374,14 @@ struct PanelView: View {
                 .accessibilityHint("Permanently replace this entry after the macOS password prompt")
             }
         }
+    }
+
+    /// Reveal and Hide cover the current and the new secret together.
+    private var newSecret: Binding<String> {
+        Binding(
+            get: { model.pendingUpdate?.secret ?? "" },
+            set: { model.pendingUpdate?.secret = $0 }
+        )
     }
 
     private static func secretChangeText(_ change: UpdateSummary.SecretChange) -> String {
