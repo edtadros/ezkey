@@ -86,6 +86,8 @@ public enum OperationStatus: Equatable, Sendable {
     case saved
     case updated
     case alreadyExists
+    case clickUpdateToChange
+    case clickReplaceToUpdate
     case retrieved
     case copied
     case chooseMatch
@@ -108,6 +110,10 @@ public enum OperationStatus: Equatable, Sendable {
             "Updated."
         case .alreadyExists:
             "This name already exists. To change it, retrieve it and click Update."
+        case .clickUpdateToChange:
+            "To change this secret, click Update…"
+        case .clickReplaceToUpdate:
+            "To update, click Replace. macOS asks for your password."
         case .retrieved:
             "Retrieved."
         case .chooseMatch:
@@ -127,6 +133,10 @@ public enum OperationStatus: Equatable, Sendable {
         case .validation(let message):
             message
         }
+    }
+
+    public var isUpdateHint: Bool {
+        self == .clickUpdateToChange || self == .clickReplaceToUpdate
     }
 
     public var isError: Bool {

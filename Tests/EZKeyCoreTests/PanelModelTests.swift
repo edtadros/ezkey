@@ -495,6 +495,31 @@ final class PanelModelTests: XCTestCase {
         XCTAssertEqual(stored, "original")
     }
 
+    func testTryingToEditTheRetrievedSecretPointsAtUpdate() async {
+        let identity = SecretIdentity(service: "ezkey.test.nudge", account: "testuser")
+        await store.seed(identity, secret: "value")
+        model.nudgeTowardUpdate()
+        XCTAssertEqual(model.status, .idle, "no hint before anything is retrieved")
+        await retrieve(identity)
+        model.nudgeTowardUpdate()
+        XCTAssertEqual(model.status, .clickUpdateToChange)
+        XCTAssertEqual(model.status.message, "To change this secret, click Update…")
+    }
+
+    func testReturnInsideUpdatePointsAtReplace() async {
+        let identity = SecretIdentity(service: "ezkey.test.nudge-replace", account: "testuser")
+        await store.seed(identity, secret: "original")
+        await retrieve(identity)
+        model.beginUpdate()
+        model.pendingUpdate?.secret = "typed"
+        await model.submit()
+        XCTAssertEqual(model.status, .clickReplaceToUpdate)
+        XCTAssertEqual(model.status.message, "To update, click Replace. macOS asks for your password.")
+        XCTAssertFalse(model.status.isError)
+        let stored = await store.secret(for: identity)
+        XCTAssertEqual(stored, "original")
+    }
+
     func testRefusedReplaceKeepsTheEditsAndTheSecret() async {
         let identity = SecretIdentity(service: "ezkey.test.refused", account: "testuser")
         await store.seed(identity, secret: "original")

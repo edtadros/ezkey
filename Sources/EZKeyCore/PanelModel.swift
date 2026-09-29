@@ -9,7 +9,7 @@ public final class PanelModel {
             guard oldValue != mode else { return }
             clearRetrieved()
             matches = []
-            if status == .retrieved || status == .copied || status == .updated || status == .alreadyExists || status == .chooseMatch {
+            if status == .retrieved || status == .copied || status == .updated || status == .alreadyExists || status == .chooseMatch || status.isUpdateHint {
                 status = .idle
             }
         }
@@ -104,7 +104,10 @@ public final class PanelModel {
     /// The Return key. Replacing a secret takes a click on Replace, so Return
     /// never replaces anything, and does nothing while Update is open.
     public func submit() async {
-        guard pendingUpdate == nil else { return }
+        guard pendingUpdate == nil else {
+            nudgeTowardUpdate()
+            return
+        }
         if mode == .save {
             await save()
         } else {
@@ -156,14 +159,23 @@ public final class PanelModel {
         )
     }
 
+    /// Someone tried to edit the read-only secret, or pressed Return inside
+    /// Update. Point at the button that does it instead of doing nothing.
+    public func nudgeTowardUpdate() {
+        guard retrievedSecret != nil, !isWorking else { return }
+        status = pendingUpdate == nil ? .clickUpdateToChange : .clickReplaceToUpdate
+    }
+
     public func beginUpdate() {
         guard retrievedSecret != nil, retrievedIdentity != nil else { return }
         pendingUpdate = PendingUpdate(secret: "", note: retrievedNote ?? "")
         isRevealed = false
+        if status.isUpdateHint { status = .retrieved }
     }
 
     public func cancelUpdate() {
         pendingUpdate = nil
+        if status.isUpdateHint { status = .retrieved }
     }
 
     /// Replaces the retrieved entry. The store asks for the login password

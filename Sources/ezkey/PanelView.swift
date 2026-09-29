@@ -170,6 +170,7 @@ struct PanelView: View {
                     }
                     .accessibilityLabel("Retrieved secret")
                     .accessibilityValue(model.isRevealed ? "visible" : "hidden")
+                    .modifier(ReadOnlyNudge(model: model))
                 }
 
                 HStack {
@@ -188,6 +189,7 @@ struct PanelView: View {
                         Button("Update…") {
                             model.beginUpdate()
                         }
+                        .modifier(Highlight(isOn: model.status == .clickUpdateToChange))
                         .disabled(model.isWorking)
                         .accessibilityHint("Replace this secret or its notes")
                     }
@@ -205,6 +207,7 @@ struct PanelView: View {
                             .padding(6)
                             .background(.quaternary, in: RoundedRectangle(cornerRadius: 6))
                             .fixedSize(horizontal: false, vertical: true)
+                            .modifier(ReadOnlyNudge(model: model))
                     }
                     .accessibilityElement(children: .combine)
                     .accessibilityLabel("Notes")
@@ -321,6 +324,7 @@ struct PanelView: View {
                 .textFieldStyle(.roundedBorder)
                 .disabled(model.isWorking)
                 .accessibilityLabel("New secret")
+                .onSubmit { Task { await model.submit() } }
             }
             VStack(alignment: .leading, spacing: 4) {
                 Text("Notes")
@@ -334,6 +338,7 @@ struct PanelView: View {
                 .lineLimit(2...4)
                 .disabled(model.isWorking)
                 .accessibilityLabel("New notes")
+                .onSubmit { Task { await model.submit() } }
             }
             VStack(alignment: .leading, spacing: 2) {
                 Text("What changes")
@@ -359,6 +364,7 @@ struct PanelView: View {
                 Button("Replace", role: .destructive) {
                     Task { await model.replaceRetrieved() }
                 }
+                .modifier(Highlight(isOn: model.status == .clickReplaceToUpdate))
                 .disabled(!summary.hasChanges || model.isWorking)
                 .accessibilityHint("Permanently replace this entry after the macOS password prompt")
             }
@@ -383,6 +389,38 @@ struct PanelView: View {
         }
     }
 
+}
+
+/// The retrieved secret and notes are read-only. Typing into them points at
+/// Update… instead of silently doing nothing. Command shortcuts (Copy),
+/// Tab and Escape pass through.
+private struct ReadOnlyNudge: ViewModifier {
+    let model: PanelModel
+
+    func body(content: Content) -> some View {
+        content
+            .focusable()
+            .onKeyPress { press in
+                if press.modifiers.contains(.command) || press.key == .tab || press.key == .escape {
+                    return .ignored
+                }
+                model.nudgeTowardUpdate()
+                return .handled
+            }
+    }
+}
+
+/// Makes the button the nudge points at stand out.
+private struct Highlight: ViewModifier {
+    let isOn: Bool
+
+    func body(content: Content) -> some View {
+        if isOn {
+            content.buttonStyle(.borderedProminent)
+        } else {
+            content
+        }
+    }
 }
 
 struct PanelVisibilityObserver: NSViewRepresentable {
