@@ -6,7 +6,7 @@
 
 ezkey is a small macOS extra for the login Keychain you already have. No account. No server. No warranty.
 
-Name is Keychain Access Name and Where. Account is your Mac user and stays hidden. Retrieve: type part of a name, then pick. Secrets stay masked until Reveal. Copy clears in 30 seconds if unchanged.
+Name is Keychain Access Name and Where. Account is your Mac user and stays hidden. Retrieve: type part of a name, then pick. Retrieved secrets stay masked until you click the eye; secrets you type show unless you hide them. Copy clears in 30 seconds if unchanged.
 
 Install: ask your agent to follow https://ezkey.app/.well-known/agent-skills/build-ezkey/SKILL.md. It shows the disclaimer, clones the newest release tag, reviews the code, and runs `./scripts/install.sh` only after you say go. By hand:
 

@@ -7,10 +7,15 @@ struct PanelView: View {
     @FocusState private var focusedField: Field?
     @State private var opensAtLogin = false
     @State private var loginItemNote = ""
+    /// Secrets you type are visible unless you hide them. The retrieved
+    /// secret uses model.isRevealed and stays masked until you ask.
+    @State private var hideSecretToSave = false
+    @State private var hideNewSecret = false
 
     private enum Field: Hashable {
         case service
         case secret
+        case newSecret
         case note
     }
 
@@ -101,14 +106,7 @@ struct PanelView: View {
                 Text("Secret")
                     .font(.caption)
                     .foregroundStyle(.secondary)
-                SecureField("Secret", text: $model.secretToSave)
-                    .textFieldStyle(.roundedBorder)
-                    .focused($focusedField, equals: .secret)
-                    .disabled(model.isWorking)
-                    .accessibilityLabel("Secret")
-                    .onSubmit {
-                        Task { await model.submit() }
-                    }
+                secretEntry("Secret", text: $model.secretToSave, isHidden: $hideSecretToSave, field: .secret, label: "Secret")
             }
 
             VStack(alignment: .leading, spacing: 4) {
@@ -151,35 +149,32 @@ struct PanelView: View {
                     Text("Secret")
                         .font(.caption)
                         .foregroundStyle(.secondary)
-                    Group {
-                        if model.isRevealed, let secret = model.retrievedSecret {
-                            Text(secret)
-                                .font(.body.monospaced())
-                                .textSelection(.enabled)
-                                .lineLimit(6)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(6)
-                                .background(.quaternary, in: RoundedRectangle(cornerRadius: 6))
-                        } else {
-                            Text("••••••••")
-                                .foregroundStyle(.secondary)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(6)
-                                .background(.quaternary, in: RoundedRectangle(cornerRadius: 6))
+                    HStack(spacing: 6) {
+                        Group {
+                            if model.isRevealed, let secret = model.retrievedSecret {
+                                Text(secret)
+                                    .font(.body.monospaced())
+                                    .textSelection(.enabled)
+                                    .lineLimit(6)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .padding(6)
+                                    .background(.quaternary, in: RoundedRectangle(cornerRadius: 6))
+                            } else {
+                                Text("••••••••")
+                                    .foregroundStyle(.secondary)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .padding(6)
+                                    .background(.quaternary, in: RoundedRectangle(cornerRadius: 6))
+                            }
                         }
+                        .accessibilityLabel("Retrieved secret")
+                        .accessibilityValue(model.isRevealed ? "visible" : "hidden")
+                        .modifier(ReadOnlyNudge(model: model))
+                        EyeButton(isHidden: !model.isRevealed) { model.toggleReveal() }
                     }
-                    .accessibilityLabel("Retrieved secret")
-                    .accessibilityValue(model.isRevealed ? "visible" : "hidden")
-                    .modifier(ReadOnlyNudge(model: model))
                 }
 
                 HStack {
-                    Button(model.isRevealed ? "Hide" : "Reveal") {
-                        model.toggleReveal()
-                    }
-                    .accessibilityLabel(model.isRevealed ? "Hide secret" : "Reveal secret")
-                    .accessibilityHint("Shows or hides the current secret and, while Update is open, the new one")
-
                     Button("Copy") {
                         model.copyRetrieved()
                     }
@@ -318,18 +313,13 @@ struct PanelView: View {
                 Text("New secret")
                     .font(.caption)
                     .foregroundStyle(.secondary)
-                Group {
-                    if model.isRevealed {
-                        TextField("Leave empty to keep the current secret", text: newSecret)
-                            .font(.body.monospaced())
-                    } else {
-                        SecureField("Leave empty to keep the current secret", text: newSecret)
-                    }
-                }
-                .textFieldStyle(.roundedBorder)
-                .disabled(model.isWorking)
-                .accessibilityLabel("New secret")
-                .onSubmit { Task { await model.submit() } }
+                secretEntry(
+                    "Leave empty to keep the current secret",
+                    text: newSecret,
+                    isHidden: $hideNewSecret,
+                    field: .newSecret,
+                    label: "New secret"
+                )
             }
             VStack(alignment: .leading, spacing: 4) {
                 Text("Notes")
@@ -376,7 +366,36 @@ struct PanelView: View {
         }
     }
 
-    /// Reveal and Hide cover the current and the new secret together.
+    /// A secret you type, visible unless you hide it with the eye. Swapping
+    /// between TextField and SecureField drops focus, so the eye puts it back.
+    private func secretEntry(
+        _ prompt: String,
+        text: Binding<String>,
+        isHidden: Binding<Bool>,
+        field: Field,
+        label: String
+    ) -> some View {
+        HStack(spacing: 6) {
+            Group {
+                if isHidden.wrappedValue {
+                    SecureField(prompt, text: text)
+                } else {
+                    TextField(prompt, text: text)
+                        .font(.body.monospaced())
+                }
+            }
+            .textFieldStyle(.roundedBorder)
+            .focused($focusedField, equals: field)
+            .disabled(model.isWorking)
+            .accessibilityLabel(label)
+            .onSubmit { Task { await model.submit() } }
+            EyeButton(isHidden: isHidden.wrappedValue) {
+                isHidden.wrappedValue.toggle()
+                focusedField = field
+            }
+        }
+    }
+
     private var newSecret: Binding<String> {
         Binding(
             get: { model.pendingUpdate?.secret ?? "" },
@@ -420,6 +439,20 @@ private struct ReadOnlyNudge: ViewModifier {
                 model.nudgeTowardUpdate()
                 return .handled
             }
+    }
+}
+
+private struct EyeButton: View {
+    let isHidden: Bool
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            Image(systemName: isHidden ? "eye" : "eye.slash")
+        }
+        .buttonStyle(.borderless)
+        .help(isHidden ? "Show" : "Hide")
+        .accessibilityLabel(isHidden ? "Show secret" : "Hide secret")
     }
 }
 

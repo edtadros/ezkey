@@ -25,7 +25,7 @@ Install ezkey on this Mac. Follow https://ezkey.app/.well-known/agent-skills/bui
 - **Account** — your Mac user, kept hidden
 - **Notes** — Keychain Access Comments (`security -j`); optional, shown on retrieve
 - **Retrieve** — type part of a name, then pick
-- **Reveal** — masked until you ask
+- **Eye icon** — a retrieved secret stays masked until you click it; secrets you type show unless you hide them
 - **Copy** — clears in 30 seconds if unchanged
 - **Password every time** — ezkey asks for your login password each time it shows a secret it saved. On purpose.
 - **Update** — from a retrieved secret: see what changes, then Replace; asks for your password; permanent

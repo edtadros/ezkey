@@ -520,7 +520,7 @@ final class PanelModelTests: XCTestCase {
         XCTAssertEqual(stored, "original")
     }
 
-    func testRevealCoversTheNewSecretToo() async {
+    func testOpeningUpdateKeepsTheRetrievedSecretsVisibility() async {
         let identity = SecretIdentity(service: "ezkey.test.reveal-new", account: "testuser")
         await store.seed(identity, secret: "three")
         await retrieve(identity)
