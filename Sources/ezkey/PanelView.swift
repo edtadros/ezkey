@@ -7,10 +7,15 @@ struct PanelView: View {
     @FocusState private var focusedField: Field?
     @State private var opensAtLogin = false
     @State private var loginItemNote = ""
+    /// Secrets you type are visible unless you hide them. The retrieved
+    /// secret uses model.isRevealed and stays masked until you ask.
+    @State private var hideSecretToSave = false
+    @State private var hideNewSecret = false
 
     private enum Field: Hashable {
         case service
         case secret
+        case newSecret
         case note
     }
 
@@ -101,14 +106,7 @@ struct PanelView: View {
                 Text("Secret")
                     .font(.caption)
                     .foregroundStyle(.secondary)
-                SecureField("Secret", text: $model.secretToSave)
-                    .textFieldStyle(.roundedBorder)
-                    .focused($focusedField, equals: .secret)
-                    .disabled(model.isWorking)
-                    .accessibilityLabel("Secret")
-                    .onSubmit {
-                        Task { await primarySaveAction() }
-                    }
+                secretEntry("Secret", text: $model.secretToSave, isHidden: $hideSecretToSave, field: .secret, label: "Secret")
             }
 
             VStack(alignment: .leading, spacing: 4) {
@@ -124,23 +122,12 @@ struct PanelView: View {
                     .help("Stored as Keychain Access Comments")
             }
 
-            HStack {
-                if model.status == .needsUpdate {
-                    Button("Update") {
-                        Task { await model.update() }
-                    }
-                    .keyboardShortcut(.defaultAction)
-                    .disabled(model.isWorking)
-                    .accessibilityHint("Replace the existing Keychain entry")
-                } else {
-                    Button("Save") {
-                        Task { await model.save() }
-                    }
-                    .keyboardShortcut(.defaultAction)
-                    .disabled(model.isWorking)
-                    .accessibilityHint("Save a new Keychain entry")
-                }
+            Button("Save") {
+                Task { await model.save() }
             }
+            .keyboardShortcut(.defaultAction)
+            .disabled(model.isWorking)
+            .accessibilityHint("Save a new Keychain entry")
         }
     }
 
@@ -150,7 +137,7 @@ struct PanelView: View {
                 Task { await model.retrieve() }
             }
             .keyboardShortcut(.defaultAction)
-            .disabled(model.isWorking)
+            .disabled(model.isWorking || model.pendingUpdate != nil)
             .accessibilityHint("Search by part of the Keychain name, or look up an exact pair")
 
             if !model.matches.isEmpty {
@@ -162,37 +149,46 @@ struct PanelView: View {
                     Text("Secret")
                         .font(.caption)
                         .foregroundStyle(.secondary)
-                    Group {
-                        if model.isRevealed, let secret = model.retrievedSecret {
-                            Text(secret)
-                                .font(.body.monospaced())
-                                .textSelection(.enabled)
-                                .lineLimit(6)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(6)
-                                .background(.quaternary, in: RoundedRectangle(cornerRadius: 6))
-                        } else {
-                            Text("••••••••")
-                                .foregroundStyle(.secondary)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(6)
-                                .background(.quaternary, in: RoundedRectangle(cornerRadius: 6))
+                    HStack(spacing: 6) {
+                        Group {
+                            if model.isRevealed, let secret = model.retrievedSecret {
+                                Text(secret)
+                                    .font(.body.monospaced())
+                                    .textSelection(.enabled)
+                                    .lineLimit(6)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .padding(6)
+                                    .background(.quaternary, in: RoundedRectangle(cornerRadius: 6))
+                            } else {
+                                Text("••••••••")
+                                    .foregroundStyle(.secondary)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .padding(6)
+                                    .background(.quaternary, in: RoundedRectangle(cornerRadius: 6))
+                            }
                         }
+                        .accessibilityLabel("Retrieved secret")
+                        .accessibilityValue(model.isRevealed ? "visible" : "hidden")
+                        .modifier(ReadOnlyNudge(model: model))
+                        EyeButton(isHidden: !model.isRevealed) { model.toggleReveal() }
                     }
-                    .accessibilityLabel("Retrieved secret")
-                    .accessibilityValue(model.isRevealed ? "visible" : "hidden")
                 }
 
                 HStack {
-                    Button(model.isRevealed ? "Hide" : "Reveal") {
-                        model.toggleReveal()
-                    }
-                    .accessibilityLabel(model.isRevealed ? "Hide secret" : "Reveal secret")
-
                     Button("Copy") {
                         model.copyRetrieved()
                     }
                     .accessibilityHint("Copy the secret, then clear the clipboard after 30 seconds if unchanged")
+
+                    if model.pendingUpdate == nil {
+                        Spacer()
+                        Button("Update…") {
+                            model.beginUpdate()
+                        }
+                        .modifier(Highlight(isOn: model.status == .clickUpdateToChange))
+                        .disabled(model.isWorking)
+                        .accessibilityHint("Replace this secret or its notes")
+                    }
                 }
 
                 if let note = model.retrievedNote, StoredSecret.normalizedNote(note).isEmpty == false {
@@ -207,10 +203,15 @@ struct PanelView: View {
                             .padding(6)
                             .background(.quaternary, in: RoundedRectangle(cornerRadius: 6))
                             .fixedSize(horizontal: false, vertical: true)
+                            .modifier(ReadOnlyNudge(model: model))
                     }
                     .accessibilityElement(children: .combine)
                     .accessibilityLabel("Notes")
                     .accessibilityValue(note)
+                }
+
+                if let summary = model.updateSummary {
+                    updateSection(summary)
                 }
             }
         }
@@ -298,9 +299,120 @@ struct PanelView: View {
                 .disabled(model.isWorking)
                 .accessibilityLabel(title)
                 .onSubmit {
-                    Task { await primarySaveAction() }
+                    Task { await model.submit() }
                 }
         }
+    }
+
+    private func updateSection(_ summary: UpdateSummary) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Divider()
+            Text("Update")
+                .font(.headline)
+            VStack(alignment: .leading, spacing: 4) {
+                Text("New secret")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                secretEntry(
+                    "Leave empty to keep the current secret",
+                    text: newSecret,
+                    isHidden: $hideNewSecret,
+                    field: .newSecret,
+                    label: "New secret"
+                )
+            }
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Notes")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                TextField("optional", text: Binding(
+                    get: { model.pendingUpdate?.note ?? "" },
+                    set: { model.pendingUpdate?.note = $0 }
+                ), axis: .vertical)
+                .textFieldStyle(.roundedBorder)
+                .lineLimit(2...4)
+                .disabled(model.isWorking)
+                .accessibilityLabel("New notes")
+                .onSubmit { Task { await model.submit() } }
+            }
+            VStack(alignment: .leading, spacing: 2) {
+                Text("What changes")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                Text(Self.secretChangeText(summary.secret))
+                Text(summary.noteChanged
+                    ? "Notes: \(Self.quoted(summary.currentNote)) → \(Self.quoted(summary.newNote))"
+                    : "Notes: unchanged")
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .font(.callout)
+            Text("Replacing is permanent. The old secret cannot be recovered. macOS asks for your login password to allow it.")
+                .font(.caption)
+                .foregroundStyle(.orange)
+                .fixedSize(horizontal: false, vertical: true)
+            HStack {
+                Button("Cancel") {
+                    model.cancelUpdate()
+                }
+                .disabled(model.isWorking)
+                Spacer()
+                Button("Replace", role: .destructive) {
+                    Task { await model.replaceRetrieved() }
+                }
+                .modifier(Highlight(isOn: model.status == .clickReplaceToUpdate))
+                .disabled(!summary.hasChanges || model.isWorking)
+                .accessibilityHint("Permanently replace this entry after the macOS password prompt")
+            }
+        }
+    }
+
+    /// A secret you type, visible unless you hide it with the eye. Swapping
+    /// between TextField and SecureField drops focus, so the eye puts it back.
+    private func secretEntry(
+        _ prompt: String,
+        text: Binding<String>,
+        isHidden: Binding<Bool>,
+        field: Field,
+        label: String
+    ) -> some View {
+        HStack(spacing: 6) {
+            Group {
+                if isHidden.wrappedValue {
+                    SecureField(prompt, text: text)
+                } else {
+                    TextField(prompt, text: text)
+                        .font(.body.monospaced())
+                }
+            }
+            .textFieldStyle(.roundedBorder)
+            .focused($focusedField, equals: field)
+            .disabled(model.isWorking)
+            .accessibilityLabel(label)
+            .onSubmit { Task { await model.submit() } }
+            EyeButton(isHidden: isHidden.wrappedValue) {
+                isHidden.wrappedValue.toggle()
+                focusedField = field
+            }
+        }
+    }
+
+    private var newSecret: Binding<String> {
+        Binding(
+            get: { model.pendingUpdate?.secret ?? "" },
+            set: { model.pendingUpdate?.secret = $0 }
+        )
+    }
+
+    private static func secretChangeText(_ change: UpdateSummary.SecretChange) -> String {
+        switch change {
+        case .kept: "Secret: kept"
+        case .replaced: "Secret: replaced"
+        case .sameAsCurrent: "Secret: same as the current one"
+        }
+    }
+
+    private static func quoted(_ note: String) -> String {
+        note.isEmpty ? "(none)" : "“\(note)”"
     }
 
     private func openLicense() {
@@ -309,15 +421,50 @@ struct PanelView: View {
         }
     }
 
-    private func primarySaveAction() async {
-        if model.mode == .save {
-            if model.status == .needsUpdate {
-                await model.update()
-            } else {
-                await model.save()
+}
+
+/// The retrieved secret and notes are read-only. Typing into them points at
+/// Update… instead of silently doing nothing. Command shortcuts (Copy),
+/// Tab and Escape pass through.
+private struct ReadOnlyNudge: ViewModifier {
+    let model: PanelModel
+
+    func body(content: Content) -> some View {
+        content
+            .focusable()
+            .onKeyPress { press in
+                if press.modifiers.contains(.command) || press.key == .tab || press.key == .escape {
+                    return .ignored
+                }
+                model.nudgeTowardUpdate()
+                return .handled
             }
+    }
+}
+
+private struct EyeButton: View {
+    let isHidden: Bool
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            Image(systemName: isHidden ? "eye" : "eye.slash")
+        }
+        .buttonStyle(.borderless)
+        .help(isHidden ? "Show" : "Hide")
+        .accessibilityLabel(isHidden ? "Show secret" : "Hide secret")
+    }
+}
+
+/// Makes the button the nudge points at stand out.
+private struct Highlight: ViewModifier {
+    let isOn: Bool
+
+    func body(content: Content) -> some View {
+        if isOn {
+            content.buttonStyle(.borderedProminent)
         } else {
-            await model.retrieve()
+            content
         }
     }
 }

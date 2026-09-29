@@ -85,7 +85,9 @@ public enum OperationStatus: Equatable, Sendable {
     case working
     case saved
     case updated
-    case needsUpdate
+    case alreadyExists
+    case clickUpdateToChange
+    case clickReplaceToUpdate
     case retrieved
     case copied
     case chooseMatch
@@ -106,8 +108,12 @@ public enum OperationStatus: Equatable, Sendable {
             "Saved."
         case .updated:
             "Updated."
-        case .needsUpdate:
-            "An entry already exists. Click Update to replace it."
+        case .alreadyExists:
+            "This name already exists. To change it, retrieve it and click Update."
+        case .clickUpdateToChange:
+            "To change this secret, click Update…"
+        case .clickReplaceToUpdate:
+            "To update, click Replace. macOS asks for your password."
         case .retrieved:
             "Retrieved."
         case .chooseMatch:
@@ -129,6 +135,10 @@ public enum OperationStatus: Equatable, Sendable {
         }
     }
 
+    public var isUpdateHint: Bool {
+        self == .clickUpdateToChange || self == .clickReplaceToUpdate
+    }
+
     public var isError: Bool {
         switch self {
         case .missingEntry, .noMatches, .accessDenied, .cancelled, .failure, .validation:
@@ -147,7 +157,7 @@ public enum OperationStatus: Equatable, Sendable {
         case .missingEntry:
             .missingEntry
         case .duplicateEntry:
-            .needsUpdate
+            .alreadyExists
         case .accessDenied:
             .accessDenied
         case .cancelled:
@@ -156,6 +166,49 @@ public enum OperationStatus: Equatable, Sendable {
             .failure
         }
     }
+}
+
+/// The Update section's edits. An empty secret keeps the current one.
+public struct PendingUpdate: Equatable, Sendable {
+    public var secret: String
+    public var note: String
+
+    public init(secret: String, note: String) {
+        self.secret = secret
+        self.note = note
+    }
+}
+
+/// What Replace would do. Secrets are compared, never displayed.
+public struct UpdateSummary: Equatable, Sendable {
+    public enum SecretChange: Equatable, Sendable {
+        case kept
+        case replaced
+        case sameAsCurrent
+    }
+
+    public let secret: SecretChange
+    public let newSecret: String
+    public let currentNote: String
+    public let newNote: String
+
+    public init(currentSecret: String, currentNote: String, pending: PendingUpdate) {
+        if pending.secret.isEmpty {
+            secret = .kept
+            newSecret = currentSecret
+        } else if pending.secret == currentSecret {
+            secret = .sameAsCurrent
+            newSecret = currentSecret
+        } else {
+            secret = .replaced
+            newSecret = pending.secret
+        }
+        self.currentNote = StoredSecret.normalizedNote(currentNote)
+        newNote = StoredSecret.normalizedNote(pending.note)
+    }
+
+    public var noteChanged: Bool { newNote != currentNote }
+    public var hasChanges: Bool { secret == .replaced || noteChanged }
 }
 
 public enum DisposableEntry {

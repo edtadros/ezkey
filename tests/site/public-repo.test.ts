@@ -71,16 +71,42 @@ test("classifier flags a second address and an OpenAI token outside the tree", (
   assert.equal(out.includes(token), true);
 });
 
-test("user-facing copy never mentions Developer ID, notarization, or Gatekeeper", () => {
+test("no tracked file mentions Developer ID, notarization, or Gatekeeper outside the rule itself", () => {
   let out = "";
   try {
     out = execFileSync(
       "git",
-      ["grep", "-n", "-i", "-E", "developer id|notariz|gatekeeper", "--", "site", "src", "README.md", "SECURITY.md", "DISCLAIMER.md", "CONTRIBUTING.md", "RELEASING.md", "scripts/render_guides.py"],
+      ["grep", "-n", "-i", "-E", "developer id|notariz|gatekeeper", "--", ".", ":!AGENTS.md", ":!tests/site/public-repo.test.ts"],
       { cwd: root, encoding: "utf8" },
     );
   } catch (error) {
     if ((error as { status?: number }).status !== 1) throw error;
   }
   assert.equal(out, "");
+});
+
+test("every site image tag declares the PNG's real size at 2x", async () => {
+  const { readFileSync, readdirSync, statSync } = await import("node:fs");
+  const htmlFiles: string[] = [];
+  const walk = (dir: string) => {
+    for (const name of readdirSync(dir)) {
+      const path = join(dir, name);
+      if (statSync(path).isDirectory()) walk(path);
+      else if (name.endsWith(".html")) htmlFiles.push(path);
+    }
+  };
+  walk(join(root, "site"));
+  let checked = 0;
+  for (const file of htmlFiles) {
+    for (const match of readFileSync(file, "utf8").matchAll(/<img[^>]*src="\/images\/([^"]+\.png)"[^>]*>/g)) {
+      const tag = match[0];
+      const png = readFileSync(join(root, "site/images", match[1]));
+      const width = png.readUInt32BE(16) / 2;
+      const height = png.readUInt32BE(20) / 2;
+      assert.equal(Number(tag.match(/width="(\d+)"/)?.[1]), width, `${file}: ${match[1]} width`);
+      assert.equal(Number(tag.match(/height="(\d+)"/)?.[1]), height, `${file}: ${match[1]} height`);
+      checked++;
+    }
+  }
+  assert.ok(checked >= 6, `only ${checked} images checked`);
 });
