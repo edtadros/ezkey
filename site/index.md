@@ -17,15 +17,19 @@ Install ezkey on this Mac. Follow https://ezkey.app/.well-known/agent-skills/bui
 
 ![ezkey Retrieve panel with matching names](https://ezkey.app/images/panel-matches.png)
 
+![ezkey Update section under a retrieved secret](https://ezkey.app/images/panel-update.png)
+
 ## How it works
 
 - **Name** — Keychain Access Name and Where
 - **Account** — your Mac user, kept hidden
 - **Notes** — Keychain Access Comments (`security -j`); optional, shown on retrieve
 - **Retrieve** — type part of a name, then pick
-- **Reveal** — masked until you ask
+- **Eye icon** — a retrieved secret stays masked until you click it; secrets you type show unless you hide them
 - **Copy** — clears in 30 seconds if unchanged
-- **Password every time** — ezkey asks for your login password each time it shows a secret, even ones it saved. On purpose.
+- **Password every time** — ezkey asks for your login password each time it shows a secret it saved. On purpose.
+- **Update** — from a retrieved secret: see what changes, then Replace; asks for your password; permanent
+- **Delete** — in Keychain Access; ezkey never deletes keys
 
 ## Install
 
@@ -41,7 +45,7 @@ cd ezkey
 
 Replace `<tag>` with the newest `v*` release tag. Only the maintainer can create, move, or delete those tags. To review the code before building, follow the [build-ezkey skill](https://ezkey.app/.well-known/agent-skills/build-ezkey/SKILL.md).
 
-ezkey is open source. You build it on your own Mac. ezkey asks for your login password every time it shows a secret, including secrets ezkey saved itself. That is on purpose. By default, macOS lets the app that saved a Keychain item read it again without asking. ezkey turns that off for everything it saves, because ezkey has no login of its own: without the prompt, anyone using your unlocked Mac could open ezkey and read your keys. Clicking **Always Allow** does not change this. It is the same protection Keychain Access gives when you show a password. Names and notes stay readable without the password so you can search; only the secret is protected.
+ezkey is open source. You build it on your own Mac. ezkey asks for your login password every time it shows a secret it saved. Secrets other apps saved follow the rules those apps set, which usually means a prompt too. That is on purpose. By default, macOS lets the app that saved a Keychain item read it again without asking. ezkey turns that off for everything it saves, because ezkey has no login of its own: without the prompt, anyone using your unlocked Mac could open ezkey and read your keys. Clicking **Always Allow** does not change this. It is the same protection Keychain Access gives when you show a password. Names and notes stay readable without the password so you can search; only the secret is protected.
 
 See the [glossary](https://ezkey.app/glossary.md) for Keychain field names.
 

@@ -96,6 +96,11 @@ public actor LoginKeychainStore: SecretStore {
     public func update(_ identity: SecretIdentity, secret: String, note: String = "") async throws {
         try requireValid(identity)
         try requireSecret(secret)
+        // Replacing a secret destroys the old one, so it needs the same
+        // password prompt as reading it. SecItemUpdate alone is silent.
+        let readQuery = try searchQuery(identity, returnData: true)
+        var current: CFTypeRef?
+        try check(withPromptPolicy { SecItemCopyMatching(readQuery as CFDictionary, &current) })
         var query = try searchQuery(identity, returnData: false)
         query[kSecUseAuthenticationUI] = allowsPrompt
             ? kSecUseAuthenticationUIAllow

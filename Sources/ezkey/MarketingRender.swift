@@ -40,7 +40,17 @@ enum MarketingRender {
                     model.service = "my-app-api-token"
                     model.retrievedSecret = "example-retrieved"
                     model.retrievedNote = "local staging token"
+                    model.retrievedIdentity = SecretIdentity(service: "my-app-api-token", account: user)
                     model.isRevealed = false
+                    model.status = .retrieved
+                }
+                try snapshot(name: "panel-update\(suffix)", scheme: scheme, directory: dir) { model in
+                    model.mode = .retrieve
+                    model.service = "my-app-api-token"
+                    model.retrievedSecret = "example-retrieved"
+                    model.retrievedNote = "local staging token"
+                    model.retrievedIdentity = SecretIdentity(service: "my-app-api-token", account: user)
+                    model.pendingUpdate = PendingUpdate(secret: "example-rotated", note: "rotated staging token")
                     model.status = .retrieved
                 }
             }

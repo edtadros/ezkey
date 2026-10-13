@@ -28,11 +28,25 @@ final class ModelsTests: XCTestCase {
     func testOperationStatusMessagesAreSpecific() {
         XCTAssertEqual(OperationStatus.saved.message, "Saved.")
         XCTAssertEqual(OperationStatus.updated.message, "Updated.")
-        XCTAssertTrue(OperationStatus.needsUpdate.message.contains("Update"))
+        XCTAssertEqual(OperationStatus.alreadyExists.message, "This name already exists. To change it, retrieve it and click Update.")
         XCTAssertEqual(OperationStatus.missingEntry.message, "No entry for this name and account.")
         XCTAssertEqual(OperationStatus.accessDenied.message, "Keychain access denied.")
         XCTAssertEqual(OperationStatus.cancelled.message, "Keychain access cancelled.")
-        XCTAssertEqual(OperationStatus.from(error: .duplicateEntry), .needsUpdate)
+        XCTAssertEqual(OperationStatus.from(error: .duplicateEntry), .alreadyExists)
+    }
+
+    func testUpdateSummaryComparesWithoutRevealing() {
+        let kept = UpdateSummary(currentSecret: "s", currentNote: " n ", pending: PendingUpdate(secret: "", note: "n"))
+        XCTAssertEqual(kept.secret, .kept)
+        XCTAssertEqual(kept.newSecret, "s")
+        XCTAssertFalse(kept.hasChanges)
+        let replaced = UpdateSummary(currentSecret: "s", currentNote: "n", pending: PendingUpdate(secret: "t", note: "n"))
+        XCTAssertEqual(replaced.secret, .replaced)
+        XCTAssertTrue(replaced.hasChanges)
+        let same = UpdateSummary(currentSecret: "s", currentNote: "n", pending: PendingUpdate(secret: "s", note: "m"))
+        XCTAssertEqual(same.secret, .sameAsCurrent)
+        XCTAssertTrue(same.noteChanged)
+        XCTAssertTrue(same.hasChanges)
     }
 
     func testStoredSecretNoteHelpers() {

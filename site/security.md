@@ -11,13 +11,15 @@ Report vulnerabilities privately via [GitHub security advisories](https://github
 
 ## How access works
 
-ezkey asks for your login password every time it shows a secret, including secrets ezkey saved itself. That is on purpose.
+ezkey asks for your login password every time it shows a secret it saved. Secrets other apps saved follow the rules those apps set, which usually means a prompt too. That is on purpose.
 
 By default, macOS lets the app that saved a Keychain item read it again without asking. ezkey turns that off for everything it saves. Each secret it saves trusts no app to read it, ezkey included. ezkey has no login of its own: without the prompt, anyone using your unlocked Mac could open ezkey and read your keys.
 
 The prompt comes from macOS. ezkey never suppresses or bypasses it. Clicking **Always Allow** does not change this. It is the same protection Keychain Access gives when you show a password.
 
-Names and notes stay readable without the password so you can search. Saving, searching by name or notes, Update, and Delete work without it. Notes show in the clear, so keep secrets out of them. Only the secret is protected.
+Names and notes stay readable without the password so you can search. Saving and searching by name or notes work without it. Notes show in the clear, so keep secrets out of them. Only the secret is protected.
+
+You change a secret from Retrieve: click Update…, enter the new secret or notes, check what changes, then click Replace. Replacing is permanent, asks for your login password, and never happens from the Return key. ezkey never deletes keys. To delete one, use Keychain Access.
 
 ## What you should install
 

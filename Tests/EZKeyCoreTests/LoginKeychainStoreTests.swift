@@ -186,7 +186,7 @@ final class LoginKeychainStoreTests: XCTestCase {
         }
     }
 
-    func testAskEveryTimeKeepsNamesNotesUpdateAndDeleteSilent() async throws {
+    func testAskEveryTimeKeepsNamesNotesAndDeleteSilent() async throws {
         let token = UUID().uuidString
         let identity = SecretIdentity(service: DisposableEntry.servicePrefix + token, account: NSUserName())
         try await askEveryTime.add(identity, secret: "first", note: "note \(token)")
@@ -197,12 +197,23 @@ final class LoginKeychainStoreTests: XCTestCase {
         XCTAssertEqual(comment, "note \(token)")
         let matches = try await askEveryTime.list(matching: token)
         XCTAssertEqual(matches, [identity])
-        try await askEveryTime.update(identity, secret: "second", note: "rotated")
-        let rotated = try await askEveryTime.comment(for: identity)
-        XCTAssertEqual(rotated, "rotated")
         try await askEveryTime.delete(identity)
         let gone = try await askEveryTime.contains(identity)
         XCTAssertFalse(gone)
+    }
+
+    func testUpdateNeedsThePasswordBeforeReplacingASecret() async throws {
+        let identity = uniqueIdentity()
+        try await askEveryTime.add(identity, secret: "original", note: "before")
+        created.append(identity)
+        do {
+            try await askEveryTime.update(identity, secret: "overwrite", note: "after")
+            XCTFail("replaced a secret without the password prompt")
+        } catch let error as KeychainError {
+            XCTAssertEqual(error, .accessDenied)
+        }
+        let note = try await askEveryTime.comment(for: identity)
+        XCTAssertEqual(note, "before", "the refused update still changed the item")
     }
 
     func testRefusesToTreatProductionServiceAsDisposable() {
