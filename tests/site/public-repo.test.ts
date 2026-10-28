@@ -74,22 +74,24 @@ test("classifier flags a second address and an OpenAI token outside the tree", (
   assert.equal(out.includes(token), true);
 });
 
-test("signing terms stay in maintainer signing files and rules", () => {
+test("tracked files contain no stale signing claims", () => {
+  const staleClaims = [
+    "never have a " + "Developer ID",
+    "never be " + "notarized",
+    "not " + "notarized",
+    "never " + "notarized",
+  ].join("|");
   let out = "";
   try {
     out = execFileSync(
       "git",
-      [
-        "grep", "-n", "-i", "-E", "developer id|notariz|gatekeeper", "--", ".",
-        ":!AGENTS.md", ":!tests/site/public-repo.test.ts", ":!SIGNING.md",
-        ":!scripts/build-and-run.sh", ":!Tests/scripts/test_signing.py",
-      ],
+      ["grep", "-n", "-i", "-E", staleClaims, "--", "."],
       { cwd: root, encoding: "utf8" },
     );
   } catch (error) {
-    if ((error as { status?: number }).status !== 1) throw error;
+    if (!(error instanceof Error) || !("status" in error) || error.status !== 1) throw error;
   }
-  assert.equal(out, "");
+  assert.equal(out, "", `Stale signing claims in tracked files:\n${out}`);
 });
 
 test("every site image tag declares the PNG's real size at 2x", async () => {
