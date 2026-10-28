@@ -64,6 +64,8 @@ The name may be remembered. Secret values are not. When ezkey saves, it sets Key
 
 A release is a `v*` tag. Only the maintainer can create one. See [RELEASING.md](RELEASING.md).
 
+Optional maintainer signing setup is in [SIGNING.md](SIGNING.md).
+
 ## Security
 
 Report vulnerabilities privately: <https://github.com/edtadros/ezkey/security/advisories/new>

@@ -22,6 +22,9 @@ test("gitignore blocks credential and local-state files", () => {
     ".env.local",
     "secrets.pem",
     "cert.p12",
+    "cert.cer",
+    "app.provisionprofile",
+    "app.mobileprovision",
     "service-account.json",
     "app-credentials.json",
     ".wrangler/state.json",
@@ -71,12 +74,16 @@ test("classifier flags a second address and an OpenAI token outside the tree", (
   assert.equal(out.includes(token), true);
 });
 
-test("no tracked file mentions Developer ID, notarization, or Gatekeeper outside the rule itself", () => {
+test("signing terms stay in maintainer signing files and rules", () => {
   let out = "";
   try {
     out = execFileSync(
       "git",
-      ["grep", "-n", "-i", "-E", "developer id|notariz|gatekeeper", "--", ".", ":!AGENTS.md", ":!tests/site/public-repo.test.ts"],
+      [
+        "grep", "-n", "-i", "-E", "developer id|notariz|gatekeeper", "--", ".",
+        ":!AGENTS.md", ":!tests/site/public-repo.test.ts", ":!SIGNING.md",
+        ":!scripts/build-and-run.sh", ":!Tests/scripts/test_signing.py",
+      ],
       { cwd: root, encoding: "utf8" },
     );
   } catch (error) {
