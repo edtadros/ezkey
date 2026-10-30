@@ -27,9 +27,11 @@ id_ed25519
 .netrc
 *.pem
 *.p12
+*.cer
 *.p8
 *.key
 *.mobileprovision
+*.provisionprofile
 *credentials*.json
 service-account*.json
 AuthKey_*.p8

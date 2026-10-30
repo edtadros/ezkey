@@ -22,6 +22,9 @@ test("gitignore blocks credential and local-state files", () => {
     ".env.local",
     "secrets.pem",
     "cert.p12",
+    "cert.cer",
+    "app.provisionprofile",
+    "app.mobileprovision",
     "service-account.json",
     "app-credentials.json",
     ".wrangler/state.json",
@@ -71,18 +74,24 @@ test("classifier flags a second address and an OpenAI token outside the tree", (
   assert.equal(out.includes(token), true);
 });
 
-test("no tracked file mentions Developer ID, notarization, or Gatekeeper outside the rule itself", () => {
+test("tracked files contain no stale signing claims", () => {
+  const staleClaims = [
+    "never have a " + "Developer ID",
+    "never be " + "notarized",
+    "not " + "notarized",
+    "never " + "notarized",
+  ].join("|");
   let out = "";
   try {
     out = execFileSync(
       "git",
-      ["grep", "-n", "-i", "-E", "developer id|notariz|gatekeeper", "--", ".", ":!AGENTS.md", ":!tests/site/public-repo.test.ts"],
+      ["grep", "-n", "-i", "-E", staleClaims, "--", "."],
       { cwd: root, encoding: "utf8" },
     );
   } catch (error) {
-    if ((error as { status?: number }).status !== 1) throw error;
+    if (!(error instanceof Error) || !("status" in error) || error.status !== 1) throw error;
   }
-  assert.equal(out, "");
+  assert.equal(out, "", `Stale signing claims in tracked files:\n${out}`);
 });
 
 test("every site image tag declares the PNG's real size at 2x", async () => {
