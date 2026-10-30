@@ -18,6 +18,8 @@ jobs:
           persist-credentials: false
       - name: Show Swift
         run: swift --version
+      - name: Signing packaging tests
+        run: python3 Tests/scripts/test_signing.py
       - name: Test
         run: swift test --package-path .
       - name: Build the app the way install.sh does (not uploaded)
